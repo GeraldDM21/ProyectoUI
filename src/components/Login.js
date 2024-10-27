@@ -2,32 +2,42 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-    const [username, setUsername] = useState('');
+    const [userName, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Aquí harías la validación real en el backend
-        if (username === 'admin' && password === 'admin123') {
-            localStorage.setItem('token', 'user-token');
-            localStorage.setItem('role', 'admin');
-            navigate('/admin');
-        } else if (username === 'usuario' && password === 'usuario123') {
-            localStorage.setItem('token', 'user-token');
-            localStorage.setItem('role', 'usuario');
-            navigate('/usuario');
-        } else if (username === 'oficial' && password === 'oficial123') {
-            localStorage.setItem('token', 'user-token');
-            localStorage.setItem('role', 'oficial');
-            navigate('/oficial');
-        } else if (username === 'juez' && password === 'juez123') {
-            localStorage.setItem('token', 'user-token');
-            localStorage.setItem('role', 'juez');
-            navigate('/juez');
-        } else {
-            setError('Usuario o contraseña incorrectos');
+        try {
+            const response = await fetch('https://localhost:7201/api/Auth/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userName, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Usuario o contraseña incorrectos');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+
+            // Navegar según el rol del usuario
+            if (data.role === 'admin') {
+                navigate('/admin');
+            } else if (data.role === 'User') {
+                navigate('/usuario');
+            } else if (data.role === 'oficial') {
+                navigate('/oficial');
+            } else if (data.role === 'juez') {
+                navigate('/juez');
+            }
+        } catch (error) {
+            setError(error.message);
         }
     };
 
@@ -40,7 +50,7 @@ function Login() {
                     <input
                         type="text"
                         className="form-control"
-                        value={username}
+                        value={userName}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                     />
