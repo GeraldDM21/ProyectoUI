@@ -1,62 +1,114 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import AuthFormContainer from './AuthFormContainer';
 
 function Register() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const [cedula, setCedula] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [contrasena, setContrasena] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [fotoCedula, setFotoCedula] = useState(null);
+    const [fotoPerfil, setFotoPerfil] = useState(null);
+    const [message, setMessage] = useState('');
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden');
-            return;
-        }
-        // Aquí harías la lógica de registro (API) y guardas en el backend
-        localStorage.setItem('token', 'user-token');
-        localStorage.setItem('role', 'usuario');
-        navigate('/usuario');
+        // Aquí puedes manejar la lógica de envío al backend
+        setMessage('Registro exitoso.');
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Registrarse</h2>
-            <form onSubmit={handleRegister}>
-                <div className="form-group">
-                    <label>Nombre de Usuario</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Contraseña</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Confirmar Contraseña</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                {error && <p className="text-danger">{error}</p>}
-                <button type="submit" className="btn btn-primary">Registrarse</button>
-            </form>
+        <div className="login-background">
+            <div className="shape-background"></div>
+            <AuthFormContainer title="Registro">
+                <form onSubmit={handleRegister}>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-id-card"></i>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Cédula"
+                            value={cedula}
+                            onChange={(e) => setCedula(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-user"></i>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Nombre"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-user"></i>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Apellido"
+                            value={apellido}
+                            onChange={(e) => setApellido(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-envelope"></i>
+                        <input
+                            type="email"
+                            className="form-control"
+                            placeholder="Correo Electrónico"
+                            value={correo}
+                            onChange={(e) => setCorreo(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Contraseña"
+                            value={contrasena}
+                            onChange={(e) => setContrasena(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-phone"></i>
+                        <input
+                            type="tel"
+                            className="form-control"
+                            placeholder="Teléfono"
+                            value={telefono}
+                            onChange={(e) => setTelefono(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Foto de Cédula</label>
+                        <input
+                            type="file"
+                            className="form-control-file"
+                            onChange={(e) => setFotoCedula(e.target.files[0])}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Foto de Perfil</label>
+                        <input
+                            type="file"
+                            className="form-control-file"
+                            onChange={(e) => setFotoPerfil(e.target.files[0])}
+                        />
+                    </div>
+                    <button type="submit" className="btn-login">Registrarse</button>
+                    {message && <p className="text-info mt-3">{message}</p>}
+                </form>
+            </AuthFormContainer>
         </div>
     );
 }

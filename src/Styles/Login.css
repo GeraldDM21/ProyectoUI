@@ -1,0 +1,133 @@
+/* Paleta de Colores */
+:root {
+    --cyan-light: #B5EAEA;
+    --blue-dark: #274C77;
+    --orange: #F76C5E;
+    --blue-medium: #6096BA;
+    --white: #FFFFFF;
+}
+
+/* Fondo y estilo general */
+.login-background {
+    background: none; /* Elimina el fondo sólido */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Oculta cualquier desbordamiento */
+}
+
+/* Estilos para las formas en el fondo */
+.shape-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--blue-medium) 25%, var(--orange) 75%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Cambia la forma del clip para cubrir toda la pantalla */
+    z-index: 0;
+}
+
+/* Contenedor principal del formulario */
+.login-container {
+    background-color: var(--white);
+    width: 350px;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin-top: -60px; /* Para acercar la tarjeta hacia el fondo */
+}
+
+/* Imagen de perfil */
+.profile-image {
+    width: 90px;
+    height: 90px;
+    background-color: var(--white);
+    border-radius: 50%;
+    margin: -60px auto 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.profile-image i {
+    font-size: 50px;
+    color: var(--blue-dark);
+}
+
+/* Encabezado del formulario */
+.login-header {
+    margin-bottom: 20px;
+    position: relative;
+    text-align: center;
+}
+
+.login-header h2 {
+    color: var(--blue-dark);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Estilos para el contenedor de entrada con ícono */
+.input-icon {
+    position: relative;
+}
+
+.input-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--blue-dark);
+    font-size: 18px;
+}
+
+/* Aumentar el padding-left para dejar espacio al ícono */
+.input-icon .form-control {
+    padding-left: 40px;
+}
+
+/* Botón de inicio de sesión */
+.btn-login {
+    background-color: var(--orange);
+    border: none;
+    color: var(--white);
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background-color: #D95947;
+    transform: scale(1.05);
+}
+
+/* Botón de enlace de contraseña */
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--blue-dark);
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+/* Mensaje de error */
+.text-danger {
+    color: #ff4d4d;
+    margin-top: 10px;
+}

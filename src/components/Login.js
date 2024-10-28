@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthFormContainer from './AuthFormContainer';
 
 function Login() {
     const [userName, setUsername] = useState('');
@@ -42,32 +43,53 @@ function Login() {
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Iniciar Sesión</h2>
-            <form onSubmit={handleLogin}>
-                <div className="form-group">
-                    <label>Nombre de Usuario</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={userName}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
+        <div className="login-background">
+            <div className="shape-background"></div>
+            <div className="login-container">
+                <div className="profile-image">
+                    <i className="fas fa-user-circle"></i>
                 </div>
-                <div className="form-group">
-                    <label>Contraseña</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                <div className="login-header">
+                    <h2>Mi Cuenta</h2>
                 </div>
-                {error && <p className="text-danger">{error}</p>}
-                <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
-            </form>
+                <form onSubmit={handleLogin}>
+                    <div className="form-group">
+                        <div className="input-icon">
+                            <i className="fas fa-user"></i>
+                            <input
+                                type="text"
+                                placeholder="Usuario"
+                                className="form-control"
+                                value={userName}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <div className="input-icon">
+                            <i className="fas fa-lock"></i>
+                            <input
+                                type="password"
+                                placeholder="Contraseña"
+                                className="form-control"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                    {error && <p className="text-danger">{error}</p>}
+                    <button type="submit" className="btn-login">Iniciar Sesión</button>
+                    <button
+                        type="button"
+                        className="btn-link"
+                        onClick={() => navigate('/forgot-password')}
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
