@@ -14,8 +14,63 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+
+        const convertirBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => {
+                    resolve(fileReader.result.split(',')[1]);
+                };
+                fileReader.onerror = (error) => {
+                    reject(error);
+                };
+            });
+        };
+
         // Aquí puedes manejar la lógica de envío al backend
+        try {
+            const usuarioFinal = {
+                cedula,
+                nombre,
+                apellido,
+                email: correo,
+                password: contrasena,
+                telefono,
+                fotoCedula: await convertirBase64(fotoCedula),
+                fotoPerfil: await convertirBase64(fotoPerfil),
+                idRol: 1
+            };
+
+            console.log(usuarioFinal);
+
+            const response = await fetch('https://localhost:7201/api/Auth/Register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify(usuarioFinal) // Aquí se envía el objeto FormData
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al registrar el usuario.');
+            }
+        } catch (error) {
+            setMessage(error.message);
+            return;
+        }
+
         setMessage('Registro exitoso.');
+
+        setCedula('');
+        setNombre('');
+        setApellido('');
+        setCorreo('');
+        setContrasena('');
+        setTelefono('');
+        setFotoCedula(null);
+        setFotoPerfil(null);
     };
 
     return (
@@ -90,7 +145,7 @@ function Register() {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Foto de Cédula</label>
+                        <label className="file-label">Foto de Cédula</label>
                         <input
                             type="file"
                             className="form-control-file"
@@ -98,7 +153,7 @@ function Register() {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Foto de Perfil</label>
+                        <label className="file-label">Foto de Perfil</label>
                         <input
                             type="file"
                             className="form-control-file"
