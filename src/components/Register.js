@@ -11,7 +11,6 @@ function Register() {
     const [fotoCedula, setFotoCedula] = useState(null);
     const [fotoPerfil, setFotoPerfil] = useState(null);
     const [numPlaca, setPlaca] = useState('');
-    const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -59,15 +58,18 @@ function Register() {
                 body: JSON.stringify(usuarioFinal) // Aquí se envía el objeto FormData
             });
 
-            if (!response.ok) {
-                throw new Error('Error al registrar el usuario.');
+            if (response.ok) {
+                alert('¡Registro exitoso!');
+            }
+            else {
+                alert('Error al registrar el usuario.');
             }
         } catch (error) {
-            setMessage(error.message);
-            return;
+            console.log(error);
+            
         }
 
-        setMessage('Registro exitoso.');
+        
 
         setCedula('');
         setNombre('');
@@ -179,7 +181,6 @@ function Register() {
                         />
                     </div>
                     <button type="submit" className="btn-login">Registrarse</button>
-                    {message && <p className="text-info mt-3">{message}</p>}
                 </form>
             </AuthFormContainer>
         </div>
