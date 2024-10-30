@@ -40,7 +40,7 @@
     text-align: center;
     position: relative;
     z-index: 1;
-    margin-top: -60px; /* Para acercar la tarjeta hacia el fondo */
+    margin: 20px; /* Para acercar la tarjeta hacia el fondo */
 }
 
 /* Imagen de perfil */
