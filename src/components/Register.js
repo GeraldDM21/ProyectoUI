@@ -10,6 +10,7 @@ function Register() {
     const [telefono, setTelefono] = useState('');
     const [fotoCedula, setFotoCedula] = useState(null);
     const [fotoPerfil, setFotoPerfil] = useState(null);
+    const [numPlaca, setPlaca] = useState('');
     const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
@@ -39,7 +40,12 @@ function Register() {
                 telefono,
                 fotoCedula: await convertirBase64(fotoCedula),
                 fotoPerfil: await convertirBase64(fotoPerfil),
-                idRol: 1
+                idRol: 1,
+                placas: [
+                    {
+                        id: numPlaca,
+                    }
+                ]
             };
 
             console.log(usuarioFinal);
@@ -69,6 +75,7 @@ function Register() {
         setCorreo('');
         setContrasena('');
         setTelefono('');
+        setPlaca('');
         setFotoCedula(null);
         setFotoPerfil(null);
     };
@@ -141,6 +148,17 @@ function Register() {
                             placeholder="Teléfono"
                             value={telefono}
                             onChange={(e) => setTelefono(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group input-icon">
+                        <i className="fas fa-id-card"></i>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Número de Placa"
+                            value={numPlaca}
+                            onChange={(e) => setPlaca(e.target.value)}
                             required
                         />
                     </div>
