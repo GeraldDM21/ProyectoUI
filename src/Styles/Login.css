@@ -1,10 +1,11 @@
 /* Paleta de Colores */
 :root {
-    --cyan-light: #B5EAEA;
-    --blue-dark: #274C77;
-    --orange: #F76C5E;
-    --blue-medium: #6096BA;
-    --white: #FFFFFF;
+    --payne-gray: #546A76;
+    --cadet-gray: #88A0A8;
+    --caledon: #B4CEB3;
+    --timberwolf: #DBD3C9;
+    --lavander-blush: #FDEDEE;
+    --white: #FFFFFF
 }
 
 /* Fondo y estilo general */
@@ -25,7 +26,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--blue-medium) 25%, var(--orange) 75%);
+    background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--timberwolf) 75%);
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Cambia la forma del clip para cubrir toda la pantalla */
     z-index: 0;
 }
@@ -60,7 +61,7 @@
 
 .profile-image i {
     font-size: 50px;
-    color: var(--blue-dark);
+    color: var(--payne-gray);
 }
 
 /* Encabezado del formulario */
@@ -71,7 +72,7 @@
 }
 
 .login-header h2 {
-    color: var(--blue-dark);
+    color: var(--payne-gray);
     font-size: 20px;
     font-weight: bold;
 }
@@ -86,7 +87,7 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--blue-dark);
+    color: var(--payne-gray);
     font-size: 18px;
 }
 
@@ -103,7 +104,7 @@
 
 /* Botón de inicio de sesión */
 .btn-login {
-    background-color: var(--orange);
+    background-color: var(--caledon);
     border: none;
     color: var(--white);
     width: 100%;
@@ -117,7 +118,7 @@
 }
 
 .btn-login:hover {
-    background-color: #D95947;
+    background-color: var(--caledon);
     transform: scale(1.05);
 }
 
@@ -125,7 +126,7 @@
 .btn-link {
     background: none;
     border: none;
-    color: var(--cyan-light);
+    color: var(--cadet-gray);
     cursor: pointer;
     margin-top: 10px;
     font-size: 14px;
@@ -134,7 +135,7 @@
 
 /* Mensaje de error */
 .text-danger {
-    color: #ff4d4d;
+    color: var(--lavander-blush);
     margin-top: 10px;
 }
 
@@ -145,7 +146,7 @@
     padding: 0.5rem;
     font-size: 14px;
     font-weight: bold;
-    color: var(--blue-dark); /* Match with the icons color */
+    color: var(--payne-gray); /* Match with the icons color */
 }
 
 .form-group input[type="file"] {
