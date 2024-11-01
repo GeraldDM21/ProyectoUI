@@ -24,15 +24,15 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/* Rutas protegidas para cada rol */}
-                <Route path="/usuario" element={<ProtectedRoute role="usuario"><DashboardUsuario /></ProtectedRoute>} />
-                <Route path="/oficial" element={<ProtectedRoute role="oficial"><DashboardOficial /></ProtectedRoute>} />
-                <Route path="/juez" element={<ProtectedRoute role="juez"><DashboardJuez /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute role="admin"><DashboardAdmin /></ProtectedRoute>} />
+                <Route path="/usuario" element={<ProtectedRoute role="UsuarioFinal"><DashboardUsuario /></ProtectedRoute>} />
+                <Route path="/oficial" element={<ProtectedRoute role="Oficial"><DashboardOficial /></ProtectedRoute>} />
+                <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute role="Admin"><DashboardAdmin /></ProtectedRoute>} />
 
                 {/* Otras funcionalidades protegidas */}
-                <Route path="/crear-multa" element={<ProtectedRoute role="oficial"><CrearMulta /></ProtectedRoute>} />
-                <Route path="/iniciar-disputa" element={<ProtectedRoute role="usuario"><IniciarDisputa /></ProtectedRoute>} />
-                <Route path="/disputas-juez" element={<ProtectedRoute role="juez"><ListaDisputasJuez /></ProtectedRoute>} />
+                <Route path="/crear-multa" element={<ProtectedRoute role="UsuarioFinal"><CrearMulta /></ProtectedRoute>} />
+                <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><IniciarDisputa /></ProtectedRoute>} />
+                <Route path="/disputas-juez" element={<ProtectedRoute role="Juez"><ListaDisputasJuez /></ProtectedRoute>} />
 
                 {/* Catálogo de infracciones protegido */}
                 <Route path="/catalogo-infracciones" element={<ProtectedRoute role="usuario"><CatalogoInfracciones /></ProtectedRoute>} />
