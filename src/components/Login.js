@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthFormContainer from './AuthFormContainer';
+//import AuthFormContainer from './AuthFormContainer';
 
 function Login() {
     const [userName, setUsername] = useState('');
@@ -20,7 +20,7 @@ function Login() {
             });
 
             if (!response.ok) {
-                throw new Error('Usuario o contraseña incorrectos');
+                alert('Usuario o contraseña incorrectos');
             }
 
             const data = await response.json();
@@ -28,13 +28,13 @@ function Login() {
             localStorage.setItem('role', data.role);
 
             // Navegar según el rol del usuario
-            if (data.role === 'admin') {
+            if (data.role === 'Administrativo') {
                 navigate('/admin');
-            } else if (data.role === 'User') {
+            } else if (data.role === 'UsuarioFinal') {
                 navigate('/usuario');
-            } else if (data.role === 'oficial') {
+            } else if (data.role === 'Oficial') {
                 navigate('/oficial');
-            } else if (data.role === 'juez') {
+            } else if (data.role === 'Juez') {
                 navigate('/juez');
             }
         } catch (error) {
@@ -57,8 +57,8 @@ function Login() {
                         <div className="input-icon">
                             <i className="fas fa-user"></i>
                             <input
-                                type="text"
-                                placeholder="Usuario"
+                                type="email"
+                                placeholder="Correo electrónico"
                                 className="form-control"
                                 value={userName}
                                 onChange={(e) => setUsername(e.target.value)}
