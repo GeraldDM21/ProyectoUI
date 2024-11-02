@@ -1,87 +1,116 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import HeatMap from './HeatMap';  // Importa el componente HeatMap
+import HeatMap from './HeatMap';
 import './HomePage.css';
 
 function HomePage() {
     const navigate = useNavigate();
+    const [plate, setPlate] = useState('');
+    const [results, setResults] = useState([]);
 
-    // Datos de los miembros del equipo
     const teamMembers = [
         { name: 'Gerald Delgado', role: 'Desarrollador Frontend' },
         { name: 'Jose Mario', role: 'Desarrollador Frontend' },
-        { name: 'Carolina Guitierrez', role: 'Scrum Master' },
+        { name: 'Carolina Gutierrez', role: 'Scrum Master' },
         { name: 'Fabian Chacon', role: 'Ingeniero de DevOps' },
     ];
 
-    // Datos simulados para el mapa de calor (latitud, longitud, intensidad)
     const heatmapPoints = [
         [9.934819, -84.088046, 0.5], // San José
-        [34.0522, -118.2437, 0.4], // Los Ángeles
-        [40.7128, -74.0060, 0.8],  // Nueva York
+        [34.0522, -118.2437, 0.4],   // Los Ángeles
+        [40.7128, -74.0060, 0.8],    // Nueva York
     ];
 
-    // Función para manejar la navegación
-    const handleLogin = () => {
-        navigate('/login'); // Redirige a la página de inicio de sesión
-    };
+    const handleLogin = () => navigate('/login');
+    const handleRegister = () => navigate('/register');
 
-    const handleRegister = () => {
-        navigate('/register'); // Redirige a la página de registro
+    const handleSearch = () => {
+        // Se simula un resultado de búsqueda, se puede conectar con una API o base de datos.
+        setResults([
+            { nombre: 'Fabio', apellido: 'Chacon', cedula: '111222333',Placa:'BGP-000',Infracciones:'Exceso de velocidad', longitud: -84.088046,latitud: 7.634416,fecha:'2024-05-15'},
+        
+        ]);
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Página Principal</h2>
+        <body className="container mt-5">
+            <header className="header">
+                <div className="header-left">
+                    <button className="nav-button" onClick={() => navigate('/transito')}>Tránsito 360</button>
+                    <button className="nav-button" onClick={() => navigate('/next-code')}>Next Code Solutions</button>
+                </div>
+                <div className="header-right">
+                    <button onClick={handleLogin}>Iniciar Sesión</button>
+                    <button onClick={handleRegister}>Registrarse</button>
+                </div>
+            </header>
 
-            {/* Botones de Inicio de Sesión y Registro */}
-            <div className="mt-4 text-center">
-                <button className="btn btn-primary" onClick={handleLogin}>Iniciar Sesión</button>
-                <button className="btn btn-secondary ml-3" onClick={handleRegister}>Registrarse</button>
+            
+
+            <div className="transito-container">
+                <h1 className="transito-title">Tránsito 360</h1>
             </div>
 
-            {/* Sección del Mapa de Calor */}
-            <div className="mt-5">
-                <h3>Mapa de Calor de Multas</h3>
-                <MapContainer center={[9.934819, -84.088046]} zoom={5} style={{ height: '400px', width: '100%' }}>
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <HeatMap points={heatmapPoints} />
+
+            <h2></h2>
+            <div className="mapa-calor-container">
+            <h3 className="mapa-calor-title">Mapa de Calor de Multas</h3>
+            </div>
+
+            <div className="mapa-calor-container">
+                 <MapContainer center={[9.934819, -84.088046]} zoom={5} className="map-container">
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <HeatMap points={heatmapPoints} />
                 </MapContainer>
-            </div>
+           </div>
 
-            {/* Sección de Miembros del Equipo */}
-            <div className="mt-5">
-                <h3>Miembros del Equipo</h3>
-                <ul>
-                    {teamMembers.map((member, index) => (
-                        <li key={index}>
-                            {member.name} - {member.role}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+        
 
-            {/* Sección de Preguntas Frecuentes */}
-            <div className="mt-5">
-                <h3>Preguntas Frecuentes (FAQ)</h3>
-                <div>
-                    <h5>¿Cómo puedo pagar mis multas?</h5>
-                    <p>Puedes pagar tus multas en línea a través de nuestra plataforma utilizando tu tarjeta de crédito o PayPal.</p>
+
+            <div className="section-container">
+            <h3 className="consulta-placa-title">Consulta por Placa</h3>
+                <div className="consulta-form">
+                    <input
+                        type="text"
+                        placeholder="Ingresa el número de placa"
+                        value={plate}
+                        onChange={(e) => setPlate(e.target.value)}
+                    />
+                    <button onClick={handleSearch}>Buscar</button>
                 </div>
-                <div>
-                    <h5>¿Dónde puedo ver mis multas?</h5>
-                    <p>Una vez que hayas iniciado sesión, puedes ver el historial de tus multas desde tu dashboard.</p>
-                </div>
-                <div>
-                    <h5>¿Qué hago si tengo una multa que considero injusta?</h5>
-                    <p>Puedes presentar una apelación directamente desde el sistema, y un juez revisará tu caso.</p>
-                </div>
+                <table className="results-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Cédula</th>
+                            <th>Placa</th>
+                            <th>Infracciones</th>
+                            <th>Longitud</th>
+                            <th>Latitud</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {results.map((result, index) => (
+                            <tr key={index}>
+                                <td>{result.nombre}</td>
+                                <td>{result.apellido}</td>
+                                <td>{result.cedula}</td>
+                                <td>{result.Placa}</td>
+                                <td>{result.Infracciones}</td>
+                                <td>{result.longitud}</td>
+                                <td>{result.latitud}</td>
+                                <td>{result.fecha}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-        </div>
+            <footer>  <h2 className="footer-title">Next Code Solutions</h2></footer>
+        </body>
     );
 }
 
