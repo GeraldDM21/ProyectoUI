@@ -74,7 +74,7 @@ body {
 .transito-container {
     width: 100%; /* ancho  */
     height: 300px; /*  altura  */
-    background-image: url(imagen/CiudadNoche.jpg); /* ruta de la imagen */
+    background-image: url(imagen/CuidadNoche.jpg); /* ruta de la imagen */
     background-size: cover; /* Hace que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     display: flex;
