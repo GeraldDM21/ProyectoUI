@@ -29,10 +29,11 @@ function HomePage() {
     const handleSearch = () => {
         // Se simula un resultado de búsqueda, se puede conectar con una API o base de datos.
         setResults([
-            { name: 'Carlos Pérez', infraction: 'Exceso de velocidad', location: 'San José', date: '2023-10-29' },
-            { name: 'Ana López', infraction: 'Estacionamiento indebido', location: 'Alajuela', date: '2023-10-15' },
+            { nombre: 'Fabio', apellido: 'Chacon', cedula: '111222333',Placa:'BGP-000',Infracciones:'Exceso de velocidad', longitud: -84.088046,latitud: 7.634416,fecha:'2024-05-15'},
+        
         ]);
     };
+
 
     return (
         <body className="container mt-5">
@@ -86,6 +87,8 @@ function HomePage() {
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Cédula</th>
+                            <th>Placa</th>
+                            <th>Infracciones</th>
                             <th>Longitud</th>
                             <th>Latitud</th>
                             <th>Fecha</th>
@@ -94,10 +97,14 @@ function HomePage() {
                     <tbody>
                         {results.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.name}</td>
-                                <td>{result.infraction}</td>
-                                <td>{result.location}</td>
-                                <td>{result.date}</td>
+                                <td>{result.nombre}</td>
+                                <td>{result.apellido}</td>
+                                <td>{result.cedula}</td>
+                                <td>{result.Placa}</td>
+                                <td>{result.Infracciones}</td>
+                                <td>{result.longitud}</td>
+                                <td>{result.latitud}</td>
+                                <td>{result.fecha}</td>
                             </tr>
                         ))}
                     </tbody>
