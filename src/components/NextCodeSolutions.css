@@ -8,10 +8,6 @@
     --white: #FFFFFF;
 }
 
-/* Contenedor principal */
-.container {
-    margin-top: 80px; /* Para que no quede oculto tras el header */
-}
 
 /* Header */
 .header {
@@ -119,7 +115,7 @@ footer {
 
 /* Espaciado adicional para los títulos */
 .transito-title {
-    margin-top: 40px; /* Espacio superior */
+    margin-top: 100px; /* Espacio superior */
 }
 
 .slogan {
