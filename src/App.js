@@ -13,6 +13,7 @@ import IniciarDisputa from './components/IniciarDisputa';
 import ListaDisputasJuez from './components/ListaDisputasJuez';
 import CatalogoInfracciones from './components/CatalogoInfracciones';
 import ProtectedRoute from './components/ProtectedRoute';
+import NextCodeSolutions from './components/NextCodeSolutions';
 
 function App() {
     return (
@@ -22,6 +23,9 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/register" element={<Register />} />
+
+                {/* Ruta para Next Code Solutions */}
+                <Route path="/NextCodeSolutions" element={<NextCodeSolutions />} />
 
                 {/* Rutas protegidas para cada rol */}
                 <Route path="/usuario" element={<ProtectedRoute role="UsuarioFinal"><DashboardUsuario /></ProtectedRoute>} />
