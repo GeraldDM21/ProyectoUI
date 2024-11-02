@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AuthFormContainer from './AuthFormContainer';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const [cedula, setCedula] = useState('');
@@ -11,6 +12,7 @@ function Register() {
     const [fotoCedula, setFotoCedula] = useState(null);
     const [fotoPerfil, setFotoPerfil] = useState(null);
     const [numPlaca, setPlaca] = useState('');
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -60,6 +62,7 @@ function Register() {
 
             if (response.ok) {
                 alert('¡Registro exitoso!');
+                navigate('/login');
             }
             else {
                 alert('Error al registrar el usuario.');
