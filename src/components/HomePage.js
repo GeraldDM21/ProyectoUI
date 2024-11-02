@@ -40,7 +40,7 @@ function HomePage() {
             <header className="header">
                 <div className="header-left">
                     <button className="nav-button" onClick={() => window.location.reload()}>Tránsito 360</button>
-                    <button className="nav-button" onClick={() => navigate('/next-code')}>Next Code Solutions</button>
+                    <button className="nav-button" onClick={() => navigate('/NextCodeSolutions')}>NextCodeSolutions</button>
                 </div>
                 <div className="header-right">
                     <button onClick={handleLogin}>Iniciar Sesión</button>
