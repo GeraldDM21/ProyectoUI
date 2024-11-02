@@ -195,14 +195,11 @@ body {
 
 footer {
     background-color: #546A76;
-    width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px 0;
     position: relative;
-    left: 0;
-    bottom: 0;
     color: #FFFFFF;
     margin-top: 100px;
 }
