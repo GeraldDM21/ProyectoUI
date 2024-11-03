@@ -49,7 +49,7 @@ function GestionRoles() {
                 const createdRole = await response.json();
                 setRoles([...roles, createdRole]);
                 setNuevoRol('');
-                setSuccess("Rol agregado exitosamente.");
+                alert("Rol agregado exitosamente.");
             } else {
                 setError("No se pudo agregar el rol.");
             }

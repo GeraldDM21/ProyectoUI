@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUserPlus, FaUser, FaIdCard, FaEnvelope, FaLock, FaPhoneAlt, FaBriefcase, FaSearch, FaTrash } from 'react-icons/fa';
+import { FaUserPlus, FaUser, FaIdCard, FaEnvelope, FaLock, FaPhoneAlt, FaBriefcase, FaSearch, FaTrash, FaUserEdit } from 'react-icons/fa';
 import '../Styles/GestionUsuariosAdmin.css';
 
 function GestionUsuariosAdmin() {
@@ -10,71 +10,124 @@ function GestionUsuariosAdmin() {
     const [contrasena, setContrasena] = useState('');
     const [telefono, setTelefono] = useState('');
     const [fotoCedula, setFotoCedula] = useState(null);
-    const [rol, setRol] = useState('');
     const [usuarios, setUsuarios] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        fetchUsuarios();
-    }, []);
+    const [roles, setRoles] = useState([]);
+    const [error, setError] = useState(null);
+    const [selectedRoleId, setSelectedRoleId] = useState(null);
 
     const fetchUsuarios = async () => {
         try {
-            const response = await fetch('https://localhost:7201/api/usuarios');
+            const response = await fetch('https://localhost:7201/api/usuarios/NotRole/1');
             const data = await response.json();
             setUsuarios(data);
         } catch (error) {
             console.error("Error al cargar usuarios:", error);
         }
+    };    
+
+    const fetchRoles = async () => {
+        try {
+            const response = await fetch('https://localhost:7201/api/Roles');
+            const data = await response.json();
+            setRoles(data);
+        } catch (error) {
+            console.error("Error al cargar los roles:", error);
+            setError("Error al cargar los roles.");
+        }
+    };
+
+    useEffect(() => {
+        fetchUsuarios();
+        fetchRoles();
+    }, []);
+
+    const getRoleNameById = (id) => {
+        const role = roles.find(role => role.id === id);
+        return role ? role.nombre : '';
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("Cedula", cedula);
-        formData.append("Nombre", nombre);
-        formData.append("Apellido", apellido);
-        formData.append("Correo", correo);
-        formData.append("Contrasena", contrasena);
-        formData.append("Telefono", telefono);
-        formData.append("FotoCedula", fotoCedula);
-        formData.append("Rol", rol);
+
+        const convertirBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => {
+                    resolve(fileReader.result.split(',')[1]);
+                };
+                fileReader.onerror = (error) => {
+                    reject(error);
+                };
+            });
+        };
 
         try {
-            const response = await fetch('https://localhost:7201/api/usuarios', {
+            const usuarioAdmin = {
+                cedula,
+                nombre,
+                apellido,
+                email: correo,
+                password: contrasena,
+                telefono,
+                fotoCedula: await convertirBase64(fotoCedula),
+                idRol: selectedRoleId,
+            };
+
+            console.log(usuarioAdmin);
+
+            const response = await fetch('https://localhost:7201/api/Auth/Register', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify(usuarioAdmin) // Aquí se envía el objeto FormData
             });
 
             if (response.ok) {
-                setMessage("Usuario creado exitosamente.");
-                setCedula('');
-                setNombre('');
-                setApellido('');
-                setCorreo('');
-                setContrasena('');
-                setTelefono('');
-                setFotoCedula(null);
-                setRol('');
-                fetchUsuarios(); // Recargar la lista de usuarios
-            } else {
-                setMessage("Error al crear el usuario.");
+                alert('¡Registro exitoso!');
+                fetchUsuarios();
+                window.location.reload();
+            }
+            else {
+                alert('Error al registrar el usuario.');
             }
         } catch (error) {
-            setMessage("Error de conexión con el servidor.");
-            console.error(error);
+            console.log(error);
+            
         }
+
+        setCedula('');
+        setNombre('');
+        setApellido('');
+        setCorreo('');
+        setContrasena('');
+        setTelefono('');
+        setFotoCedula(null);
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, email) => {
         try {
+            // Delete the user from the api/usuarios endpoint
             const response = await fetch(`https://localhost:7201/api/usuarios/${id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
-                setUsuarios(usuarios.filter(user => user.id !== id));
+                // Delete the user from the DeleteUser endpoint using the email
+                const deleteUserResponse = await fetch(`https://localhost:7201/api/Auth/DeleteUser?userName=${email}`, {
+                    method: 'DELETE',
+                });
+
+                if (deleteUserResponse.ok) {
+                    setUsuarios(usuarios.filter(user => user.id !== id));
+                    alert("Usuario eliminado exitosamente.");
+                } else {
+                    alert("No se pudo eliminar el usuario del sistema de autenticación.");
+                }
             } else {
                 setMessage("No se pudo eliminar el usuario.");
             }
@@ -121,12 +174,10 @@ function GestionUsuariosAdmin() {
                         <input type="file" onChange={(e) => setFotoCedula(e.target.files[0])} required />
                         <div className="input-icon">
                             <FaBriefcase className="icon" />
-                            <select value={rol} onChange={(e) => setRol(e.target.value)} required>
-                                <option value="">Seleccione un rol</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Juez">Juez</option>
-                                <option value="Oficial">Oficial</option>
-                                <option value="Usuario">Usuario</option>
+                            <select onChange={(e) => setSelectedRoleId(e.target.value)}>
+                                {roles.map(role => (
+                                    <option key={role.id} value={role.id}>{role.nombre}</option>
+                                ))}
                             </select>
                         </div>
                         <button type="submit" className="btn-submit">Agregar Usuario</button>
@@ -136,6 +187,9 @@ function GestionUsuariosAdmin() {
 
                 {/* Tabla de usuarios */}
                 <div className="tabla-usuarios-container">
+                <div className="profile-image">
+                        <FaUserEdit size={50} />
+                    </div>
                     <h2>Lista de Usuarios</h2>
                     <div className="input-icon">
                         <FaSearch className="icon" />
@@ -153,6 +207,7 @@ function GestionUsuariosAdmin() {
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Correo</th>
+                                <th>Rol</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -162,8 +217,9 @@ function GestionUsuariosAdmin() {
                                     <td>{user.nombre}</td>
                                     <td>{user.apellido}</td>
                                     <td>{user.correo}</td>
+                                    <td>{getRoleNameById(user.idRol)}</td>
                                     <td>
-                                        <button onClick={() => handleDelete(user.id)} className="delete-button">
+                                        <button onClick={() => handleDelete(user.id, user.correo)} className="delete-button">
                                             <FaTrash /> Eliminar
                                         </button>
                                     </td>

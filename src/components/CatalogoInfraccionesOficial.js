@@ -13,7 +13,7 @@ function CatalogoInfraccionesOficial() {
     // Función para obtener las infracciones desde el backend
     const fetchInfracciones = async () => {
         try {
-            const response = await fetch('https://localhost:7201/api/Infracciones');
+            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
             const data = await response.json();
             setInfracciones(data);
         } catch (error) {
@@ -39,7 +39,7 @@ function CatalogoInfraccionesOficial() {
                             infracciones.map((infraccion) => (
                                 <tr key={infraccion.id}>
                                     <td>{infraccion.nombre}</td>
-                                    <td>{`$${infraccion.monto.toFixed(2)}`}</td>
+                                    <td>{`₡${(infraccion.costo ?? 0).toFixed(2)}`}</td>
                                 </tr>
                             ))
                         ) : (
