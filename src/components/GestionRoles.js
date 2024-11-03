@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
+import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import '../Styles/GestionRoles.css';
 
 function GestionRoles() {
     const [roles, setRoles] = useState([]);
     const [nuevoRol, setNuevoRol] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [filtro, setFiltro] = useState('');
 
-    // Cargar los roles al montar el componente
     useEffect(() => {
         fetchRoles();
     }, []);
@@ -20,12 +21,16 @@ function GestionRoles() {
             setRoles(data);
         } catch (error) {
             console.error("Error al cargar los roles:", error);
+            setError("Error al cargar los roles.");
         }
     };
 
     // Función para agregar un nuevo rol
     const handleAddRole = async (e) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
+
         if (!nuevoRol.trim()) {
             setError("El nombre del rol es obligatorio.");
             return;
@@ -41,19 +46,23 @@ function GestionRoles() {
             });
 
             if (response.ok) {
+                const createdRole = await response.json();
+                setRoles([...roles, createdRole]);
                 setNuevoRol('');
-                setError('');
-                fetchRoles(); // Recargar la lista de roles
+                setSuccess("Rol agregado exitosamente.");
             } else {
                 setError("No se pudo agregar el rol.");
             }
         } catch (error) {
             console.error("Error al agregar el rol:", error);
+            setError("Error al agregar el rol.");
         }
     };
 
     // Función para eliminar un rol
     const handleDeleteRole = async (id) => {
+        setError('');
+        setSuccess('');
         try {
             const response = await fetch(`https://localhost:7201/api/Roles/${id}`, {
                 method: 'DELETE',
@@ -61,51 +70,85 @@ function GestionRoles() {
 
             if (response.ok) {
                 setRoles(roles.filter(role => role.id !== id));
+                setSuccess("Rol eliminado exitosamente.");
             } else {
                 setError("No se pudo eliminar el rol.");
             }
         } catch (error) {
             console.error("Error al eliminar el rol:", error);
+            setError("Error al eliminar el rol.");
         }
     };
 
+    // Función para filtrar roles
+    const handleFilterChange = (e) => {
+        setFiltro(e.target.value);
+    };
+
+    const rolesFiltrados = roles.filter(role => 
+        role.nombre.toLowerCase().includes(filtro.toLowerCase())
+    );
+
     return (
-        <div className="gestion-roles-background">
-            <div className="shape-background"></div>
-            <div className="gestion-roles-container">
-                <div className="header-icon">
-                    <FaPlusCircle size={50} />
-                </div>
+        <div className="roles-background">
+            <div className="roles-container">
                 <h2>Gestión de Roles</h2>
+                {error && <p className="error-message">{error}</p>}
+                {success && <p className="success-message">{success}</p>}
 
                 {/* Formulario para agregar un nuevo rol */}
                 <form onSubmit={handleAddRole} className="form-role">
-                    <div className="input-icon">
-                        <FaPlusCircle className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Nombre del Rol"
-                            value={nuevoRol}
-                            onChange={(e) => setNuevoRol(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn-add">Agregar Rol</button>
-                    {error && <p className="text-danger">{error}</p>}
+                    <input
+                        type="text"
+                        placeholder="Nombre del Rol"
+                        value={nuevoRol}
+                        onChange={(e) => setNuevoRol(e.target.value)}
+                        required
+                    />
+                    <button type="submit" className="add-button">
+                        <FaPlus /> Agregar Rol
+                    </button>
                 </form>
 
-                {/* Lista de roles */}
-                <ul className="lista-roles">
-                    {roles.map((role) => (
-                        <li key={role.id} className="role-item">
-                            <span>{role.nombre}</span>
-                            <FaTrashAlt 
-                                onClick={() => handleDeleteRole(role.id)}
-                                className="delete-icon"
-                            />
-                        </li>
-                    ))}
-                </ul>
+                {/* Campo de filtrado */}
+                <input
+                    type="text"
+                    placeholder="Filtrar roles"
+                    value={filtro}
+                    onChange={handleFilterChange}
+                    className="filter-input"
+                />
+
+                {/* Tabla de roles */}
+                <table className="roles-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rolesFiltrados.length > 0 ? (
+                            rolesFiltrados.map((role) => (
+                                <tr key={role.id}>
+                                    <td>{role.nombre}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleDeleteRole(role.id)}
+                                            className="delete-button"
+                                        >
+                                            <FaTrashAlt /> Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="2" className="no-data">No se encontraron roles.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

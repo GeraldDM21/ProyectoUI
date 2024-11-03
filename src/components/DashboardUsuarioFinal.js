@@ -16,6 +16,9 @@ function DashboardUsuarioFinal() {
                 <button onClick={() => navigate('/iniciar-disputa')} className="sidebar-button">
                     <i className="fas fa-exclamation-circle"></i> Crear Disputa
                 </button>
+                <button onClick={() => navigate('/ver-disputas')} className="sidebar-button">
+                    <i className="fas fa-clipboard-list"></i> Ver Disputas
+                </button>
                 <button onClick={() => navigate('/perfil')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
                 </button>
@@ -27,7 +30,7 @@ function DashboardUsuarioFinal() {
                     <h2>Dashboard - Usuario Final</h2>
                 </header>
                 <div className="content-body">
-                    <p>Bienvenido al panel de usuario final. Aquí puedes ver tus multas y crear disputas si es necesario.</p>
+                    <p>Bienvenido al panel de usuario final. Aquí puedes ver tus multas, crear disputas y revisar el estado de tus disputas.</p>
                 </div>
             </main>
         </div>

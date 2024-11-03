@@ -15,7 +15,7 @@ function DashboardAdmin() {
                     <i className="fas fa-book"></i> Administrar Catálogo
                 </button>
                 <button onClick={() => navigate('/crear-usuario')} className="sidebar-button">
-                    <i className="fas fa-user-plus"></i> Crear Usuario
+                    <i className="fas fa-user-plus"></i> Gestionar Usuarios
                 </button>
                 <button onClick={() => navigate('/roles')} className="sidebar-button">
                     <i className="fas fa-users-cog"></i> Gestionar Roles
