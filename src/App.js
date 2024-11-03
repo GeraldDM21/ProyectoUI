@@ -55,10 +55,13 @@ function App() {
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
                 <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><CreacionDisputa /></ProtectedRoute>} />
-
-                {/* Funcionalidades para juez */}
-                <Route path="/ver-disputas" element={<ProtectedRoute role="Juez"><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
+                
+                {/* Funcionalidades compartidas entre usuario final y juez */}
+                <Route path="/ver-disputas" element={<ProtectedRoute role={["Juez", "UsuarioFinal"]}><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
+                
+                {/* Funcionalidades exclusivas para juez */}
                 <Route path="/resolver-disputas" element={<ProtectedRoute role="Juez"><ResolverDisputas /></ProtectedRoute>} /> {/* Resolver disputas */}
+
             </Routes>
         </Router>
     );

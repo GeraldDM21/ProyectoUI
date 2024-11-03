@@ -3,16 +3,16 @@
     --cadet-gray: #88A0A8;
     --caledon: #B4CEB3;
     --timberwolf: #DBD3C9;
-    --lavander-blush: #FDEDEE;
+    --lavender-blush: #FDEDEE;
     --white: #FFFFFF;
 }
 
-/* Página principal para centrar el contenedor y añadir el fondo degradado */
+/* Fondo y estilo general para centrar el contenedor */
 .ver-multas-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Ocupa la pantalla completa */
+    min-height: 100vh;
     background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--caledon) 75%);
 }
 
@@ -68,8 +68,6 @@
     background-color: var(--timberwolf);
     color: var(--payne-gray);
     font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
 .multas-table th svg {
@@ -78,10 +76,46 @@
 
 /* Filas */
 .multas-table tr:nth-child(even) {
-    background-color: var(--lavander-blush);
+    background-color: var(--lavender-blush);
 }
 
 .multas-table tr:hover {
     background-color: var(--caledon);
     cursor: default;
+}
+
+/* Botones de Acción */
+.action-buttons .pay-button,
+.action-buttons .dispute-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--white);
+}
+
+.pay-button {
+    background-color: var(--caledon);
+}
+
+.pay-button:hover {
+    background-color: var(--cadet-gray);
+}
+
+.dispute-button {
+    background-color: #f76c5e;
+}
+
+.dispute-button:hover {
+    background-color: #d9534f;
+}
+
+/* Mensaje cuando no hay datos */
+.no-data {
+    text-align: center;
+    padding: 15px 0;
+    font-style: italic;
+    color: var(--cadet-gray);
 }
