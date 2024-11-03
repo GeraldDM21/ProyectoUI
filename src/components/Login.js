@@ -49,13 +49,13 @@ function Login() {
     };
 
     const navigateToDashboard = (role) => {
-        if (role === 'admin') {
+        if (role === 'Administrativo') {
             navigate('/admin');
-        } else if (role === 'usuario') {
+        } else if (role === 'UsuarioFinal') {
             navigate('/usuario');
-        } else if (role === 'oficial') {
+        } else if (role === 'Oficial') {
             navigate('/oficial');
-        } else if (role === 'juez') {
+        } else if (role === 'Juez') {
             navigate('/juez');
         } else {
             console.error('Rol no reconocido:', role); // Log para roles inesperados
@@ -120,10 +120,10 @@ function Login() {
                 {/* Botones para iniciar sesión con roles de prueba */}
                 <div className="mt-4">
                     <h4>Iniciar sesión como:</h4>
-                    <button onClick={() => handleTestLogin('admin')} className="btn btn-secondary">Admin</button>
-                    <button onClick={() => handleTestLogin('usuario')} className="btn btn-secondary">Usuario</button>
-                    <button onClick={() => handleTestLogin('oficial')} className="btn btn-secondary">Oficial</button>
-                    <button onClick={() => handleTestLogin('juez')} className="btn btn-secondary">Juez</button>
+                    <button onClick={() => handleTestLogin('Administrativo')} className="btn btn-secondary">Admin</button>
+                    <button onClick={() => handleTestLogin('UsuarioFinal')} className="btn btn-secondary">Usuario</button>
+                    <button onClick={() => handleTestLogin('Oficial')} className="btn btn-secondary">Oficial</button>
+                    <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
                 </div>
             </div>
         </div>
