@@ -42,6 +42,7 @@
     position: relative;
     z-index: 1;
     margin: 20px; /* Para acercar la tarjeta hacia el fondo */
+    margin-top: 50px;
 }
 
 /* Imagen de perfil */
@@ -97,9 +98,7 @@
     padding-top: 8px;
     padding-bottom: 8px;
     border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-    
+    border: 1px solid #ccc;    
 }
 
 /* Botón de inicio de sesión */
@@ -149,7 +148,14 @@
     color: var(--payne-gray); /* Match with the icons color */
 }
 
-.form-group input[type="file"] {
+.form-group-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.form-group-login input[type="file"] {
     display: flex;
     align-items: center;
     padding: 0.5rem;
@@ -161,7 +167,7 @@
     transition: background-color 0.2s ease;
 }
 
-.form-group input[type="file"]:hover {
+.form-group-login input[type="file"]:hover {
     background-color: #e9ecef;
 }
 

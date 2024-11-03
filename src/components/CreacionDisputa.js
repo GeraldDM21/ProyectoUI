@@ -44,7 +44,7 @@ function CreacionDisputa() {
             <div className="crear-disputa-container">
                 <h2><FaEdit /> Crear Disputa</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="form-group-disputa">
                         <label>
                             <FaInfoCircle className="icon" /> Razón de la Disputa
                         </label>
@@ -56,7 +56,7 @@ function CreacionDisputa() {
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-disputa">
                         <label>
                             <FaAlignLeft className="icon" /> Descripción
                         </label>
