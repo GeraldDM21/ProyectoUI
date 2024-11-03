@@ -24,10 +24,12 @@ function Login() {
             }
 
             const data = await response.json();
+            console.log('Datos recibidos:', data); // Verifica los datos recibidos
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
 
             // Navegar según el rol del usuario
+
             if (data.role === 'Administrativo') {
                 navigate('/admin');
             } else if (data.role === 'UsuarioFinal') {
@@ -37,9 +39,33 @@ function Login() {
             } else if (data.role === 'Juez') {
                 navigate('/juez');
             }
+
+            navigateToDashboard(data.role);
+ 
         } catch (error) {
             setError(error.message);
         }
+    };
+
+    const navigateToDashboard = (role) => {
+        if (role === 'admin') {
+            navigate('/admin');
+        } else if (role === 'usuario') {
+            navigate('/usuario');
+        } else if (role === 'oficial') {
+            navigate('/oficial');
+        } else if (role === 'juez') {
+            navigate('/juez');
+        } else {
+            console.error('Rol no reconocido:', role); // Log para roles inesperados
+            setError("Rol de usuario no reconocido.");
+        }
+    };
+
+    const handleTestLogin = (role) => {
+        localStorage.setItem('token', 'fakeToken');
+        localStorage.setItem('role', role);
+        navigateToDashboard(role);
     };
 
     return (
@@ -89,6 +115,15 @@ function Login() {
                         ¿Olvidaste tu contraseña?
                     </button>
                 </form>
+
+                {/* Botones para iniciar sesión con roles de prueba */}
+                <div className="mt-4">
+                    <h4>Iniciar sesión como:</h4>
+                    <button onClick={() => handleTestLogin('admin')} className="btn btn-secondary">Admin</button>
+                    <button onClick={() => handleTestLogin('usuario')} className="btn btn-secondary">Usuario</button>
+                    <button onClick={() => handleTestLogin('oficial')} className="btn btn-secondary">Oficial</button>
+                    <button onClick={() => handleTestLogin('juez')} className="btn btn-secondary">Juez</button>
+                </div>
             </div>
         </div>
     );
