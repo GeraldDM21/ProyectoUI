@@ -6,15 +6,12 @@ function Perfil() {
     const [correo, setCorreo] = useState('');
     const [telefono, setTelefono] = useState('');
     const [mensaje, setMensaje] = useState('');
-    const role = localStorage.getItem('role'); // Obtener el rol del usuario
+    const userId = localStorage.getItem('userId'); // Obtener el rol del usuario
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
             try {
-                const response = await fetch('https://localhost:7201/api/usuario/perfil', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await fetch(`https://localhost:7201/api/usuarios/${userId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setNombre(data.nombre);
@@ -36,11 +33,10 @@ function Perfil() {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch('https://localhost:7201/api/usuario/perfil/actualizar', {
+            const response = await fetch(`https://localhost:7201/api/usuarios/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ nombre, apellido, correo, telefono }),
             });
@@ -57,7 +53,7 @@ function Perfil() {
 
     return (
         <div className="perfil-container">
-            <h2>Mi Perfil - {role.charAt(0).toUpperCase() + role.slice(1)}</h2>
+            <h2>Mi Perfil - {userId.charAt(0).toUpperCase() + userId.slice(1)}</h2>
             <form onSubmit={handleUpdateProfile}>
                 <div className="form-group">
                     <label>Nombre</label>
@@ -87,6 +83,7 @@ function Perfil() {
                         value={correo}
                         onChange={(e) => setCorreo(e.target.value)}
                         required
+                        readOnly
                     />
                 </div>
                 <div className="form-group">

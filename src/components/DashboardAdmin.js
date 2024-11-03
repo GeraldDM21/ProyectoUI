@@ -29,7 +29,7 @@ function DashboardAdmin() {
             {/* Contenido principal */}
             <main className="main-content">
                 <header className="content-header">
-                    <h2>Dashboard - Administrador Administrativo</h2>
+                    <h2>Dashboard - Administrativo</h2>
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, roles y el catálogo de infracciones.</p>

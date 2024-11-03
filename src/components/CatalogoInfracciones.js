@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaSave, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaSave, FaPlus, FaTrash } from 'react-icons/fa';
 import '../Styles/CatalogoInfracciones.css';
 
 function CatalogoInfracciones() {
     const [infracciones, setInfracciones] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
     const [editedMonto, setEditedMonto] = useState('');
-    const [newInfraccion, setNewInfraccion] = useState({ nombre: '', monto: '' });
+    const [newInfraccion, setNewInfraccion] = useState({ nombre: '', costo: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -17,7 +17,7 @@ function CatalogoInfracciones() {
     // Función para obtener las infracciones desde el backend
     const fetchInfracciones = async () => {
         try {
-            const response = await fetch('https://localhost:7201/api/Infracciones');
+            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
             const data = await response.json();
             setInfracciones(data);
         } catch (error) {
@@ -27,37 +27,46 @@ function CatalogoInfracciones() {
     };
 
     // Función para iniciar la edición de un monto
-    const handleEdit = (index, monto) => {
+    const handleEdit = (index, costo) => {
         setEditIndex(index);
-        setEditedMonto(monto);
+        setEditedMonto(costo);
         setSuccess('');
         setError('');
     };
 
     // Función para guardar el monto editado en el backend
     const handleSave = async (id) => {
+        const parsedMonto = parseFloat(editedMonto);
+        if (isNaN(parsedMonto)) {
+            setError("El monto debe ser un número válido.");
+            return;
+        }
+
         try {
-            const response = await fetch(`https://localhost:7201/api/Infracciones/${id}`, {
+            const response = await fetch(`https://localhost:7201/api/CatalogoInfracciones/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ monto: parseFloat(editedMonto) }),
+                body: JSON.stringify({ 
+                    id: id,
+                    nombre: infracciones.find(inf => inf.id === id).nombre,
+                    costo: parsedMonto }),
             });
 
             if (response.ok) {
                 setInfracciones(infracciones.map((inf, index) => (
-                    index === editIndex ? { ...inf, monto: parseFloat(editedMonto) } : inf
+                    index === editIndex ? { ...inf, costo: parsedMonto } : inf
                 )));
                 setEditIndex(null);
                 setEditedMonto('');
-                setSuccess("Monto actualizado correctamente.");
+                alert("Monto actualizado correctamente.");
             } else {
-                setError("No se pudo actualizar el monto.");
+                alert("No se pudo actualizar el monto.");
             }
         } catch (error) {
-            setError("Error al actualizar el monto.");
-            console.error("Error al guardar el monto:", error);
+            alert("Error al actualizar el monto.");
+            console.log("Error al guardar el monto:", error);
         }
     };
 
@@ -67,34 +76,59 @@ function CatalogoInfracciones() {
         setError('');
         setSuccess('');
 
-        if (!newInfraccion.nombre || !newInfraccion.monto) {
+        if (!newInfraccion.nombre || !newInfraccion.costo) {
             setError("Ambos campos son obligatorios.");
             return;
         }
 
+        const parsedMonto = parseFloat(newInfraccion.costo);
+        if (isNaN(parsedMonto)) {
+            setError("El monto debe ser un número válido.");
+            return;
+        }
+
         try {
-            const response = await fetch('https://localhost:7201/api/Infracciones', {
+            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     nombre: newInfraccion.nombre,
-                    monto: parseFloat(newInfraccion.monto),
+                    costo: parsedMonto,
                 }),
             });
 
             if (response.ok) {
                 const createdInfraccion = await response.json();
                 setInfracciones([...infracciones, createdInfraccion]);
-                setNewInfraccion({ nombre: '', monto: '' });
-                setSuccess("Infracción agregada exitosamente.");
+                setNewInfraccion({ nombre: '', costo: '' });
+                alert("Infracción agregada exitosamente.");
             } else {
                 setError("No se pudo agregar la infracción.");
             }
         } catch (error) {
             setError("Error al agregar la infracción.");
             console.error("Error al agregar infracción:", error);
+        }
+    };
+
+    // Función para eliminar una infracción
+    const handleDelete = async (id) => {
+        try {
+            const response = await fetch(`https://localhost:7201/api/CatalogoInfracciones/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setInfracciones(infracciones.filter(infraccion => infraccion.id !== id));
+                alert("Infracción eliminada correctamente.");
+            } else {
+                alert("No se pudo eliminar la infracción.");
+            }
+        } catch (error) {
+            alert("Error al eliminar la infracción.");
+            console.log("Error al eliminar infracción:", error);
         }
     };
 
@@ -117,8 +151,8 @@ function CatalogoInfracciones() {
                     <input
                         type="number"
                         placeholder="Monto"
-                        value={newInfraccion.monto}
-                        onChange={(e) => setNewInfraccion({ ...newInfraccion, monto: e.target.value })}
+                        value={newInfraccion.costo}
+                        onChange={(e) => setNewInfraccion({ ...newInfraccion, costo: e.target.value })}
                         required
                     />
                     <button type="submit" className="add-button"><FaPlus /> Agregar Infracción</button>
@@ -147,7 +181,7 @@ function CatalogoInfracciones() {
                                                 className="edit-input"
                                             />
                                         ) : (
-                                            `$${infraccion.monto.toFixed(2)}`
+                                            `₡${(infraccion.costo ?? 0).toFixed(2)}`
                                         )}
                                     </td>
                                     <td>
@@ -159,12 +193,20 @@ function CatalogoInfracciones() {
                                                 <FaSave /> Guardar
                                             </button>
                                         ) : (
-                                            <button
-                                                onClick={() => handleEdit(index, infraccion.monto)}
-                                                className="action-button edit-button"
-                                            >
-                                                <FaEdit /> Editar
-                                            </button>
+                                            <>
+                                                <button
+                                                    onClick={() => handleEdit(index, infraccion.costo)}
+                                                    className="action-button edit-button"
+                                                >
+                                                    <FaEdit /> Editar
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(infraccion.id)}
+                                                    className="action-button edit-button"
+                                                >
+                                                    <FaTrash /> Eliminar
+                                                </button>
+                                            </>
                                         )}
                                     </td>
                                 </tr>

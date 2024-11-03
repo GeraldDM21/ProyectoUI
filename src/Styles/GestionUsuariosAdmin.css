@@ -20,7 +20,7 @@
 
 .crear-usuario-container {
     display: flex;
-    gap: 30px;
+    gap: 60px;
     background-color: var(--white);
     width: 90%;
     max-width: 1200px;

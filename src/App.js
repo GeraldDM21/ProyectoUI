@@ -47,7 +47,7 @@ function App() {
                 <Route path="/catalogo-infracciones-oficial" element={<ProtectedRoute role="Oficial"><CatalogoInfraccionesOficial /></ProtectedRoute>} />
                 <Route path="/crear-usuario" element={<ProtectedRoute role="Administrativo"><GestionUsuariosAdmin /></ProtectedRoute>} />
                 <Route path="/roles" element={<ProtectedRoute role="Administrativo"><GestionRoles /></ProtectedRoute>} />
-                <Route path="/perfil" element={<ProtectedRoute role="all"><Perfil /></ProtectedRoute>} />
+                <Route path="/perfil" element={<ProtectedRoute role={["Juez", "UsuarioFinal", "Oficial", "Administrativo"]}><Perfil /></ProtectedRoute>} />
                 
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />

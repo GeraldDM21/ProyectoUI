@@ -28,6 +28,9 @@ function Login() {
             console.log('Datos recibidos:', data); // Verifica los datos recibidos
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
+            localStorage.setItem('userId', data.userId);
+
+            console.log('Rol:', data.role, 'ID:', data.userId);
 
             // Navegar según el rol del usuario
 
@@ -44,7 +47,7 @@ function Login() {
             navigateToDashboard(data.role);
  
         } catch (error) {
-            setError(error.message);
+            alert(error.message);
         }
     };
 
