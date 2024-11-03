@@ -20,6 +20,10 @@ import VerMultas from './components/VerMultas';
 import VerDisputas from './components/VerDisputas'; 
 import ResolverDisputas from './components/ResolverDisputas'; 
 import ProtectedRoute from './components/ProtectedRoute';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+import { AdvancedImage } from '@cloudinary/react';
 
 function App() {
     return (
@@ -33,31 +37,46 @@ function App() {
                 <Route path="/NextCodeSolutions" element={<NextCodeSolutions />} />
 
                 {/* Dashboard para cada rol */}
-                <Route path="/admin" element={<ProtectedRoute role="admin"><DashboardAdmin /></ProtectedRoute>} />
-                <Route path="/usuario" element={<ProtectedRoute role="usuario"><DashboardUsuarioFinal /></ProtectedRoute>} />
-                <Route path="/oficial" element={<ProtectedRoute role="oficial"><DashboardOficial /></ProtectedRoute>} />
-                <Route path="/juez" element={<ProtectedRoute role="juez"><DashboardJuez /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute role="Administrativo"><DashboardAdmin /></ProtectedRoute>} />
+                <Route path="/usuario" element={<ProtectedRoute role="UsuarioFinal"><DashboardUsuarioFinal /></ProtectedRoute>} />
+                <Route path="/oficial" element={<ProtectedRoute role="Oficial"><DashboardOficial /></ProtectedRoute>} />
+                <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
 
                 {/* Funcionalidades específicas para cada rol */}
-                <Route path="/catalogo-infracciones" element={<ProtectedRoute role="admin"><CatalogoInfracciones /></ProtectedRoute>} />
-                <Route path="/catalogo-infracciones-oficial" element={<ProtectedRoute role="oficial"><CatalogoInfraccionesOficial /></ProtectedRoute>} />
-                <Route path="/crear-usuario" element={<ProtectedRoute role="admin"><GestionUsuariosAdmin /></ProtectedRoute>} />
-                <Route path="/roles" element={<ProtectedRoute role="admin"><GestionRoles /></ProtectedRoute>} />
+                <Route path="/catalogo-infracciones" element={<ProtectedRoute role="Administrativo"><CatalogoInfracciones /></ProtectedRoute>} />
+                <Route path="/catalogo-infracciones-oficial" element={<ProtectedRoute role="Oficial"><CatalogoInfraccionesOficial /></ProtectedRoute>} />
+                <Route path="/crear-usuario" element={<ProtectedRoute role="Administrativo"><GestionUsuariosAdmin /></ProtectedRoute>} />
+                <Route path="/roles" element={<ProtectedRoute role="Administrativo"><GestionRoles /></ProtectedRoute>} />
                 <Route path="/perfil" element={<ProtectedRoute role="all"><Perfil /></ProtectedRoute>} />
                 
                 {/* Funcionalidades para oficial */}
-                <Route path="/crear-multa" element={<ProtectedRoute role="oficial"><CrearMulta /></ProtectedRoute>} />
+                <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />
 
                 {/* Funcionalidades para usuario final */}
-                <Route path="/ver-multas" element={<ProtectedRoute role="usuario"><VerMultas /></ProtectedRoute>} />
-                <Route path="/iniciar-disputa" element={<ProtectedRoute role="usuario"><CreacionDisputa /></ProtectedRoute>} />
+                <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
+                <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><CreacionDisputa /></ProtectedRoute>} />
 
                 {/* Funcionalidades para juez */}
-                <Route path="/ver-disputas" element={<ProtectedRoute role="juez"><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
-                <Route path="/resolver-disputas" element={<ProtectedRoute role="juez"><ResolverDisputas /></ProtectedRoute>} /> {/* Resolver disputas */}
+                <Route path="/ver-disputas" element={<ProtectedRoute role="Juez"><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
+                <Route path="/resolver-disputas" element={<ProtectedRoute role="Juez"><ResolverDisputas /></ProtectedRoute>} /> {/* Resolver disputas */}
             </Routes>
         </Router>
     );
 }
 
+const Cloud = () => {
+    const cld = new Cloudinary({ cloud: { cloudName: 'dvdag5roy' } });
+    
+    // Use this sample image or upload your own via the Media Explorer
+    const img = cld
+          .image('cld-sample-5')
+          .format('auto') // Optimize delivery by resizing and applying auto-format and auto-quality
+          .quality('auto')
+          .resize(auto().gravity(autoGravity()).width(500).height(500)); // Transform the image: auto-crop to square aspect_ratio
+  
+    return (<AdvancedImage cldImg={img}/>);
+  };
+  
+
 export default App;
+export { Cloud };
