@@ -4,6 +4,7 @@ import HomePage from './components/HomePage';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
 import Register from './components/Register';
+import NextCodeSolutions from './components/NextCodeSolutions';
 import DashboardUsuarioFinal from './components/DashboardUsuarioFinal';
 import DashboardOficial from './components/DashboardOficial';
 import DashboardJuez from './components/DashboardJuez';
@@ -16,8 +17,8 @@ import GestionUsuariosAdmin from './components/GestionUsuariosAdmin';
 import GestionRoles from './components/GestionRoles';
 import Perfil from './components/Perfil';
 import VerMultas from './components/VerMultas';
-import VerDisputas from './components/VerDisputas'; // Nuevo componente para Ver Disputas
-import ResolverDisputas from './components/ResolverDisputas'; // Nuevo componente para Resolver Disputas
+import VerDisputas from './components/VerDisputas'; 
+import ResolverDisputas from './components/ResolverDisputas'; 
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/NextCodeSolutions" element={<NextCodeSolutions />} />
 
                 {/* Dashboard para cada rol */}
                 <Route path="/admin" element={<ProtectedRoute role="admin"><DashboardAdmin /></ProtectedRoute>} />
