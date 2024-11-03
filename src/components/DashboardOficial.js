@@ -1,18 +1,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogoutButton from './LogoutButton';
+import '../Styles/Dashboard.css';
 
 function DashboardOficial() {
     const navigate = useNavigate();
 
     return (
-        <div className="container mt-5">
-            <h2>Dashboard Oficial de Tránsito</h2>
-            <button className="btn btn-primary" onClick={() => navigate('/crear-multa')}>
-                Crear Nueva Multa
-            </button>
-            <button className="btn btn-secondary ml-3" onClick={() => navigate('/catalogo-infracciones')}>
-                Ver Catálogo de Infracciones 
-            </button>
+        <div className="dashboard-layout">
+            <aside className="sidebar">
+                <h2>Oficial</h2>
+                {/* Redirige a la ruta correcta de solo lectura del catálogo */}
+                <button onClick={() => navigate('/catalogo-infracciones-oficial')} className="sidebar-button">
+                    <i className="fas fa-book"></i> Ver Catálogo
+                </button>
+                <button onClick={() => navigate('/crear-multa')} className="sidebar-button">
+                    <i className="fas fa-file-alt"></i> Crear Multa
+                </button>
+                <button onClick={() => navigate('/perfil')} className="sidebar-button">
+                    <i className="fas fa-user-edit"></i> Editar Perfil
+                </button>
+                <LogoutButton />
+            </aside>
+
+            <main className="main-content">
+                <header className="content-header">
+                    <h2>Dashboard - Oficial</h2>
+                </header>
+                <div className="content-body">
+                    <p>Bienvenido al panel de oficial. Aquí puedes gestionar multas y ver el catálogo de infracciones.</p>
+                </div>
+            </main>
         </div>
     );
 }

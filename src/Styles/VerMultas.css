@@ -1,0 +1,87 @@
+:root {
+    --payne-gray: #546A76;
+    --cadet-gray: #88A0A8;
+    --caledon: #B4CEB3;
+    --timberwolf: #DBD3C9;
+    --lavander-blush: #FDEDEE;
+    --white: #FFFFFF;
+}
+
+/* Página principal para centrar el contenedor y añadir el fondo degradado */
+.ver-multas-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ocupa la pantalla completa */
+    background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--caledon) 75%);
+}
+
+/* Contenedor Principal */
+.ver-multas-container {
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Encabezado */
+.ver-multas-container h2 {
+    font-size: 1.5em;
+    color: var(--payne-gray);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ver-multas-container h2 svg {
+    margin-right: 8px;
+    color: var(--caledon);
+}
+
+/* Mensaje de Error */
+.error-message {
+    color: #d9534f;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Tabla de Multas */
+.multas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: var(--payne-gray);
+}
+
+.multas-table th, .multas-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--cadet-gray);
+}
+
+/* Encabezados de Tabla */
+.multas-table th {
+    background-color: var(--timberwolf);
+    color: var(--payne-gray);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.multas-table th svg {
+    margin-right: 8px;
+}
+
+/* Filas */
+.multas-table tr:nth-child(even) {
+    background-color: var(--lavander-blush);
+}
+
+.multas-table tr:hover {
+    background-color: var(--caledon);
+    cursor: default;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../Styles/Login.css'; // Asegúrate de que la ruta sea correcta para importar el CSS
+import '../Styles/Login.css'; 
 
 function AuthFormContainer({ title, children }) {
     return (

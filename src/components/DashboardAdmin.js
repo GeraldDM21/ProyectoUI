@@ -1,12 +1,40 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../Styles/Dashboard.css';
+import LogoutButton from './LogoutButton';
 
 function DashboardAdmin() {
+    const navigate = useNavigate();
+
     return (
-        <div className="container mt-5">
-            <h2>Dashboard Administrador</h2>
-            <p>Aquí puedes gestionar los usuarios, roles y ver reportes del sistema.</p>
-            <button className="btn btn-primary mt-3">Gestionar Usuarios</button>
-            <button className="btn btn-secondary mt-3 ml-3">Gestionar Roles</button>
+        <div className="dashboard-layout">
+            {/* Menú lateral */}
+            <aside className="sidebar">
+                <h2>Administrador</h2>
+                <button onClick={() => navigate('/catalogo-infracciones')} className="sidebar-button">
+                    <i className="fas fa-book"></i> Administrar Catálogo
+                </button>
+                <button onClick={() => navigate('/crear-usuario')} className="sidebar-button">
+                    <i className="fas fa-user-plus"></i> Crear Usuario
+                </button>
+                <button onClick={() => navigate('/roles')} className="sidebar-button">
+                    <i className="fas fa-users-cog"></i> Gestionar Roles
+                </button>
+                <button onClick={() => navigate('/perfil')} className="sidebar-button">
+                    <i className="fas fa-user-edit"></i> Editar Perfil
+                </button>
+                <LogoutButton />
+            </aside>
+
+            {/* Contenido principal */}
+            <main className="main-content">
+                <header className="content-header">
+                    <h2>Dashboard - Administrador Administrativo</h2>
+                </header>
+                <div className="content-body">
+                    <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, roles y el catálogo de infracciones.</p>
+                </div>
+            </main>
         </div>
     );
 }
