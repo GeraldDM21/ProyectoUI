@@ -90,7 +90,7 @@ function Register() {
             <div className="shape-background"></div>
             <AuthFormContainer title="Registro">
                 <form onSubmit={handleRegister}>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-id-card"></i>
                         <input
                             type="text"
@@ -101,7 +101,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-user"></i>
                         <input
                             type="text"
@@ -112,7 +112,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-user"></i>
                         <input
                             type="text"
@@ -123,7 +123,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-envelope"></i>
                         <input
                             type="email"
@@ -134,7 +134,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-lock"></i>
                         <input
                             type="password"
@@ -145,7 +145,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-phone"></i>
                         <input
                             type="tel"
@@ -156,7 +156,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group input-icon">
+                    <div className="form-group-login input-icon">
                         <i className="fas fa-id-card"></i>
                         <input
                             type="text"
@@ -167,7 +167,7 @@ function Register() {
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login">
                         <label className="file-label">Foto de Cédula</label>
                         <input
                             type="file"
@@ -175,7 +175,7 @@ function Register() {
                             onChange={(e) => setFotoCedula(e.target.files[0])}
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login">
                         <label className="file-label">Foto de Perfil</label>
                         <input
                             type="file"

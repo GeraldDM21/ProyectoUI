@@ -10,12 +10,6 @@ function HomePage() {
     const [plate, setPlate] = useState('');
     const [results, setResults] = useState([]);
 
-    const teamMembers = [
-        { name: 'Gerald Delgado', role: 'Desarrollador Frontend' },
-        { name: 'Jose Mario', role: 'Desarrollador Frontend' },
-        { name: 'Carolina Gutierrez', role: 'Scrum Master' },
-        { name: 'Fabian Chacon', role: 'Ingeniero de DevOps' },
-    ];
 
     const heatmapPoints = [
         [9.934819, -84.088046, 0.5], // San José

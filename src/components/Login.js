@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../Styles/Login.css';
 //import AuthFormContainer from './AuthFormContainer';
 
 function Login() {
@@ -79,7 +80,7 @@ function Login() {
                     <h2>Mi Cuenta</h2>
                 </div>
                 <form onSubmit={handleLogin}>
-                    <div className="form-group">
+                    <div className="form-group-login">
                         <div className="input-icon">
                             <i className="fas fa-user"></i>
                             <input
@@ -92,7 +93,7 @@ function Login() {
                             />
                         </div>
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login">
                         <div className="input-icon">
                             <i className="fas fa-lock"></i>
                             <input
