@@ -195,7 +195,7 @@ function GestionUsuariosAdmin() {
                         <FaSearch className="icon" />
                         <input
                             type="text"
-                            placeholder="Buscar usuario..."
+                            placeholder="Buscar usuario por nombre"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="input-busqueda"
