@@ -5,6 +5,7 @@ import '../Styles/VerMultas.css';
 function VerMultas() {
     const [multas, setMultas] = useState([]);
     const [error, setError] = useState('');
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         fetchMultas();
@@ -13,7 +14,7 @@ function VerMultas() {
     // Función para obtener las multas desde el backend
     const fetchMultas = async () => {
         try {
-            const response = await fetch('https://localhost:7201/api/multas'); // Reemplaza con la URL correcta de tu API
+            const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}`); // Reemplaza con la URL correcta de tu API
             if (!response.ok) {
                 throw new Error('Error al cargar las multas');
             }
@@ -56,7 +57,7 @@ function VerMultas() {
                             multas.map((multa) => (
                                 <tr key={multa.id}>
                                     <td>{multa.infraccion}</td>
-                                    <td>${multa.monto.toFixed(2)}</td>
+                                    <td>${multa.total.toFixed(2)}</td>
                                     <td>{multa.estado}</td>
                                     <td className="action-buttons">
                                         <button className="pay-button" onClick={() => handlePago(multa.id)}>
