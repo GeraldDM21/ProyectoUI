@@ -24,7 +24,7 @@ function DashboardJuez() {
 
             <main className="main-content">
                 <header className="content-header">
-                    <h2>Dashboard - Juez</h2>
+                    <h2>Panel - Juez</h2>
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de juez. Aquí puedes revisar y resolver disputas.</p>

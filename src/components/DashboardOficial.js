@@ -25,7 +25,7 @@ function DashboardOficial() {
 
             <main className="main-content">
                 <header className="content-header">
-                    <h2>Dashboard - Oficial</h2>
+                    <h2>Panel - Oficial</h2>
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de oficial. Aquí puedes gestionar multas y ver el catálogo de infracciones.</p>

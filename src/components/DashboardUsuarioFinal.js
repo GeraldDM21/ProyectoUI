@@ -27,7 +27,7 @@ function DashboardUsuarioFinal() {
 
             <main className="main-content">
                 <header className="content-header">
-                    <h2>Dashboard - Usuario Final</h2>
+                    <h2>Panel - Usuario Final</h2>
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de usuario final. Aquí puedes ver tus multas, crear disputas y revisar el estado de tus disputas.</p>
