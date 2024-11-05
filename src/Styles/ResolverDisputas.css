@@ -79,8 +79,6 @@
     background-color: var(--timberwolf);
     color: var(--payne-gray);
     font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
 .disputas-table th svg {

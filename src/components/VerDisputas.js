@@ -5,12 +5,13 @@ import '../Styles/VerDisputas.css';
 function VerDisputas() {
     const [disputas, setDisputas] = useState([]);
     const [error, setError] = useState('');
+    const userId = localStorage.getItem('userId');
 
     // Obtiene las disputas desde el backend
     useEffect(() => {
         const fetchDisputas = async () => {
             try {
-                const response = await fetch('https://localhost:7201/api/Disputas');
+                const response = await fetch(`https://localhost:7201/api/Disputas/IdInfractor/${userId}`);
                 if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
                 
                 const data = await response.json();
@@ -29,12 +30,14 @@ function VerDisputas() {
             <div className="ver-disputas-container">
                 <h2><FaExclamationTriangle /> Lista de Disputas</h2>
                 {error && <p className="error-message">{error}</p>}
-                <table className="disputas-table">
+                <table className="ver-disputas-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Razón</th>
                             <th>Descripción</th>
                             <th>Estado</th>
+                            <th>ID Multa</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -42,9 +45,11 @@ function VerDisputas() {
                         {disputas.length > 0 ? (
                             disputas.map((disputa) => (
                                 <tr key={disputa.id}>
+                                    <td>{disputa.id}</td>
                                     <td>{disputa.razon}</td>
                                     <td>{disputa.descripcion}</td>
                                     <td>{disputa.estado}</td>
+                                    <td>{disputa.idMulta}</td>
                                     <td>
                                         <button className="view-button">
                                             <FaEye /> Ver Detalles

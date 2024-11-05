@@ -13,9 +13,11 @@ function DashboardUsuarioFinal() {
                 <button onClick={() => navigate('/ver-multas')} className="sidebar-button">
                     <i className="fas fa-file-invoice"></i> Administrar Multas
                 </button>
+                {/*
                 <button onClick={() => navigate('/iniciar-disputa')} className="sidebar-button">
                     <i className="fas fa-exclamation-circle"></i> Crear Disputa
-                </button>
+                </button> 
+                */}
                 <button onClick={() => navigate('/ver-disputas')} className="sidebar-button">
                     <i className="fas fa-clipboard-list"></i> Ver Disputas
                 </button>
