@@ -33,7 +33,7 @@
 /* Contenedor principal del formulario */
 .ver-disputas-container {
     background-color: var(--white);
-    width: 800px;
+    width: 1000px;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
@@ -64,38 +64,36 @@
 }
 
 /* Tabla de disputas */
-.disputas-table {
+.ver-disputas-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     color: var(--payne-gray);
 }
 
-.disputas-table th, .disputas-table td {
-    padding: 12px 15px;
+.ver-disputas-table th, .ver-disputas-table td {
+    padding: 15px 20px;
     text-align: left;
     border-bottom: 1px solid var(--cadet-gray);
 }
 
 /* Encabezados de tabla */
-.disputas-table th {
+.ver-disputas-table th {
     background-color: var(--timberwolf);
     color: var(--payne-gray);
     font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
-.disputas-table th svg {
+.ver-disputas-table th svg {
     margin-right: 8px;
 }
 
 /* Filas */
-.disputas-table tr:nth-child(even) {
+.ver-disputas-table tr:nth-child(even) {
     background-color: var(--lavander-blush);
 }
 
-.disputas-table tr:hover {
+.ver-disputas-table tr:hover {
     background-color: var(--caledon);
     cursor: default;
 }

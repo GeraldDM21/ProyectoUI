@@ -11,7 +11,7 @@ function LogoutButton() {
     };
 
     return (
-        <button className="action-button logout-button" onClick={handleLogout}>
+        <button className="dashboard-logout-button" onClick={handleLogout}>
             Cerrar Sesión
         </button>
     );

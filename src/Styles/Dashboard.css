@@ -27,7 +27,7 @@
 }
 
 .sidebar h2 {
-    font-size: 18px;
+    font-size: 25px;
     margin-bottom: 20px;
     color: var(--caledon);
 }
@@ -37,7 +37,7 @@
     color: var(--payne-gray);
     border: none;
     padding: 10px;
-    font-size: 16px;
+    font-size: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -80,12 +80,12 @@
 }
 
 /* Botón de cerrar sesión */
-.logout-button {
+.dashboard-logout-button {
     background-color: var(--caledon);
     color: var(--white);
     padding: 10px;
     border: none;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     border-radius: 4px;
     margin-top: auto;

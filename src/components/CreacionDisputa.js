@@ -1,20 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FaEdit, FaAlignLeft, FaInfoCircle } from 'react-icons/fa';
 import '../Styles/CreacionDisputa.css';
 
 function CreacionDisputa() {
+    const location = useLocation();
+    const multa = location.state?.multa || {};
+    const navigate = useNavigate();
+
     const [razon, setRazon] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [estado, setEstado] = useState('Pendiente'); 
+    const [estado, setEstado] = useState('Nueva'); 
     const [message, setMessage] = useState('');
+    const [jueces, setJueces] = useState([]);
+    const userId = localStorage.getItem('userId');
+
+    useEffect(() => {
+        fetchJuecesDisponibles();
+    }, []);
+
+    const fetchJuecesDisponibles = async () => {
+        try {
+            const response = await fetch('https://localhost:7201/api/Usuarios/Role/3');
+            if (!response.ok) {
+                throw new Error('Error al cargar los jueces');
+            }
+            const data = await response.json();
+            setJueces(data);
+        } catch (error) {
+            console.error('Error al cargar los jueces:', error);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Randomly pick a judge ID
+        const randomJuez = jueces[Math.floor(Math.random() * jueces.length)];
+
         const disputaData = { 
             razon, 
             descripcion, 
-            estado 
+            estado,
+            idMulta: multa.id,
+            idUsuarioFinal: userId,
+            idOficial: multa.idOficial,
+            idJuez: randomJuez.id // Include the randomly picked judge ID
         };
 
         try {
@@ -27,15 +58,16 @@ function CreacionDisputa() {
             });
 
             if (response.ok) {
-                setMessage("Disputa creada exitosamente.");
+                alert("Disputa creada exitosamente.");
                 setRazon('');
                 setDescripcion('');
+                navigate('/ver-disputas');
             } else {
-                setMessage("Error al crear la disputa.");
+                alert("Error al crear la disputa.");
             }
         } catch (error) {
-            console.error("Error al conectar con el servidor:", error);
-            setMessage("Error de conexión. Intente nuevamente más tarde.");
+            console.log("Error al conectar con el servidor:", error);
+            alert("Error de conexión. Intente nuevamente más tarde.");
         }
     };
 
