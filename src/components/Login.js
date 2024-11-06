@@ -120,7 +120,8 @@ function Login() {
                     </button>
                 </form>
 
-                {/* Botones para iniciar sesión con roles de prueba */}
+                {/*
+                
                 <div className="mt-4">
                     <h4>Iniciar sesión como:</h4>
                     <button onClick={() => handleTestLogin('Administrativo')} className="btn btn-secondary">Admin</button>
@@ -128,6 +129,7 @@ function Login() {
                     <button onClick={() => handleTestLogin('Oficial')} className="btn btn-secondary">Oficial</button>
                     <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
                 </div>
+                */}
             </div>
         </div>
     );
