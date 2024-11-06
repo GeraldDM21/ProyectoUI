@@ -4,7 +4,7 @@ import './NextCodeSolutions.css'; // Asegúrate de crear este archivo CSS
 import JoseMarioPhoto from './imagen/JoseMario.jpg'; 
 import FabianPhoto from './imagen/Fabian.jpg';
 import CarolinaPhoto from './imagen/Carolina.jpg';
-import GeraldPhoto from './imagen/Gerald.jpg';
+import GeraldPhoto from './imagen/GeraldFoto.jpeg';
 
 const NextCodeSolutions = () => {
     const navigate = useNavigate();
