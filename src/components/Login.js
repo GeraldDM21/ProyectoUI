@@ -120,7 +120,7 @@ function Login() {
                     </button>
                 </form>
 
-                {/*
+                {/* */}
                 
                 <div className="mt-4">
                     <h4>Iniciar sesión como:</h4>
@@ -129,7 +129,7 @@ function Login() {
                     <button onClick={() => handleTestLogin('Oficial')} className="btn btn-secondary">Oficial</button>
                     <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
                 </div>
-                */}
+                
             </div>
         </div>
     );

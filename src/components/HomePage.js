@@ -12,7 +12,7 @@ function HomePage() {
 
 
     const heatmapPoints = [
-        [9.934819, -84.088046, 0.5], // San José
+        [9.934819, -84.088046], // San José
         [34.0522, -118.2437, 0.4],   // Los Ángeles
         [40.7128, -74.0060, 0.8],    // Nueva York
     ];
