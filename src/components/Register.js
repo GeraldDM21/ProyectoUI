@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AuthFormContainer from './AuthFormContainer';
 import { useNavigate } from 'react-router-dom';
+import UploadWidget from './UploadWidget';
 
 function Register() {
     const [cedula, setCedula] = useState('');
@@ -169,6 +170,7 @@ function Register() {
                     </div>
                     <div className="form-group-login">
                         <label className="file-label">Foto de Cédula</label>
+                        <UploadWidget />
                         <input
                             type="file"
                             className="form-control-file"
@@ -177,6 +179,7 @@ function Register() {
                     </div>
                     <div className="form-group-login">
                         <label className="file-label">Foto de Perfil</label>
+                        <UploadWidget />
                         <input
                             type="file"
                             className="form-control-file"
