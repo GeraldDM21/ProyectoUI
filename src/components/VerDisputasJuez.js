@@ -11,7 +11,7 @@ function VerDisputas() {
     useEffect(() => {
         const fetchDisputas = async () => {
             try {
-                const response = await fetch(`https://localhost:7201/api/Disputas/IdJuez/${userId}`);
+                const response = await fetch(`https://localhost:7201/api/Disputas/IdJuez/${userId}/Resolved`);
                 if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
                 
                 const data = await response.json();
