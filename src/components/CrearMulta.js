@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard } from 'react-icons/fa';
 import '../Styles/CrearMulta.css';
 import { set } from '@cloudinary/url-gen/actions/variable';
+import { cat } from '@cloudinary/url-gen/qualifiers/focusOn';
 
 function CrearMulta() {
     const [placasId, setIdPlaca] = useState('');
@@ -115,9 +116,15 @@ function CrearMulta() {
             fecha,
             pagada: false,
             fotoSinpe: "string",
-            total: 0,
+            total: selectedInfracciones.reduce((accumulator, id) => {
+                console.log(id);
+                console.log(infraccion);
+                const infra = infraccion.find(item => item.id === id);
+                console.log(infra);
+                return accumulator + (infra ? infra.costo : 0);
+            }, 0),
             idOficial: userId,
-            idInfractor: userIdInfractor.id,
+            idInfractor: userIdInfractor ? userIdInfractor.id : null,
             infraccionMultas: selectedInfracciones.map(id => ({ catalogoInfraccionesId: id })),
             multaPlacas: [{
                 placasId,
@@ -239,6 +246,7 @@ function CrearMulta() {
                                 }
                             }
                             setSelectedInfracciones(selectedValues);
+                            console.log(selectedValues);
                         }}>
                             {infraccion.map((infraccion) => (
                                 <option key={infraccion.id} value={infraccion.id}>

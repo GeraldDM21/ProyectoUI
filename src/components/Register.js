@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AuthFormContainer from './AuthFormContainer';
 import { useNavigate } from 'react-router-dom';
+import UploadWidget from './UploadWidget';
 
 function Register() {
     const [cedula, setCedula] = useState('');
@@ -17,19 +18,6 @@ function Register() {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        const convertirBase64 = (file) => {
-            return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => {
-                    resolve(fileReader.result.split(',')[1]);
-                };
-                fileReader.onerror = (error) => {
-                    reject(error);
-                };
-            });
-        };
-
         // Aquí puedes manejar la lógica de envío al backend
         try {
             const usuarioFinal = {
@@ -39,8 +27,8 @@ function Register() {
                 email: correo,
                 password: contrasena,
                 telefono,
-                fotoCedula: await convertirBase64(fotoCedula),
-                fotoPerfil: await convertirBase64(fotoPerfil),
+                fotoCedula,
+                fotoPerfil,
                 idRol: 1,
                 placas: [
                     {
@@ -69,10 +57,7 @@ function Register() {
             }
         } catch (error) {
             console.log(error);
-            
         }
-
-        
 
         setCedula('');
         setNombre('');
@@ -169,19 +154,11 @@ function Register() {
                     </div>
                     <div className="form-group-login">
                         <label className="file-label">Foto de Cédula</label>
-                        <input
-                            type="file"
-                            className="form-control-file"
-                            onChange={(e) => setFotoCedula(e.target.files[0])}
-                        />
+                        <UploadWidget onUpload={setFotoCedula} />
                     </div>
                     <div className="form-group-login">
                         <label className="file-label">Foto de Perfil</label>
-                        <input
-                            type="file"
-                            className="form-control-file"
-                            onChange={(e) => setFotoPerfil(e.target.files[0])}
-                        />
+                        <UploadWidget onUpload={setFotoPerfil} />
                     </div>
                     <button type="submit" className="btn-login">Registrarse</button>
                 </form>
