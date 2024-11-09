@@ -7,12 +7,14 @@ function ResolverDisputas() {
     const [error, setError] = useState('');
     const [selectedDisputa, setSelectedDisputa] = useState(null);
     const [newStatus, setNewStatus] = useState('');
+    const userId = localStorage.getItem('userId');
+
 
     // Obtiene las disputas desde el backend
     useEffect(() => {
         const fetchDisputas = async () => {
             try {
-                const response = await fetch('https://localhost:7201/api/Disputas');
+                const response = await fetch(`https://localhost:7201/api/Disputas/IdJuez/${userId}`);
                 if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
                 
                 const data = await response.json();
@@ -52,17 +54,19 @@ function ResolverDisputas() {
     };
 
     return (
-        <div className="resolver-disputas-background">
+        <div className="ver-disputas-background">
             <div className="shape-background"></div>
-            <div className="resolver-disputas-container">
-                <h2><FaGavel /> Resolver Disputas</h2>
+            <div className="ver-disputas-container">
+                <h2><FaGavel /> Lista de Disputas</h2>
                 {error && <p className="error-message">{error}</p>}
-                <table className="disputas-table">
+                <table className="ver-disputas-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Razón</th>
                             <th>Descripción</th>
                             <th>Estado</th>
+                            <th>ID Multa</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -70,9 +74,11 @@ function ResolverDisputas() {
                         {disputas.length > 0 ? (
                             disputas.map((disputa) => (
                                 <tr key={disputa.id}>
+                                    <td>{disputa.id}</td>
                                     <td>{disputa.razon}</td>
                                     <td>{disputa.descripcion}</td>
                                     <td>{disputa.estado}</td>
+                                    <td>{disputa.idMulta}</td>
                                     <td>
                                         <button className="resolve-button" onClick={() => setSelectedDisputa(disputa)}>
                                             <FaCheckCircle /> Resolver

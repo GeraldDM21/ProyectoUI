@@ -10,11 +10,11 @@ function DashboardJuez() {
         <div className="dashboard-layout">
             <aside className="sidebar">
                 <h2>Juez</h2>
-                <button onClick={() => navigate('/ver-disputas')} className="sidebar-button">
-                    <i className="fas fa-gavel"></i> Ver Disputas
-                </button>
                 <button onClick={() => navigate('/resolver-disputas')} className="sidebar-button">
-                    <i className="fas fa-check-circle"></i> Resolver Disputas
+                    <i className="fas fa-check-circle"></i> Gestionar Disputas
+                </button>
+                <button onClick={() => navigate('/ver-disputas-juez')} className="sidebar-button">
+                    <i className="fas fa-gavel"></i> Disputas Resueltas
                 </button>
                 <button onClick={() => navigate('/perfil')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
