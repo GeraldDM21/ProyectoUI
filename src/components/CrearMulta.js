@@ -117,10 +117,7 @@ function CrearMulta() {
             pagada: false,
             fotoSinpe: "string",
             total: selectedInfracciones.reduce((accumulator, id) => {
-                console.log(id);
-                console.log(infraccion);
-                const infra = infraccion.find(item => item.id === id);
-                console.log(infra);
+                const infra = infraccion.find(item => item.id == id);
                 return accumulator + (infra ? infra.costo : 0);
             }, 0),
             idOficial: userId,
