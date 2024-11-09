@@ -1,13 +1,19 @@
 /* Estilo general para los formularios */
 .auth-container {
     max-width: 400px;
-    margin: 50px auto;
+    margin: 0px auto;
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     text-align: center;
 }
+
+/* Ajusta según la altura de tu header */
+.login-background {
+    padding-top: 100px;  
+}
+
 
 .auth-container h2 {
     color: #333;
@@ -64,3 +70,4 @@
 .auth-container a:hover {
     text-decoration: underline;
 }
+

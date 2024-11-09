@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import AuthFormContainer from './AuthFormContainer';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header'; // Importa el Header
+import AuthFormContainer from './AuthFormContainer';
 import UploadWidget from './UploadWidget';
 
 function Register() {
@@ -45,7 +46,7 @@ function Register() {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
                 },
-                body: JSON.stringify(usuarioFinal) // Aquí se envía el objeto FormData
+                body: JSON.stringify(usuarioFinal)
             });
 
             if (response.ok) {
@@ -73,6 +74,10 @@ function Register() {
     return (
         <div className="login-background">
             <div className="shape-background"></div>
+            
+            {/* Agregar el Header aquí */}
+            <Header /> 
+
             <AuthFormContainer title="Registro">
                 <form onSubmit={handleRegister}>
                     <div className="form-group-login input-icon">

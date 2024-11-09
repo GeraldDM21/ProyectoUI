@@ -7,14 +7,13 @@ import './HomePage.css';
 
 function HomePage() {
     const navigate = useNavigate();
-    const [plate, setPlate] = useState('');
+    const [plate, setPlate] = useState(''); 
     const [results, setResults] = useState([]);
-
 
     const heatmapPoints = [
         [9.934819, -84.088046], // San José
         [34.0522, -118.2437, 0.4],   // Los Ángeles
-        [40.7128, -74.0060, 0.8],    // Nueva York
+        [40.7128, -74.0060, 0.8],    // Nueva York .
     ];
 
     const handleLogin = () => navigate('/login');
@@ -27,7 +26,6 @@ function HomePage() {
         
         ]);
     };
-
 
     return (
         <body className="container mt-5">
