@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import AuthFormContainer from './AuthFormContainer'; // Usando el mismo contenedor reutilizable
+import Header from './Header'; // Importa el componente Header
+import './Header.css'; // Importa el CSS del Header
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -27,25 +29,28 @@ function ForgotPassword() {
     };
 
     return (
-        <div className="login-background">
-            <div className="shape-background"></div> {/* Fondo degradado */}
-            <AuthFormContainer title="Restablecer Contraseña">
-                <form onSubmit={handleForgotPassword}>
-                    <div className="form-group input-icon">
-                        <i className="fas fa-envelope"></i>
-                        <input
-                            type="email"
-                            className="form-control"
-                            placeholder="Correo Electrónico"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn-login">Enviar Correo de Restablecimiento</button>
-                    {message && <p className="text-info mt-3">{message}</p>}
-                </form>
-            </AuthFormContainer>
+        <div>
+            <Header /> {/* Aquí agregas el Header */}
+            <div className="login-background">
+                <div className="shape-background"></div> {/* Fondo degradado */}
+                <AuthFormContainer title="Restablecer Contraseña">
+                    <form onSubmit={handleForgotPassword}>
+                        <div className="form-group input-icon">
+                            <i className="fas fa-envelope"></i>
+                            <input
+                                type="email"
+                                className="form-control"
+                                placeholder="Correo Electrónico"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="btn-login">Enviar Correo de Restablecimiento</button>
+                        {message && <p className="text-info mt-3">{message}</p>}
+                    </form>
+                </AuthFormContainer>
+            </div>
         </div>
     );
 }

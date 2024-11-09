@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header'; // Importa el componente Header
+import './Header.css'; // Importa el CSS del Header
 import '../Styles/Login.css';
-//import AuthFormContainer from './AuthFormContainer';
 
 function Login() {
     const [userName, setUsername] = useState('');
@@ -22,6 +23,7 @@ function Login() {
 
             if (!response.ok) {
                 alert('Usuario o contraseña incorrectos');
+                return;
             }
 
             const data = await response.json();
@@ -31,18 +33,6 @@ function Login() {
             localStorage.setItem('userId', data.userId);
 
             console.log('Rol:', data.role, 'ID:', data.userId);
-
-            // Navegar según el rol del usuario
-
-            if (data.role === 'Administrativo') {
-                navigate('/admin');
-            } else if (data.role === 'UsuarioFinal') {
-                navigate('/usuario');
-            } else if (data.role === 'Oficial') {
-                navigate('/oficial');
-            } else if (data.role === 'Juez') {
-                navigate('/juez');
-            }
 
             navigateToDashboard(data.role);
  
@@ -61,7 +51,7 @@ function Login() {
         } else if (role === 'Juez') {
             navigate('/juez');
         } else {
-            console.error('Rol no reconocido:', role); // Log para roles inesperados
+            console.error('Rol no reconocido:', role);
             setError("Rol de usuario no reconocido.");
         }
     };
@@ -74,6 +64,7 @@ function Login() {
 
     return (
         <div className="login-background">
+            <Header /> {/* Agrega el Header aquí */}
             <div className="shape-background"></div>
             <div className="login-container">
                 <div className="profile-image">
@@ -120,8 +111,6 @@ function Login() {
                     </button>
                 </form>
 
-                {/* */}
-                
                 <div className="mt-4">
                     <h4>Iniciar sesión como:</h4>
                     <button onClick={() => handleTestLogin('Administrativo')} className="btn btn-secondary">Admin</button>
@@ -129,7 +118,6 @@ function Login() {
                     <button onClick={() => handleTestLogin('Oficial')} className="btn btn-secondary">Oficial</button>
                     <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
                 </div>
-                
             </div>
         </div>
     );
