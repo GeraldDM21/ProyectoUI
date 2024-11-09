@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const UploadWidget = () => {
+const UploadWidget = ({ onUpload }) => {
     const cloudinaryRef = useRef();
     const widgetRef = useRef();
 
@@ -21,15 +21,17 @@ const UploadWidget = () => {
                 cloudName: 'dvdag5roy',
                 uploadPreset: 'fcb_pre'
             }, function(error, result) {
-                console.log(result);
+                if (!error && result && result.event === "success") {
+                    onUpload(result.info.secure_url);
+                }
             });
         }).catch(error => {
             console.error("Failed to load Cloudinary script", error);
         });
-    }, []);
+    }, [onUpload]);
 
     return (
-        <button onClick={() => widgetRef.current && widgetRef.current.open()}>
+        <button type="button" onClick={() => widgetRef.current && widgetRef.current.open()}>
             Subir Foto
         </button>
     );
