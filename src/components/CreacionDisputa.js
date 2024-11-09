@@ -42,6 +42,7 @@ function CreacionDisputa() {
             razon, 
             descripcion, 
             estado,
+            necesitaDeclaracion: false,
             idMulta: multa.id,
             idUsuarioFinal: userId,
             idOficial: multa.idOficial,

@@ -18,6 +18,7 @@ import GestionRoles from './components/GestionRoles';
 import Perfil from './components/Perfil';
 import VerMultas from './components/VerMultas';
 import VerDisputas from './components/VerDisputas'; 
+import VerDisputasJuez from './components/VerDisputasJuez';
 import ResolverDisputas from './components/ResolverDisputas'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import { Cloudinary } from '@cloudinary/url-gen';
@@ -57,9 +58,10 @@ function App() {
                 <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><CreacionDisputa /></ProtectedRoute>} />
                 
                 {/* Funcionalidades compartidas entre usuario final y juez */}
-                <Route path="/ver-disputas" element={<ProtectedRoute role={["Juez", "UsuarioFinal"]}><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
+                <Route path="/ver-disputas" element={<ProtectedRoute role={["UsuarioFinal"]}><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
                 
                 {/* Funcionalidades exclusivas para juez */}
+                <Route path="/ver-disputas-juez" element={<ProtectedRoute role="Juez"><VerDisputasJuez /></ProtectedRoute>} /> {/* Ver disputas */}
                 <Route path="/resolver-disputas" element={<ProtectedRoute role="Juez"><ResolverDisputas /></ProtectedRoute>} /> {/* Resolver disputas */}
 
             </Routes>

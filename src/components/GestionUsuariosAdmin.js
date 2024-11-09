@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserPlus, FaUser, FaIdCard, FaEnvelope, FaLock, FaPhoneAlt, FaBriefcase, FaSearch, FaTrash, FaUserEdit } from 'react-icons/fa';
 import '../Styles/GestionUsuariosAdmin.css';
+import UploadWidget from './UploadWidget';
 
 function GestionUsuariosAdmin() {
     const [cedula, setCedula] = useState('');
@@ -51,19 +52,6 @@ function GestionUsuariosAdmin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const convertirBase64 = (file) => {
-            return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => {
-                    resolve(fileReader.result.split(',')[1]);
-                };
-                fileReader.onerror = (error) => {
-                    reject(error);
-                };
-            });
-        };
-
         try {
             const usuarioAdmin = {
                 cedula,
@@ -72,7 +60,7 @@ function GestionUsuariosAdmin() {
                 email: correo,
                 password: contrasena,
                 telefono,
-                fotoCedula: await convertirBase64(fotoCedula),
+                fotoCedula,
                 idRol: selectedRoleId,
             };
 
@@ -171,7 +159,7 @@ function GestionUsuariosAdmin() {
                             <input type="tel" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
                         </div>
                         <label>Foto de Cédula:</label>
-                        <input type="file" onChange={(e) => setFotoCedula(e.target.files[0])} required />
+                        <UploadWidget onUpload={setFotoCedula} />
                         <div className="input-icon">
                             <FaBriefcase className="icon" />
                             <select onChange={(e) => setSelectedRoleId(e.target.value)}>
