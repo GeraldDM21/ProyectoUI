@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaSave, FaPlus, FaTrash } from 'react-icons/fa';
 import '../Styles/CatalogoInfracciones.css';
+import HeaderAdmin from './HeaderAdmin';
 
 function CatalogoInfracciones() {
     const [infracciones, setInfracciones] = useState([]);
@@ -134,6 +135,9 @@ function CatalogoInfracciones() {
 
     return (
         <div className="catalogo-background">
+            {/* HeaderAdmin con rutas y títulos personalizados */}
+            <HeaderAdmin regresarRuta="/" tituloPrincipal="Tránsito 360" tituloRegresar="Regresar" />
+
             <div className="catalogo-infracciones-container">
                 <h2>Administrar Catálogo de Infracciones</h2>
                 {error && <p className="error-message">{error}</p>}

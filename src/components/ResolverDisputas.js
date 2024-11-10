@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaCheckCircle, FaTimesCircle, FaGavel } from 'react-icons/fa';
 import '../Styles/ResolverDisputas.css';
+import HeaderJuez from './HeaderJuez'; 
 
 function ResolverDisputas() {
     const [disputas, setDisputas] = useState([]);
@@ -8,7 +9,6 @@ function ResolverDisputas() {
     const [selectedDisputa, setSelectedDisputa] = useState(null);
     const [newStatus, setNewStatus] = useState('');
     const userId = localStorage.getItem('userId');
-
 
     // Obtiene las disputas desde el backend
     useEffect(() => {
@@ -55,7 +55,9 @@ function ResolverDisputas() {
 
     return (
         <div className="ver-disputas-background">
-            <div className="shape-background"></div>
+            {/* Aquí agregas el HeaderJuez */}
+            <HeaderJuez />
+
             <div className="ver-disputas-container">
                 <h2><FaGavel /> Lista de Disputas</h2>
                 {error && <p className="error-message">{error}</p>}

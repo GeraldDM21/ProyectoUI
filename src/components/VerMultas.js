@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaDollarSign, FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
 import { useNavigate } from 'react-router-dom';
+import HeaderUsuario from './HeaderUsuario'; // Importamos HeaderUsuario
 
 function VerMultas() {
     const [multas, setMultas] = useState([]);
@@ -78,6 +79,9 @@ function VerMultas() {
 
     return (
         <div className="ver-multas-page">
+            {/* Aquí colocamos el HeaderUsuario */}
+            <HeaderUsuario />
+
             <div className="ver-multas-container">
                 <h2><FaExclamationCircle /> Mis Multas</h2>
                 {error && <p className="error-message">{error}</p>}

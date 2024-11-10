@@ -14,8 +14,20 @@ function Register() {
     const [fotoCedula, setFotoCedula] = useState(null);
     const [fotoPerfil, setFotoPerfil] = useState(null);
     const [numPlaca, setPlaca] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
     const navigate = useNavigate();
 
+    // Función para mostrar alertas
+    const showAlert = (message, type) => {
+        setAlertMessage(message);
+        setAlertType(type);
+        setTimeout(() => {
+            setAlertMessage('');
+        }, 5000); // La alerta desaparece después de 5 segundos
+    };
+
+    // Lógica de registro
     const handleRegister = async (e) => {
         e.preventDefault();
 
@@ -50,16 +62,17 @@ function Register() {
             });
 
             if (response.ok) {
-                alert('¡Registro exitoso!');
+                showAlert('¡Registro exitoso!', 'success');
                 navigate('/login');
-            }
-            else {
-                alert('Error al registrar el usuario.');
+            } else {
+                showAlert('Error al registrar el usuario.', 'error');
             }
         } catch (error) {
             console.log(error);
+            showAlert('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
         }
 
+        // Limpiar los campos después de enviar el formulario
         setCedula('');
         setNombre('');
         setApellido('');
@@ -76,7 +89,14 @@ function Register() {
             <div className="shape-background"></div>
             
             {/* Agregar el Header aquí */}
-            <Header /> 
+            <Header />
+
+            {/* Mostrar alerta aquí */}
+            {alertMessage && (
+                <div className={`alert ${alertType === 'success' ? 'alert-success' : 'alert-error'}`}>
+                    {alertMessage}
+                </div>
+            )}
 
             <AuthFormContainer title="Registro">
                 <form onSubmit={handleRegister}>

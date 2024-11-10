@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaExclamationTriangle, FaEye } from 'react-icons/fa';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import '../Styles/VerDisputas.css';
+import HeaderJuez from './HeaderJuez'; // Importa el HeaderJuez
 
 function VerDisputas() {
     const [disputas, setDisputas] = useState([]);
@@ -26,6 +27,9 @@ function VerDisputas() {
 
     return (
         <div className="ver-disputas-background">
+            {/* Agregar HeaderJuez aquí */}
+            <HeaderJuez />
+
             <div className="shape-background"></div>
             <div className="ver-disputas-container">
                 <h2><FaExclamationTriangle /> Lista de Disputas Resueltas</h2>
@@ -55,7 +59,7 @@ function VerDisputas() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="6" className="no-data">No se encontraron disputas.</td>
                             </tr>
                         )}
                     </tbody>
