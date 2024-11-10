@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle, FaEye } from 'react-icons/fa';
+import HeaderUsuario from './HeaderUsuario'; // Asegúrate de que la ruta sea correcta
 import '../Styles/VerDisputas.css';
+import './HeaderUsuario.css';
 
 function VerDisputas() {
     const [disputas, setDisputas] = useState([]);
@@ -26,6 +28,8 @@ function VerDisputas() {
 
     return (
         <div className="ver-disputas-background">
+            {/* Aquí se coloca el HeaderUsuario */}
+            <HeaderUsuario />
             <div className="shape-background"></div>
             <div className="ver-disputas-container">
                 <h2><FaExclamationTriangle /> Lista de Disputas</h2>
@@ -59,7 +63,7 @@ function VerDisputas() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="6" className="no-data">No se encontraron disputas.</td>
                             </tr>
                         )}
                     </tbody>

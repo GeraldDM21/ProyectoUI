@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaBook } from 'react-icons/fa';
 import '../Styles/CatalogoInfraccionesOficial.css';
+import HeaderOficial from './HeaderOficial'; // Importamos HeaderOficial
 
 function CatalogoInfraccionesOficial() {
     const [infracciones, setInfracciones] = useState([]);
@@ -24,6 +25,7 @@ function CatalogoInfraccionesOficial() {
 
     return (
         <div className="catalogo-infracciones-oficial-page">
+            <HeaderOficial /> 
             <div className="catalogo-infracciones-oficial-container">
                 <h2><FaBook /> Catálogo de Infracciones</h2>
                 {error && <p className="error-message">{error}</p>}

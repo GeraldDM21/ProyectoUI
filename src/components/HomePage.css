@@ -110,7 +110,7 @@ body {
 
 .consulta-form {
     display: flex;
-    justify-content: left;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
 
@@ -123,6 +123,7 @@ body {
     border-radius: 5px;
     width: 220px !important;
     font-size: 1rem;
+
 }
 /*buscar en consulta de placa*/
 .consulta-form button {

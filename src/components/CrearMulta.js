@@ -3,6 +3,7 @@ import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard } from 'react-icons/fa'
 import '../Styles/CrearMulta.css';
 import { set } from '@cloudinary/url-gen/actions/variable';
 import { cat } from '@cloudinary/url-gen/qualifiers/focusOn';
+import HeaderOficial from './HeaderOficial';
 
 function CrearMulta() {
     const [placasId, setIdPlaca] = useState('');
@@ -158,6 +159,7 @@ function CrearMulta() {
 
     return (
         <div className="crear-multa-background">
+            <HeaderOficial />
             <div className="shape-background"></div>
             <div className="crear-multa-container">
                 <h2>Crear Multa</h2>

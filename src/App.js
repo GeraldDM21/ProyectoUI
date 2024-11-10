@@ -25,6 +25,8 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { auto } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     return (
@@ -42,6 +44,8 @@ function App() {
                 <Route path="/usuario" element={<ProtectedRoute role="UsuarioFinal"><DashboardUsuarioFinal /></ProtectedRoute>} />
                 <Route path="/oficial" element={<ProtectedRoute role="Oficial"><DashboardOficial /></ProtectedRoute>} />
                 <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
+                <Route path="/dashboard-juez" element={<DashboardJuez />} />
+
 
                 {/* Funcionalidades específicas para cada rol */}
                 <Route path="/catalogo-infracciones" element={<ProtectedRoute role="Administrativo"><CatalogoInfracciones /></ProtectedRoute>} />

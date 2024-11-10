@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import '../Styles/GestionRoles.css';
+import HeaderAdmin from './HeaderAdmin';  // Asegúrate de que esta ruta sea correcta
 
 function GestionRoles() {
     const [roles, setRoles] = useState([]);
@@ -91,6 +92,7 @@ function GestionRoles() {
 
     return (
         <div className="roles-background">
+            <HeaderAdmin /> {/* Aquí se agrega el header */}
             <div className="roles-container">
                 <h2>Gestión de Roles</h2>
                 {error && <p className="error-message">{error}</p>}

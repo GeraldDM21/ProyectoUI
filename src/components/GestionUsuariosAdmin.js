@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUserPlus, FaUser, FaIdCard, FaEnvelope, FaLock, FaPhoneAlt, FaBriefcase, FaSearch, FaTrash, FaUserEdit } from 'react-icons/fa';
 import '../Styles/GestionUsuariosAdmin.css';
 import UploadWidget from './UploadWidget';
+import HeaderAdmin from './HeaderAdmin';  // Importar el HeaderAdmin
 
 function GestionUsuariosAdmin() {
     const [cedula, setCedula] = useState('');
@@ -26,7 +27,7 @@ function GestionUsuariosAdmin() {
         } catch (error) {
             console.error("Error al cargar usuarios:", error);
         }
-    };    
+    };
 
     const fetchRoles = async () => {
         try {
@@ -126,7 +127,9 @@ function GestionUsuariosAdmin() {
 
     return (
         <div className="crear-usuario-background">
-            <div className="shape-background"></div>
+            {/* Añadir el HeaderAdmin aquí */}
+            <HeaderAdmin />  {/* El Header se coloca aquí */}
+
             <div className="crear-usuario-container">
                 <div className="formulario-container">
                     <div className="profile-image">
