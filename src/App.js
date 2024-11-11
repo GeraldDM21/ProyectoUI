@@ -27,6 +27,7 @@ import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import VerDeclaraciones from './components/VerDeclaraciones';
 
 function App() {
     return (
@@ -56,6 +57,8 @@ function App() {
                 
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />
+                <Route path="/Ver-Declaraciones" element={<ProtectedRoute role="Oficial"><VerDeclaraciones /></ProtectedRoute>} />
+
 
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
