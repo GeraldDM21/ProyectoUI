@@ -3,89 +3,161 @@
     --cadet-gray: #88A0A8;
     --caledon: #B4CEB3;
     --timberwolf: #DBD3C9;
-    --lavander-blush: #FDEDEE;
+    --lavender-blush: #FDEDEE;
     --white: #FFFFFF;
+    --error-red: #d9534f;
 }
 
 /* Fondo y estilo general */
 .crear-multa-background {
-    background: var(--lavander-blush);
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--caledon) 75%);
 }
 
-/* Fondo degradado */
-.shape-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--payne-gray) 25%, var(--caledon) 75%);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    z-index: 0;
-}
-
-/* Contenedor principal del formulario */
 .crear-multa-container {
     background-color: var(--white);
-    width: 400px;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
     text-align: center;
-    position: relative;
-    z-index: 1;
 }
 
-/* Encabezado */
 .crear-multa-container h2 {
     color: var(--payne-gray);
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
 }
 
-/* Formulario */
+/* Estilo para los campos de entrada */
 .form-group {
-    display: flex;
-    align-items: center;
+    position: relative;
     margin-bottom: 15px;
+    text-align: left;
 }
 
-.form-group .icon {
-    margin-right: 10px;
-    color: var(--payne-gray);
+.icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: var(--cadet-gray);
 }
 
-input, select {
+input[type="text"],
+input[type="date"],
+select {
     width: 100%;
-    padding: 10px;
+    padding: 10px 10px 10px 30px;
     border: 1px solid var(--cadet-gray);
     border-radius: 5px;
-    outline: none;
-    font-size: 18px;
+    font-size: 1em;
+    color: var(--payne-gray);
+    background-color: var(--white);
+    box-sizing: border-box;
 }
 
-.btn-submit {
-    background-color: var(--caledon);
-    border: none;
-    color: var(--white);
-    width: 100%;
-    padding: 12px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 6px;
+input[type="text"]:focus,
+input[type="date"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--caledon);
+}
+
+/* Estilo para el grupo de búsqueda de ubicación */
+.search-location-group {
+    position: relative;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    border: 1px solid var(--cadet-gray);
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style-type: none;
+    padding: 0;
+    margin: 5px 0 0;
+    z-index: 10;
+}
+
+.suggestions-list li {
+    padding: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+}
+
+.suggestions-list li:hover {
+    background-color: var(--lavender-blush);
+}
+
+/* Botón de búsqueda */
+.search-location-group button {
+    padding: 8px 15px;
+    background-color: var(--caledon);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.search-location-group button:hover {
+    background-color: var(--payne-gray);
+}
+
+/* Estilo para el mapa */
+.leaflet-container {
+    height: 300px;
+    width: 100%;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--cadet-gray);
+}
+
+/* Botón de enviar */
+.btn-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--caledon);
+    color: var(--white);
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #98b798;
+    background-color: var(--payne-gray);
 }
 
-.message {
-    margin-top: 15px;
+/* Etiqueta de campo */
+.form-group label {
+    display: block;
+    font-weight: bold;
     color: var(--payne-gray);
+    margin-bottom: 5px;
+}
+
+/* Mensaje de estado */
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--caledon);
+}
+
+.error-message {
+    color: var(--error-red);
+    font-weight: bold;
 }

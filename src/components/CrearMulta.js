@@ -1,8 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard } from 'react-icons/fa';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard, FaSearchLocation } from 'react-icons/fa';
 import '../Styles/CrearMulta.css';
-import { set } from '@cloudinary/url-gen/actions/variable';
-import { cat } from '@cloudinary/url-gen/qualifiers/focusOn';
+
+const markerIcon = new L.Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    shadowSize: [41, 41],
+});
+
+function LocationMarker({ setLatitud, setLongitud }) {
+    const [position, setPosition] = useState(null);
+
+    useMapEvents({
+        click(e) {
+            setPosition(e.latlng);
+            setLatitud(e.latlng.lat);
+            setLongitud(e.latlng.lng);
+        },
+    });
+
+    return position === null ? null : (
+        <Marker position={position} icon={markerIcon}></Marker>
+    );
+}
 
 function CrearMulta() {
     const [placasId, setIdPlaca] = useState('');
@@ -15,97 +40,56 @@ function CrearMulta() {
     const [infraccion, setInfraccion] = useState([]);
     const [message, setMessage] = useState('');
     const [selectedInfracciones, setSelectedInfracciones] = useState([]);
+    const [searchLocation, setSearchLocation] = useState('');
+    const [locationSuggestions, setLocationSuggestions] = useState([]);
     const userId = localStorage.getItem('userId');
 
-    const fetchInfractions = async () => {
-        try {
-            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
-            if (response.ok) {
-                const data = await response.json();
-                setInfraccion(data);
-            } else {
-                throw new Error('No se pudo cargar la información de las infracciones.');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     useEffect(() => {
+        const fetchInfractions = async () => {
+            try {
+                const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
+                if (response.ok) {
+                    const data = await response.json();
+                    setInfraccion(data);
+                } else {
+                    throw new Error('No se pudo cargar la información de las infracciones.');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
         fetchInfractions();
     }, []);
 
-    const checkUserExists = async (cedula) => {
+    const fetchLocationSuggestions = async (query) => {
         try {
-            const response = await fetch(`https://localhost:7201/api/Usuarios/Cedula/${cedula}`);
-            if (response.ok) {
-                const user = await response.json();
-                return user; // Assuming the user object has an 'id' property
-            } else {
-                return null;
-            }
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
+            const data = await response.json();
+            setLocationSuggestions(data);
         } catch (error) {
-            console.log('Error checking user:', error);
-            return null;
+            console.error('Error al obtener sugerencias de ubicación:', error);
         }
     };
 
-    const checkAndAddPlaca = async (placasId) => {
-        try {
-            // Check if the placa exists
-            const response = await fetch(`https://localhost:7201/api/Placas/${placasId}`);
-            if (response.ok) {
-                // Placa exists
-                return true;
-            } else if (response.status === 404) {
-                // Placa does not exist, add it
-                const addResponse = await fetch('https://localhost:7201/api/Placas', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id: placasId })
-                });
-                return addResponse.ok;
-            } else {
-                throw new Error('Error checking placa');
-            }
-        } catch (error) {
-            console.log('Error checking or adding placa:', error);
-            return false;
+    const handleSearchLocationChange = (e) => {
+        const query = e.target.value;
+        setSearchLocation(query);
+        if (query.length > 2) {
+            fetchLocationSuggestions(query);
+        } else {
+            setLocationSuggestions([]);
         }
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (cedulaInfractor) {
-                const user = await checkUserExists(cedulaInfractor);
-                if (user) {
-                    setNombreInfractor(user.nombre); // Assuming the user object has a 'nombre' property
-                    setApellidoInfractor(user.apellido); // Assuming the user object has an 'apellido' property
-                } else {
-                    setNombreInfractor('');
-                    setApellidoInfractor('');
-                }
-            }
-        };
+    const handleSuggestionClick = (lat, lon) => {
+        setLatitud(lat);
+        setLongitud(lon);
+        setLocationSuggestions([]);
+        setSearchLocation('');
+    };
 
-        fetchUserData();
-    }, [cedulaInfractor]);
-
-    // Maneja el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Verifica si la placa existe
-        const placaExists = await checkAndAddPlaca(placasId);
-        if (!placaExists) {
-            console.log('Error: La placa no existe o no se pudo agregar');
-            return;
-        }
-
-        // Verifica si el usuario ya existe
-        const userIdInfractor = await checkUserExists(cedulaInfractor);
 
         const multaData = {
             nombreInfractor,
@@ -116,32 +100,24 @@ function CrearMulta() {
             fecha,
             pagada: false,
             fotoSinpe: "string",
-            total: selectedInfracciones.reduce((accumulator, id) => {
-                const infra = infraccion.find(item => item.id == id);
-                return accumulator + (infra ? infra.costo : 0);
+            total: selectedInfracciones.reduce((acc, id) => {
+                const infra = infraccion.find(item => item.id === id);
+                return acc + (infra ? infra.costo : 0);
             }, 0),
             idOficial: userId,
-            idInfractor: userIdInfractor ? userIdInfractor.id : null,
             infraccionMultas: selectedInfracciones.map(id => ({ catalogoInfraccionesId: id })),
-            multaPlacas: [{
-                placasId,
-            }]
+            multaPlacas: [{ placasId }]
         };
-
-        console.log(multaData);
 
         try {
             const response = await fetch('https://localhost:7201/api/Multas', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(multaData)
             });
 
             if (response.ok) {
                 alert('Multa creada exitosamente');
-                // Resetea los campos
                 setNombreInfractor('');
                 setApellidoInfractor('');
                 setCedulaInfractor('');
@@ -149,7 +125,7 @@ function CrearMulta() {
                 setLatitud('');
                 setFecha('');
                 setIdPlaca('');
-                setSelectedInfracciones([]); // Reset selected infracciones
+                setSelectedInfracciones([]);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -158,15 +134,36 @@ function CrearMulta() {
 
     return (
         <div className="crear-multa-background">
-            <div className="shape-background"></div>
             <div className="crear-multa-container">
                 <h2>Crear Multa</h2>
                 <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                    <div className="form-group search-location-group">
+                        <FaSearchLocation className="icon" />
+                        <input
+                            type="text"
+                            placeholder="Buscar ubicación por nombre"
+                            value={searchLocation}
+                            onChange={handleSearchLocationChange}
+                        />
+                        {locationSuggestions.length > 0 && (
+                            <ul className="suggestions-list">
+                                {locationSuggestions.map((suggestion, index) => (
+                                    <li
+                                        key={index}
+                                        onClick={() => handleSuggestionClick(suggestion.lat, suggestion.lon)}
+                                    >
+                                        {suggestion.display_name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    <div className="form-group">
                         <FaIdCard className="icon" />
                         <input
                             type="text"
-                            placeholder="Numero de Placa"
+                            placeholder="Número de Placa"
                             value={placasId}
                             onChange={(e) => setIdPlaca(e.target.value)}
                             required
@@ -203,26 +200,6 @@ function CrearMulta() {
                         />
                     </div>
                     <div className="form-group">
-                        <FaMapMarkerAlt className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Longitud"
-                            value={longitud}
-                            onChange={(e) => setLongitud(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <FaMapMarkerAlt className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Latitud"
-                            value={latitud}
-                            onChange={(e) => setLatitud(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
                         <FaCalendarAlt className="icon" />
                         <input
                             type="date"
@@ -232,28 +209,36 @@ function CrearMulta() {
                             required
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label>Selecciona la Ubicación:</label>
+                        <MapContainer center={[10.0, -84.0]} zoom={13} className="leaflet-container">
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap'
+                            />
+                            <LocationMarker setLatitud={setLatitud} setLongitud={setLongitud} />
+                        </MapContainer>
+                    </div>
+
                     <div className="form-group">
                         <label>Tipo de Infracción:</label>
-                        <select multiple value={selectedInfracciones} onChange={(e) => {
-                            const options = e.target.options;
-                            const selectedValues = [];
-                            for (let i = 0; i < options.length; i++) {
-                                if (options[i].selected) {
-                                    selectedValues.push(options[i].value);
-                                }
-                            }
-                            setSelectedInfracciones(selectedValues);
-                            console.log(selectedValues);
-                        }}>
-                            {infraccion.map((infraccion) => (
-                                <option key={infraccion.id} value={infraccion.id}>
-                                    {infraccion.nombre}
+                        <select
+                            multiple
+                            value={selectedInfracciones}
+                            onChange={(e) => {
+                                const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+                                setSelectedInfracciones(selectedValues);
+                            }}
+                        >
+                            {infraccion.map((inf) => (
+                                <option key={inf.id} value={inf.id}>
+                                    {inf.nombre}
                                 </option>
                             ))}
                         </select>
                     </div>
                     <button type="submit" className="btn-submit">Registrar Multa</button>
-                    {message && <p className="message">{message}</p>}
                 </form>
             </div>
         </div>

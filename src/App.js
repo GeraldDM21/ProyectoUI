@@ -17,6 +17,7 @@ import GestionUsuariosAdmin from './components/GestionUsuariosAdmin';
 import GestionRoles from './components/GestionRoles';
 import Perfil from './components/Perfil';
 import VerMultas from './components/VerMultas';
+import MisMultasCreadas from './components/MisMultasCreadas'; 
 import VerDisputas from './components/VerDisputas'; 
 import VerDisputasJuez from './components/VerDisputasJuez';
 import ResolverDisputas from './components/ResolverDisputas'; 
@@ -52,6 +53,7 @@ function App() {
                 
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />
+                <Route path="/mis-multas-creadas" element={<ProtectedRoute role="Oficial"><MisMultasCreadas /></ProtectedRoute>} /> {/* Nueva Ruta */}
 
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
