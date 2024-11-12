@@ -10,7 +10,7 @@
 
 /* Fondo y estilo general */
 .ver-disputas-background {
-    background: var(--lavander-blush);
+    background: linear-gradient(135deg, var(--payne-gray) 25%, var(--caledon) 75%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -33,7 +33,7 @@
 /* Contenedor principal del formulario */
 .ver-disputas-container {
     background-color: var(--white);
-    width: 1000px;
+    width: 1600px;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
@@ -88,24 +88,25 @@
     margin-right: 8px;
 }
 
-/* Filas */
+/* Filas 
 .ver-disputas-table tr:nth-child(even) {
     background-color: var(--lavander-blush);
 }
+*/ 
 
-.ver-disputas-table tr:hover {
+/*.ver-disputas-table tr:hover {
     background-color: var(--caledon);
     cursor: default;
-}
+}*/
 
 .view-button {
-    background: var(--caledon);
+    background: var(--payne-gray);
     color: var(--white);
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 18px;
     display: flex;
     align-items: center;
 }

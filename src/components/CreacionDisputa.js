@@ -42,6 +42,8 @@ function CreacionDisputa() {
             razon, 
             descripcion, 
             estado,
+            resolucion: 'Pendiente',
+            declaracion: 'Oficial no ha declarado.',
             necesitaDeclaracion: false,
             idMulta: multa.id,
             idUsuarioFinal: userId,

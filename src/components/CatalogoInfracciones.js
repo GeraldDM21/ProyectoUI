@@ -185,7 +185,7 @@ function CatalogoInfracciones() {
                                                 className="edit-input"
                                             />
                                         ) : (
-                                            `₡${(infraccion.costo ?? 0).toFixed(2)}`
+                                            `₡${(infraccion.costo ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                                         )}
                                     </td>
                                     <td>

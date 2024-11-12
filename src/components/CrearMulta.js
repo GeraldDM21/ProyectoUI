@@ -116,6 +116,7 @@ function CrearMulta() {
             latitud: parseFloat(latitud),
             fecha,
             pagada: false,
+            resuelta: false,
             fotoSinpe: "string",
             total: selectedInfracciones.reduce((accumulator, id) => {
                 const infra = infraccion.find(item => item.id == id);
