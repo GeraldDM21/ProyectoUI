@@ -111,6 +111,7 @@
     font-weight: bold;
 }
 
+/*
 .infracciones-table tr:nth-child(even) {
     background-color: var(--lavender-blush);
 }
@@ -120,6 +121,8 @@
     color: var(--white);
     cursor: default;
 }
+
+*/
 
 /* Botones de acciones */
 .action-button {

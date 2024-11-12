@@ -41,7 +41,7 @@ function CatalogoInfraccionesOficial() {
                             infracciones.map((infraccion) => (
                                 <tr key={infraccion.id}>
                                     <td>{infraccion.nombre}</td>
-                                    <td>{`₡${(infraccion.costo ?? 0).toFixed(2)}`}</td>
+                                    <td>{`₡${(infraccion.costo ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                                 </tr>
                             ))
                         ) : (
