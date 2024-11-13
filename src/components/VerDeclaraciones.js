@@ -9,13 +9,16 @@ function VerDeclaraciones() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [expandedDisputaId, setExpandedDisputaId] = useState(null);
-    const userId = "12345"; // Puedes quemar un userId aquí para pruebas
+    const [detailsVisible, setDetailsVisible] = useState({});
+    const [multaDetails, setMultaDetails] = useState({});
+    const [infracciones, setInfracciones] = useState([]);
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         // Comentar o eliminar el fetch real para usar datos quemados
-        /* const fetchDisputas = async () => {
+         const fetchDisputas = async () => {
             try {
-                const response = await fetch(`https://localhost:7201/api/Disputas/IdOficial/${userId}/Pendientes`);
+                const response = await fetch(`https://localhost:7201/api/Disputas/IdOficial/${userId}/NeedsDeclaration`);
                 if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
                 
                 const data = await response.json();
@@ -25,16 +28,8 @@ function VerDeclaraciones() {
                 setError('No se pudieron cargar las disputas.');
             }
         };
-        fetchDisputas(); */
-
-        // Datos de prueba quemados
-        setDisputas([
-            { id: 1, razon: 'Exceso de velocidad', descripcion: 'Excedió el límite de velocidad en zona escolar.' },
-            { id: 2, razon: 'Uso de celular', descripcion: 'Usó el celular mientras conducía.' },
-            { id: 3, razon: 'Paso en rojo', descripcion: 'No respetó la luz roja del semáforo.' },
-            { id: 4, razon: 'Estacionamiento prohibido', descripcion: 'Estacionó en lugar prohibido.' },
-            { id: 5, razon: 'Exceso de velocidad', descripcion: 'Excedió el límite de velocidad en zona escolar.' },
-        ]);
+        fetchDisputas(); 
+        fetchInfracciones();
     }, []);
 
     const toggleExpandDisputa = (id) => {
@@ -44,11 +39,25 @@ function VerDeclaraciones() {
     const handleEnviarDeclaracion = async (idDisputa) => {
         try {
             const declaracion = declaraciones[idDisputa] || '';
-            // Simula un envío exitoso
-            console.log(`Enviando declaración para disputa ${idDisputa}: ${declaracion}`);
-            
-            setSuccess('Declaración enviada con éxito.');
-            setDeclaraciones((prev) => ({ ...prev, [idDisputa]: '' }));
+            const disputa = disputas.find(d => d.id === idDisputa);
+            const updatedDisputa = { ...disputa, declaracion, estado: 'Declaración Recibida', necesitaDeclaracion: false };
+
+            const response = await fetch(`https://localhost:7201/api/Disputas/${idDisputa}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedDisputa),
+            });
+
+            if (response.ok) {
+                alert('Declaración enviada con éxito.');
+                setDisputas(disputas.map(d => d.id === idDisputa ? updatedDisputa : d));
+                setDeclaraciones((prev) => ({ ...prev, [idDisputa]: '' }));
+                window.location.reload(); // Reload the page
+            } else {
+                throw new Error('No se pudo actualizar la disputa.');
+            }
         } catch (err) {
             console.error("Error al enviar declaración:", err);
             setError('No se pudo enviar la declaración.');
@@ -57,6 +66,44 @@ function VerDeclaraciones() {
 
     const handleChangeDeclaracion = (idDisputa, value) => {
         setDeclaraciones((prev) => ({ ...prev, [idDisputa]: value }));
+    };
+
+    const fetchInfracciones = async () => {
+        try {
+            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
+            if (!response.ok) {
+                throw new Error('Error al cargar las infracciones');
+            }
+            const data = await response.json();
+            setInfracciones(data);
+        } catch (error) {
+            console.error('Error al cargar infracciones:', error);
+        }
+    };
+
+    const fetchMultaDetails = async (idMulta) => {
+        try {
+            const response = await fetch(`https://localhost:7201/api/Multas/${idMulta}`);
+            if (!response.ok) throw new Error('No se pudo cargar los detalles de la multa.');
+            
+            const data = await response.json();
+            setMultaDetails((prevDetails) => ({
+                ...prevDetails,
+                [idMulta]: data
+            }));
+        } catch (error) {
+            console.error('Error fetching multa details:', error);
+        }
+    };
+
+    const handleVerDetallesClick = (idMulta) => {
+        setDetailsVisible((prevVisible) => ({
+            ...prevVisible,
+            [idMulta]: !prevVisible[idMulta]
+        }));
+        if (!detailsVisible[idMulta]) {
+            fetchMultaDetails(idMulta);
+        }
     };
 
     return (
@@ -75,6 +122,9 @@ function VerDeclaraciones() {
                             <th>ID</th>
                             <th>Razón</th>
                             <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Resolución</th>
+                            <th>Multa</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -86,18 +136,25 @@ function VerDeclaraciones() {
                                         <td>{disputa.id}</td>
                                         <td>{disputa.razon}</td>
                                         <td>{disputa.descripcion}</td>
+                                        <td>{disputa.estado}</td>
+                                        <td>{disputa.resolucion}</td>
+                                        <td>
+                                            <button className='resolver-button' onClick={() => handleVerDetallesClick(disputa.idMulta)}>
+                                                {detailsVisible[disputa.idMulta] ? 'Ocultar Detalles' : 'Ver Detalles'}
+                                            </button>
+                                        </td>
                                         <td>
                                             <button
-                                                className="expand-button"
+                                                className="resolver-button"
                                                 onClick={() => toggleExpandDisputa(disputa.id)}
                                             >
-                                                {expandedDisputaId === disputa.id ? <FaChevronUp /> : <FaChevronDown />}
+                                                Declarar
                                             </button>
                                         </td>
                                     </tr>
                                     {expandedDisputaId === disputa.id && (
                                         <tr className="declaracion-row">
-                                            <td colSpan="4">
+                                            <td colSpan="7">
                                                 <textarea
                                                     value={declaraciones[disputa.id] || ''}
                                                     onChange={(e) => handleChangeDeclaracion(disputa.id, e.target.value)}
@@ -113,11 +170,36 @@ function VerDeclaraciones() {
                                             </td>
                                         </tr>
                                     )}
+                                    {detailsVisible[disputa.idMulta] && multaDetails[disputa.idMulta] && (
+                                        <tr className="multa-details-row">
+                                            <td colSpan="7">
+                                                <div className="multa-details">
+                                                    <p><strong>ID Multa:</strong> {multaDetails[disputa.idMulta].id}</p>
+                                                    <p><strong>Cédula Infractor:</strong> {multaDetails[disputa.idMulta].cedulaInfractor}</p>
+                                                    <p><strong>Nombre Completo:</strong> {`${multaDetails[disputa.idMulta].nombreInfractor} ${multaDetails[disputa.idMulta].apellidoInfractor}`}</p>
+                                                    <p><strong>Fecha:</strong> {new Date(multaDetails[disputa.idMulta].fecha).toLocaleDateString()}</p>
+                                                    <p><strong>Placa:</strong> {multaDetails[disputa.idMulta].multaPlacas ? multaDetails[disputa.idMulta].multaPlacas.map(placa => placa.placasId).join(', ') : 'N/A'}</p>
+                                                    <p><strong>Infracciones:</strong></p>
+                                                    <ul>
+                                                        {multaDetails[disputa.idMulta].infraccionMultas ? multaDetails[disputa.idMulta].infraccionMultas.map(infraccion => {
+                                                            const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
+                                                            return (
+                                                                <li key={infraccion.catalogoInfraccionesId}>
+                                                                    {infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId}
+                                                                </li>
+                                                            );
+                                                        }) : <li>N/A</li>}
+                                                    </ul>
+                                                    <p><strong>Monto Total:</strong> ₡{(multaDetails[disputa.idMulta].total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </React.Fragment>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="7" className="no-data">No se encontraron disputas.</td>
                             </tr>
                         )}
                     </tbody>
