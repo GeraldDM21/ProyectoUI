@@ -1,0 +1,235 @@
+:root {
+    --primary-color: #546A76;
+    --secondary-color: #B4CEB3;
+    --sidebar-bg: #FDEDEE;
+    --button-hover: #DBD3C9;
+    --input-border: #88A0A8;
+    --white: #FFFFFF;
+    --error-color: #d9534f;
+}
+
+/* Layout General */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 25%, var(--secondary-color) 75%);
+}
+
+/* Barra Lateral */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Información de perfil en la barra lateral */
+.perfil-sidebar {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.foto-perfil-lateral {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid var(--primary-color);
+}
+
+.perfil-sidebar p {
+    margin: 8px 0;
+    color: var(--primary-color);
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* Iconos en la barra lateral */
+.perfil-sidebar p svg {
+    color: var(--secondary-color);
+    font-size: 1.1em;
+}
+
+.logout-button {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: auto;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: var(--primary-color);
+}
+
+/* Contenido Principal */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header h2 {
+    color: var(--white);
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.content-body {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Foto de perfil con opción de actualización */
+.foto-perfil {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.foto-perfil img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid var(--primary-color);
+}
+
+.foto-perfil input[type="file"] {
+    display: block;
+    margin: 10px auto;
+}
+
+.btn-upload {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    font-size: 0.9em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-upload:hover {
+    background-color: var(--primary-color);
+}
+
+/* Formulario de perfil */
+.perfil-form .form-group {
+    margin-bottom: 15px;
+}
+
+.perfil-form label {
+    font-weight: bold;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.perfil-form .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    color: var(--primary-color);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.perfil-form .form-control:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0px 0px 5px rgba(180, 206, 179, 0.5);
+}
+
+/* Botón Guardar Cambios */
+.btn-primary {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color);
+}
+
+/* Botón Cambiar Contraseña */
+.cambiar-password {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-secondary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Mensaje de estado */
+.text-info {
+    color: var(--primary-color);
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* Ajustes de responsividad */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        padding: 15px;
+    }
+    .content-header h2 {
+        font-size: 1.5em;
+    }
+}
