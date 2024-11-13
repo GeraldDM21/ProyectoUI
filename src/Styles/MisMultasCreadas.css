@@ -1,0 +1,128 @@
+:root {
+    --payne-gray: #546A76;
+    --cadet-gray: #88A0A8;
+    --caledon: #B4CEB3;
+    --timberwolf: #DBD3C9;
+    --lavender-blush: #FDEDEE;
+    --white: #FFFFFF;
+    --error-red: #d9534f;
+}
+
+/* Fondo y estilo general para centrar el contenedor */
+.mis-multas-creadas-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--caledon) 75%);
+}
+
+/* Contenedor Principal */
+.mis-multas-creadas-container {
+    padding: 20px;
+    max-width: 900px;
+    width: 100%;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Encabezado del Contenedor */
+.mis-multas-creadas-container h2 {
+    font-size: 1.5em;
+    color: var(--payne-gray);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mis-multas-creadas-container h2 svg {
+    margin-right: 8px;
+    color: var(--caledon);
+    font-size: 1.2em;
+}
+
+/* Mensaje de Error */
+.error-message {
+    color: var(--error-red);
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Tabla de Multas */
+.multas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: var(--payne-gray);
+    font-size: 0.9em;
+}
+
+/* Encabezados de la Tabla */
+.multas-table th {
+    background-color: var(--timberwolf);
+    color: var(--payne-gray);
+    font-weight: bold;
+    padding: 12px 15px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--cadet-gray);
+    text-align: left;
+}
+
+/* Celdas y Filas de la Tabla */
+.multas-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--cadet-gray);
+}
+
+.multas-table tr:nth-child(even) {
+    background-color: var(--lavender-blush);
+}
+
+.multas-table tr:hover {
+    background-color: var(--caledon);
+    cursor: default;
+}
+
+/* Botones de Acción */
+.action-buttons .pay-button,
+.action-buttons .dispute-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pay-button {
+    background-color: var(--caledon);
+}
+
+.pay-button:hover {
+    background-color: var(--cadet-gray);
+}
+
+.dispute-button {
+    background-color: var(--error-red);
+}
+
+.dispute-button:hover {
+    background-color: #c9302c;
+}
+
+/* Mensaje cuando no hay datos */
+.no-data {
+    text-align: center;
+    padding: 15px 0;
+    font-style: italic;
+    color: var(--cadet-gray);
+    font-size: 0.9em;
+}

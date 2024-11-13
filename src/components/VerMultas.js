@@ -7,12 +7,14 @@ import HeaderUsuario from './HeaderUsuario'; // Importamos HeaderUsuario
 function VerMultas() {
     const [multas, setMultas] = useState([]);
     const [disputas, setDisputas] = useState([]);
+    const [infracciones, setInfracciones] = useState({});
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [infracciones, setInfracciones] = useState([]);
     const [pastMultas, setPastMultas] = useState([]);
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         fetchMultas();
         fetchInfracciones();
@@ -20,7 +22,6 @@ function VerMultas() {
         fetchPastMultas();
     }, []);
 
-    // Función para obtener las multas desde el backend
     const fetchMultas = async () => {
         try {
             const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}/NotResolved`); // Reemplaza con la URL correcta de tu API
@@ -30,32 +31,31 @@ function VerMultas() {
             const data = await response.json();
             setMultas(data);
         } catch (error) {
-            console.error('Error al cargar multas:', error);
-            setError('No se pudo cargar las multas.');
+            setError('Error al cargar multas.');
+            console.error(error);
         }
     };
 
-    // Función para obtener las infracciones desde el backend
     const fetchInfracciones = async () => {
         try {
             const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
-            if (!response.ok) {
-                throw new Error('Error al cargar las infracciones');
-            }
+            if (!response.ok) throw new Error('Error al cargar infracciones');
             const data = await response.json();
-            setInfracciones(data);
+            const infraccionesMap = data.reduce((map, infraccion) => {
+                map[infraccion.id] = infraccion.nombre;
+                return map;
+            }, {});
+            setInfracciones(infraccionesMap);
         } catch (error) {
-            console.error('Error al cargar infracciones:', error);
+            setError('Error al cargar infracciones.');
+            console.error(error);
         }
     };
 
-    // Función para obtener las disputas desde el backend
     const fetchDisputas = async () => {
         try {
             const response = await fetch(`https://localhost:7201/api/Disputas/IdInfractor/${userId}`);
-            if (!response.ok) {
-                throw new Error('Error al cargar las disputas');
-            }
+            if (!response.ok) throw new Error('Error al cargar disputas');
             const data = await response.json();
             setDisputas(data);
         } catch (error) {
@@ -79,11 +79,10 @@ function VerMultas() {
 
     // Función para manejar el pago de una multa
     const handlePago = (id) => {
-        alert(`Pagar multa con ID: ${id}`);
-        // Lógica real para procesar el pago
+        alert(`Procesando pago para la multa con ID: ${id}`);
+        // Aquí agregarías la lógica real para procesar el pago
     };
 
-    // Función para crear una disputa para una multa
     const handleDisputa = (multa) => {
         const existingDisputa = disputas.find(disputa => disputa.idMulta === multa.id);
         if (existingDisputa) {
@@ -92,6 +91,9 @@ function VerMultas() {
             navigate('/iniciar-disputa', { state: { multa } });
         }
     };
+
+    if (loading) return <p>Cargando multas...</p>;
+    if (error) return <p className="error-message">{error}</p>;
 
     return (
         <div className="ver-multas-page">
@@ -127,12 +129,9 @@ function VerMultas() {
                                     <td>{new Date(multa.fecha).toLocaleDateString()}</td>
                                     <td>{multa.multaPlacas.map(placa => placa.placasId).join(', ')}</td>
                                     <td>
-                                        {multa.infraccionMultas.map(infraccion => {
-                                            const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
-                                            return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
-                                        }).map((nombre, index) => (
+                                        {multa.infraccionMultas.map((infraccion, index) => (
                                             <span key={index}>
-                                                {nombre}
+                                                {infracciones[infraccion.catalogoInfraccionesId] || infraccion.catalogoInfraccionesId}
                                                 <br />
                                             </span>
                                         ))}
@@ -140,8 +139,20 @@ function VerMultas() {
                                     <td>{`₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                                     <td>{multa.pagada ? 'Sí' : 'No'}</td>
                                     <td className="action-buttons">
-                                        <button className="pay-button" onClick={() => handlePago(multa.id)}>Pagar</button>
-                                        <button className="dispute-button" onClick={() => handleDisputa(multa)}>Disputar</button>
+                                        <button
+                                            className="pay-button"
+                                            onClick={() => handlePago(multa.id)}
+                                            title="Pagar"
+                                        >
+                                            <FaDollarSign />
+                                        </button>
+                                        <button
+                                            className="dispute-button"
+                                            onClick={() => handleDisputa(multa)}
+                                            title="Disputar"
+                                        >
+                                            <FaExclamationCircle />
+                                        </button>
                                     </td>
                                 </tr>
                             ))

@@ -10,7 +10,9 @@ function DashboardOficial() {
         <div className="dashboard-layout">
             <aside className="sidebar">
                 <h2>Oficial</h2>
-                {/* Redirige a la ruta correcta de solo lectura del catálogo */}
+                <button onClick={() => navigate('/mis-multas-creadas')} className="sidebar-button">
+                    <i className="fas fa-list"></i> Mis Multas Creadas
+                </button>
                 <button onClick={() => navigate('/catalogo-infracciones-oficial')} className="sidebar-button">
                     <i className="fas fa-book"></i> Ver Catálogo
                 </button>
