@@ -39,7 +39,8 @@
     text-align: center;
     position: relative;
     z-index: 1;
-    margin-top: 70px;
+    margin-top: 100px;
+    margin-bottom: 30px;
 }
 
 /* Encabezado */
@@ -89,4 +90,57 @@ input, select {
 .message {
     margin-top: 15px;
     color: var(--payne-gray);
+}
+
+/* Botón de búsqueda */
+.search-button {
+    padding: 8px 15px;
+    background-color: var(--caledon);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: var(--payne-gray);
+}
+
+/* Lista de sugerencias */
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    border: 1px solid var(--cadet-gray);
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style-type: none;
+    padding: 0;
+    margin: 5px 0 0;
+    z-index: 10;
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions-list li:hover {
+    background-color: var(--lavender-blush);
+}
+
+/* Mapa de selección de ubicación */
+.leaflet-container {
+    height: 250px;
+    width: 100%;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--cadet-gray);
+    margin-bottom: 15px;
 }

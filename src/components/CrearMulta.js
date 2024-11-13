@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard } from 'react-icons/fa';
 import '../Styles/CrearMulta.css';
-import { set } from '@cloudinary/url-gen/actions/variable';
-import { cat } from '@cloudinary/url-gen/qualifiers/focusOn';
 import HeaderOficial from './HeaderOficial';
 
 function CrearMulta() {
@@ -16,7 +17,16 @@ function CrearMulta() {
     const [infraccion, setInfraccion] = useState([]);
     const [message, setMessage] = useState('');
     const [selectedInfracciones, setSelectedInfracciones] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [locationSuggestions, setLocationSuggestions] = useState([]);
+    const [selectedPosition, setSelectedPosition] = useState([9.932358, -84.07963]); // Coordenadas iniciales de Costa Rica
     const userId = localStorage.getItem('userId');
+
+    const markerIcon = new L.Icon({
+        iconUrl: require('leaflet/dist/images/marker-icon.png'),
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+    });
 
     const fetchInfractions = async () => {
         try {
@@ -35,6 +45,25 @@ function CrearMulta() {
     useEffect(() => {
         fetchInfractions();
     }, []);
+
+    // Buscar la ubicación actual del usuario y centrar el mapa en ella
+    const searchLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setLatitud(latitude);
+                    setLongitud(longitude);
+                    setSelectedPosition([latitude, longitude]);
+                },
+                (error) => {
+                    console.error('Error al obtener la ubicación:', error);
+                }
+            );
+        } else {
+            console.error('La geolocalización no es compatible con este navegador.');
+        }
+    };
 
     const checkUserExists = async (cedula) => {
         try {
@@ -158,6 +187,20 @@ function CrearMulta() {
         }
     };
 
+        // Componente para manejar eventos en el mapa (clic para seleccionar ubicación)
+        function LocationMarker() {
+            useMapEvents({
+                click(e) {
+                    setLatitud(e.latlng.lat);
+                    setLongitud(e.latlng.lng);
+                    setSelectedPosition([e.latlng.lat, e.latlng.lng]);
+                },
+            });
+            return selectedPosition ? (
+                <Marker position={selectedPosition} icon={markerIcon}></Marker>
+            ) : null;
+        }
+
     return (
         <div className="crear-multa-background">
             <HeaderOficial />
@@ -165,7 +208,17 @@ function CrearMulta() {
             <div className="crear-multa-container">
                 <h2>Crear Multa</h2>
                 <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                    <div className="form-group-login input-icon">
+                        <FaMapMarkerAlt className="icon" />
+                        <input
+                            type="text"
+                            placeholder="Buscar ubicación por nombre"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button type="button" onClick={searchLocation} className="search-button">Buscar</button>
+                    </div>
+                    <div className="form-group">
                         <FaIdCard className="icon" />
                         <input
                             type="text"
@@ -206,26 +259,6 @@ function CrearMulta() {
                         />
                     </div>
                     <div className="form-group">
-                        <FaMapMarkerAlt className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Longitud"
-                            value={longitud}
-                            onChange={(e) => setLongitud(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <FaMapMarkerAlt className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Latitud"
-                            value={latitud}
-                            onChange={(e) => setLatitud(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
                         <FaCalendarAlt className="icon" />
                         <input
                             type="date"
@@ -235,6 +268,11 @@ function CrearMulta() {
                             required
                         />
                     </div>
+                    <label>Selecciona la Ubicación:</label>
+                    <MapContainer center={selectedPosition} zoom={13} className="leaflet-container">
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <LocationMarker />
+                    </MapContainer>
                     <div className="form-group">
                         <label>Tipo de Infracción:</label>
                         <select multiple value={selectedInfracciones} onChange={(e) => {

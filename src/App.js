@@ -17,6 +17,7 @@ import GestionUsuariosAdmin from './components/GestionUsuariosAdmin';
 import GestionRoles from './components/GestionRoles';
 import Perfil from './components/Perfil';
 import VerMultas from './components/VerMultas';
+import VerMultaOficial from './components/VerMultaOficial';
 import VerDisputas from './components/VerDisputas'; 
 import VerDisputasJuez from './components/VerDisputasJuez';
 import ResolverDisputas from './components/ResolverDisputas'; 
@@ -57,6 +58,7 @@ function App() {
                 
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />
+                <Route path="/ver-multa-oficial" element={<ProtectedRoute role="Oficial"><VerMultaOficial /></ProtectedRoute>} />
                 <Route path="/Ver-Declaraciones" element={<ProtectedRoute role="Oficial"><VerDeclaraciones /></ProtectedRoute>} />
 
 
