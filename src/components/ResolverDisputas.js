@@ -210,7 +210,7 @@ function ResolverDisputas() {
                                             </button>
                                         </td>
                                         <td>
-                                            <button className="resolver-button" onClick={() => handleUpdateDisputa(disputa, 'Esperando Declaración de Oficial', true ,disputa.resolucion)}>
+                                            <button className="resolver-button" onClick={() => handleUpdateDisputa(disputa, 'Esperando Declaración del Oficial', true ,disputa.resolucion)}>
                                                 Solicitar Declaración
                                             </button>
                                             <button className="resolver-button" onClick={() => handleResolverClick(disputa)}>

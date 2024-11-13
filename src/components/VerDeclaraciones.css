@@ -33,7 +33,7 @@
 /* Contenedor principal */
 .ver-declaraciones-container {
     background-color: var(--white);
-    width: 1000px;
+    width: 1200px;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
@@ -49,7 +49,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -15px;
+    margin: 15px;
 }
 
 .ver-declaraciones-container h2 svg {
@@ -89,16 +89,17 @@
     color: var(--payne-gray);
     font-weight: bold;
 }
-/*cambiar el color fijo del fondo de la fila*/
+/*cambiar el color fijo del fondo de la fila
 .ver-declaraciones-table tr:nth-child(even) {
     background-color: var(--white);
 }
 
-/*cambiar el color de la fila al pasar el mouse*/
 .ver-declaraciones-table tr:hover {
     background-color:  var(--caledon);
     cursor: default;
 }
+
+*/
 
 /* Contenedor del área de declaración con borde degradado */
 .declaracion-container {
