@@ -1,33 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { FaExclamationTriangle } from 'react-icons/fa';
-import '../Styles/VerDisputas.css';
-import HeaderUsuario from './HeaderUsuario';
+import { FaExclamationTriangle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import './VerDeclaraciones.css';
+import HeaderOficial from './HeaderOficial'; // Importa el Header del Oficial
 
-function VerDisputas() {
+function VerDeclaraciones() {
     const [disputas, setDisputas] = useState([]);
+    const [declaraciones, setDeclaraciones] = useState({});
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [expandedDisputaId, setExpandedDisputaId] = useState(null);
     const [detailsVisible, setDetailsVisible] = useState({});
     const [multaDetails, setMultaDetails] = useState({});
-    const [officialDetails, setOfficialDetails] = useState({});
     const [infracciones, setInfracciones] = useState([]);
     const userId = localStorage.getItem('userId');
 
     useEffect(() => {
-        fetchDisputas();
+        // Comentar o eliminar el fetch real para usar datos quemados
+         const fetchDisputas = async () => {
+            try {
+                const response = await fetch(`https://localhost:7201/api/Disputas/IdOficial/${userId}/NeedsDeclaration`);
+                if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
+                
+                const data = await response.json();
+                setDisputas(data);
+            } catch (err) {
+                console.error("Error al cargar disputas:", err);
+                setError('No se pudieron cargar las disputas.');
+            }
+        };
+        fetchDisputas(); 
         fetchInfracciones();
     }, []);
 
-    const fetchDisputas = async () => {
+    const toggleExpandDisputa = (id) => {
+        setExpandedDisputaId(expandedDisputaId === id ? null : id);
+    };
+
+    const handleEnviarDeclaracion = async (idDisputa) => {
         try {
-            const response = await fetch(`https://localhost:7201/api/Disputas/IdInfractor/${userId}`);
-            if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
-            
-            const data = await response.json();
-            setDisputas(data);
+            const declaracion = declaraciones[idDisputa] || '';
+            const disputa = disputas.find(d => d.id === idDisputa);
+            const updatedDisputa = { ...disputa, declaracion, estado: 'Declaración Recibida', necesitaDeclaracion: false };
+
+            const response = await fetch(`https://localhost:7201/api/Disputas/${idDisputa}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedDisputa),
+            });
+
+            if (response.ok) {
+                alert('Declaración enviada con éxito.');
+                setDisputas(disputas.map(d => d.id === idDisputa ? updatedDisputa : d));
+                setDeclaraciones((prev) => ({ ...prev, [idDisputa]: '' }));
+                window.location.reload(); // Reload the page
+            } else {
+                throw new Error('No se pudo actualizar la disputa.');
+            }
         } catch (err) {
-            console.error("Error al cargar disputas:", err);
-            setError('No se pudieron cargar las disputas.');
+            console.error("Error al enviar declaración:", err);
+            setError('No se pudo enviar la declaración.');
         }
+    };
+
+    const handleChangeDeclaracion = (idDisputa, value) => {
+        setDeclaraciones((prev) => ({ ...prev, [idDisputa]: value }));
     };
 
     const fetchInfracciones = async () => {
@@ -53,24 +91,8 @@ function VerDisputas() {
                 ...prevDetails,
                 [idMulta]: data
             }));
-            fetchOfficialDetails(data.idOficial);
         } catch (error) {
             console.error('Error fetching multa details:', error);
-        }
-    };
-
-    const fetchOfficialDetails = async (idOficial) => {
-        try {
-            const response = await fetch(`https://localhost:7201/api/Usuarios/${idOficial}`);
-            if (!response.ok) throw new Error('No se pudo cargar los detalles del oficial.');
-            
-            const data = await response.json();
-            setOfficialDetails((prevDetails) => ({
-                ...prevDetails,
-                [idOficial]: data
-            }));
-        } catch (error) {
-            console.error('Error fetching official details:', error);
         }
     };
 
@@ -85,13 +107,16 @@ function VerDisputas() {
     };
 
     return (
-        <div className="ver-disputas-background">
-            <HeaderUsuario />
+        <div className="ver-declaraciones-background">
+            <HeaderOficial />
+
             <div className="shape-background"></div>
-            <div className="ver-disputas-container">
-                <h2><FaExclamationTriangle /> Lista de Disputas</h2>
+            <div className="ver-declaraciones-container">
+                <h2><FaExclamationTriangle /> Disputas Pendientes por Declarar</h2>
                 {error && <p className="error-message">{error}</p>}
-                <table className="ver-disputas-table">
+                {success && <p className="success-message">{success}</p>}
+                
+                <table className="ver-declaraciones-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -99,7 +124,8 @@ function VerDisputas() {
                             <th>Descripción</th>
                             <th>Estado</th>
                             <th>Resolución</th>
-                            <th>Ver Información de Multa</th>
+                            <th>Multa</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,14 +139,40 @@ function VerDisputas() {
                                         <td>{disputa.estado}</td>
                                         <td>{disputa.resolucion}</td>
                                         <td>
-                                            <button className='view-button' onClick={() => handleVerDetallesClick(disputa.idMulta)}>
+                                            <button className='resolver-button' onClick={() => handleVerDetallesClick(disputa.idMulta)}>
                                                 {detailsVisible[disputa.idMulta] ? 'Ocultar Detalles' : 'Ver Detalles'}
                                             </button>
                                         </td>
+                                        <td>
+                                            <button
+                                                className="resolver-button"
+                                                onClick={() => toggleExpandDisputa(disputa.id)}
+                                            >
+                                                Declarar
+                                            </button>
+                                        </td>
                                     </tr>
+                                    {expandedDisputaId === disputa.id && (
+                                        <tr className="declaracion-row">
+                                            <td colSpan="7">
+                                                <textarea
+                                                    value={declaraciones[disputa.id] || ''}
+                                                    onChange={(e) => handleChangeDeclaracion(disputa.id, e.target.value)}
+                                                    placeholder="Escriba su declaración aquí..."
+                                                    className="declaracion-textarea"
+                                                />
+                                                <button
+                                                    className="send-button"
+                                                    onClick={() => handleEnviarDeclaracion(disputa.id)}
+                                                >
+                                                    Enviar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )}
                                     {detailsVisible[disputa.idMulta] && multaDetails[disputa.idMulta] && (
                                         <tr className="multa-details-row">
-                                            <td colSpan="5">
+                                            <td colSpan="7">
                                                 <div className="multa-details">
                                                     <p><strong>ID Multa:</strong> {multaDetails[disputa.idMulta].id}</p>
                                                     <p><strong>Cédula Infractor:</strong> {multaDetails[disputa.idMulta].cedulaInfractor}</p>
@@ -136,11 +188,9 @@ function VerDisputas() {
                                                                     {infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId}
                                                                 </li>
                                                             );
-                                                        }) : <li>N/A</li>}  
+                                                        }) : <li>N/A</li>}
                                                     </ul>
                                                     <p><strong>Monto Total:</strong> ₡{(multaDetails[disputa.idMulta].total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                                    <p><strong>Nombre del Oficial:</strong> {officialDetails[multaDetails[disputa.idMulta].idOficial] ? `${officialDetails[multaDetails[disputa.idMulta].idOficial].nombre} ${officialDetails[multaDetails[disputa.idMulta].idOficial].apellido}` : 'N/A'}</p>
-                                                    <p><strong>Declaracion del Oficial:</strong> {disputa.declaracion}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -149,7 +199,7 @@ function VerDisputas() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="5" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="7" className="no-data">No se encontraron disputas.</td>
                             </tr>
                         )}
                     </tbody>
@@ -159,4 +209,4 @@ function VerDisputas() {
     );
 }
 
-export default VerDisputas;
+export default VerDeclaraciones;

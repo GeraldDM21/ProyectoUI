@@ -9,8 +9,8 @@
 }
 
 /* Fondo y estilo general */
-.ver-disputas-background {
-    background: linear-gradient(135deg, var(--payne-gray) 25%, var(--caledon) 75%);
+.ver-declaraciones-background {
+    background: var(--lavander-blush);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -30,10 +30,10 @@
     z-index: 0;
 }
 
-/* Contenedor principal del formulario */
-.ver-disputas-container {
+/* Contenedor principal */
+.ver-declaraciones-container {
     background-color: var(--white);
-    width: 1600px;
+    width: 1200px;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
@@ -43,74 +43,98 @@
 }
 
 /* Encabezado */
-.ver-disputas-container h2 {
+.ver-declaraciones-container h2 {
     color: var(--payne-gray);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 15px;
 }
 
-.ver-disputas-container h2 svg {
+.ver-declaraciones-container h2 svg {
     margin-right: 8px;
     color: var(--caledon);
 }
 
-/* Mensaje de error */
+/* Mensajes de error y éxito */
 .error-message {
     color: #d9534f;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-/* Tabla de disputas */
-.ver-disputas-table {
+.success-message {
+    color: #5cb85c;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Tabla de declaraciones */
+.ver-declaraciones-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     color: var(--payne-gray);
 }
 
-.ver-disputas-table th, .ver-disputas-table td {
+.ver-declaraciones-table th, .ver-declaraciones-table td {
     padding: 15px 20px;
     text-align: left;
     border-bottom: 1px solid var(--cadet-gray);
 }
 
-/* Encabezados de tabla */
-.ver-disputas-table th {
+.ver-declaraciones-table th {
     background-color: var(--timberwolf);
     color: var(--payne-gray);
     font-weight: bold;
 }
-
-.ver-disputas-table th svg {
-    margin-right: 8px;
+/*cambiar el color fijo del fondo de la fila
+.ver-declaraciones-table tr:nth-child(even) {
+    background-color: var(--white);
 }
 
-/* Filas 
-.ver-disputas-table tr:nth-child(even) {
-    background-color: var(--lavander-blush);
-}
-*/ 
-
-/*.ver-disputas-table tr:hover {
-    background-color: var(--caledon);
+.ver-declaraciones-table tr:hover {
+    background-color:  var(--caledon);
     cursor: default;
-}*/
+}
 
-.view-button {
+*/
+
+/* Contenedor del área de declaración con borde degradado */
+.declaracion-container {
+    background: linear-gradient(135deg, var(--payne-gray) 25%, var(--caledon) 75%);
+    padding: 5px;
+    border-radius: 10px;
+    margin-top: 10px;
+    transition: none; 
+}
+
+/* Área de declaración (textarea) con fondo blanco */
+textarea {
+    width: 100%;
+    background-color: var(--white);
+    color: var(--payne-gray);
+    border: 2px solid var(--cadet-gray);
+    border-radius: 5px;
+    padding: 10px;
+    resize: vertical;
+    font-size: 14px;
+    box-sizing: border-box;  /* Asegura que el padding no afecte el tamaño total */
+}
+
+/* Botón de envío */
+.send-button {
     background: var(--payne-gray);
     color: var(--white);
     border: none;
-    padding: 8px 12px;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-.view-button svg {
-    margin-right: 5px;
+.send-button:hover {
+    background-color: var(--payne-gray);
 }

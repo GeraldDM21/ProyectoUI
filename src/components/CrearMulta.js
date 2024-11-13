@@ -4,6 +4,9 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import '../Styles/CrearMulta.css';
+import { set } from '@cloudinary/url-gen/actions/variable';
+import { cat } from '@cloudinary/url-gen/qualifiers/focusOn';
+import HeaderOficial from './HeaderOficial';
 
 function CrearMulta() {
     const [placasId, setIdPlaca] = useState('');
@@ -70,9 +73,11 @@ function CrearMulta() {
             latitud: parseFloat(latitud),
             fecha,
             pagada: false,
-            total: selectedInfracciones.reduce((acc, id) => {
-                const infra = infraccion.find(item => item.id === id);
-                return acc + (infra ? infra.costo : 0);
+            resuelta: false,
+            fotoSinpe: "string",
+            total: selectedInfracciones.reduce((accumulator, id) => {
+                const infra = infraccion.find(item => item.id == id);
+                return accumulator + (infra ? infra.costo : 0);
             }, 0),
             idOficial: userId,
             infraccionMultas: selectedInfracciones.map(id => ({ catalogoInfraccionesId: id })),
@@ -119,6 +124,8 @@ function CrearMulta() {
 
     return (
         <div className="crear-multa-background">
+            <HeaderOficial />
+            <div className="shape-background"></div>
             <div className="crear-multa-container">
                 <h2>Crear Multa</h2>
                 <form onSubmit={handleSubmit}>

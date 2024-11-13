@@ -105,9 +105,11 @@
     font-weight: bold;
 }
 
+/*
 .roles-table tr:nth-child(even) {
     background-color: var(--lavender-blush);
 }
+*/
 
 /* Botón de eliminar en la tabla */
 .delete-button {
@@ -116,7 +118,7 @@
     padding: 5px 10px;
     border: none;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;

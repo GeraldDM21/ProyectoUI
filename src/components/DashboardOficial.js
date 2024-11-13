@@ -19,6 +19,9 @@ function DashboardOficial() {
                 <button onClick={() => navigate('/crear-multa')} className="sidebar-button">
                     <i className="fas fa-file-alt"></i> Crear Multa
                 </button>
+                <button onClick={() => navigate('/Ver-Declaraciones')} className="sidebar-button">
+                    <i className="fas fa-file-alt"></i> Ver Declaraciones
+                </button>
                 <button onClick={() => navigate('/perfil')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
                 </button>

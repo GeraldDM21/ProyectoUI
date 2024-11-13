@@ -16,6 +16,7 @@
     padding: 20px;
     box-sizing: border-box;
     position: relative;
+    margin-top: 35px;
 }
 
 .crear-usuario-container {
@@ -115,6 +116,8 @@
     background-color: var(--timberwolf);
 }
 
+/*
 .usuarios-table tr:nth-child(even) {
     background-color: var(--lavender-blush);
 }
+*/

@@ -26,6 +26,9 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { auto } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import VerDeclaraciones from './components/VerDeclaraciones';
 
 function App() {
     return (
@@ -43,6 +46,8 @@ function App() {
                 <Route path="/usuario" element={<ProtectedRoute role="UsuarioFinal"><DashboardUsuarioFinal /></ProtectedRoute>} />
                 <Route path="/oficial" element={<ProtectedRoute role="Oficial"><DashboardOficial /></ProtectedRoute>} />
                 <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
+                <Route path="/dashboard-juez" element={<DashboardJuez />} />
+
 
                 {/* Funcionalidades específicas para cada rol */}
                 <Route path="/catalogo-infracciones" element={<ProtectedRoute role="Administrativo"><CatalogoInfracciones /></ProtectedRoute>} />
@@ -54,6 +59,7 @@ function App() {
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />
                 <Route path="/mis-multas-creadas" element={<ProtectedRoute role="Oficial"><MisMultasCreadas /></ProtectedRoute>} /> {/* Nueva Ruta */}
+                <Route path="/Ver-Declaraciones" element={<ProtectedRoute role="Oficial"><VerDeclaraciones /></ProtectedRoute>} />
 
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
