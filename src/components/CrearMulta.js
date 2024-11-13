@@ -1,33 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard } from 'react-icons/fa';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { FaUser, FaCalendarAlt, FaMapMarkerAlt, FaIdCard, FaSearchLocation } from 'react-icons/fa';
 import '../Styles/CrearMulta.css';
-
-const markerIcon = new L.Icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-    shadowSize: [41, 41],
-});
-
-function LocationMarker({ setLatitud, setLongitud }) {
-    const [position, setPosition] = useState(null);
-
-    useMapEvents({
-        click(e) {
-            setPosition(e.latlng);
-            setLatitud(e.latlng.lat);
-            setLongitud(e.latlng.lng);
-        },
-    });
-
-    return position === null ? null : (
-        <Marker position={position} icon={markerIcon}></Marker>
-    );
-}
 
 function CrearMulta() {
     const [placasId, setIdPlaca] = useState('');
@@ -38,59 +14,54 @@ function CrearMulta() {
     const [latitud, setLatitud] = useState('');
     const [fecha, setFecha] = useState('');
     const [infraccion, setInfraccion] = useState([]);
-    const [message, setMessage] = useState('');
     const [selectedInfracciones, setSelectedInfracciones] = useState([]);
-    const [searchLocation, setSearchLocation] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [locationSuggestions, setLocationSuggestions] = useState([]);
+    const [selectedPosition, setSelectedPosition] = useState([9.7489, -83.7534]); // Coordenadas iniciales de Costa Rica
+
     const userId = localStorage.getItem('userId');
 
+    const markerIcon = new L.Icon({
+        iconUrl: require('leaflet/dist/images/marker-icon.png'),
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+    });
+
+    const fetchInfractions = async () => {
+        try {
+            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
+            const data = await response.json();
+            setInfraccion(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
-        const fetchInfractions = async () => {
-            try {
-                const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
-                if (response.ok) {
-                    const data = await response.json();
-                    setInfraccion(data);
-                } else {
-                    throw new Error('No se pudo cargar la información de las infracciones.');
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
         fetchInfractions();
     }, []);
 
-    const fetchLocationSuggestions = async (query) => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
-            const data = await response.json();
-            setLocationSuggestions(data);
-        } catch (error) {
-            console.error('Error al obtener sugerencias de ubicación:', error);
-        }
-    };
-
-    const handleSearchLocationChange = (e) => {
-        const query = e.target.value;
-        setSearchLocation(query);
-        if (query.length > 2) {
-            fetchLocationSuggestions(query);
+    // Buscar la ubicación actual del usuario y centrar el mapa en ella
+    const searchLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setLatitud(latitude);
+                    setLongitud(longitude);
+                    setSelectedPosition([latitude, longitude]);
+                },
+                (error) => {
+                    console.error('Error al obtener la ubicación:', error);
+                }
+            );
         } else {
-            setLocationSuggestions([]);
+            console.error('La geolocalización no es compatible con este navegador.');
         }
-    };
-
-    const handleSuggestionClick = (lat, lon) => {
-        setLatitud(lat);
-        setLongitud(lon);
-        setLocationSuggestions([]);
-        setSearchLocation('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const multaData = {
             nombreInfractor,
             apellidoInfractor,
@@ -99,7 +70,6 @@ function CrearMulta() {
             latitud: parseFloat(latitud),
             fecha,
             pagada: false,
-            fotoSinpe: "string",
             total: selectedInfracciones.reduce((acc, id) => {
                 const infra = infraccion.find(item => item.id === id);
                 return acc + (infra ? infra.costo : 0);
@@ -112,10 +82,11 @@ function CrearMulta() {
         try {
             const response = await fetch('https://localhost:7201/api/Multas', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(multaData)
             });
-
             if (response.ok) {
                 alert('Multa creada exitosamente');
                 setNombreInfractor('');
@@ -128,117 +99,77 @@ function CrearMulta() {
                 setSelectedInfracciones([]);
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error al crear multa:', error);
         }
     };
+
+    // Componente para manejar eventos en el mapa (clic para seleccionar ubicación)
+    function LocationMarker() {
+        useMapEvents({
+            click(e) {
+                setLatitud(e.latlng.lat);
+                setLongitud(e.latlng.lng);
+                setSelectedPosition([e.latlng.lat, e.latlng.lng]);
+            },
+        });
+        return selectedPosition ? (
+            <Marker position={selectedPosition} icon={markerIcon}></Marker>
+        ) : null;
+    }
 
     return (
         <div className="crear-multa-background">
             <div className="crear-multa-container">
                 <h2>Crear Multa</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group search-location-group">
-                        <FaSearchLocation className="icon" />
+                    <div className="form-group-login input-icon">
+                        <FaMapMarkerAlt className="icon" />
                         <input
                             type="text"
                             placeholder="Buscar ubicación por nombre"
-                            value={searchLocation}
-                            onChange={handleSearchLocationChange}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        {locationSuggestions.length > 0 && (
-                            <ul className="suggestions-list">
-                                {locationSuggestions.map((suggestion, index) => (
-                                    <li
-                                        key={index}
-                                        onClick={() => handleSuggestionClick(suggestion.lat, suggestion.lon)}
-                                    >
-                                        {suggestion.display_name}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        <button type="button" onClick={searchLocation} className="search-button">Buscar</button>
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group-login input-icon">
                         <FaIdCard className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Número de Placa"
-                            value={placasId}
-                            onChange={(e) => setIdPlaca(e.target.value)}
-                            required
-                        />
+                        <input type="text" placeholder="Número de Placa" value={placasId} onChange={(e) => setIdPlaca(e.target.value)} required />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login input-icon">
                         <FaUser className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Cédula del Infractor"
-                            value={cedulaInfractor}
-                            onChange={(e) => setCedulaInfractor(e.target.value)}
-                            required
-                        />
+                        <input type="text" placeholder="Cédula del Infractor" value={cedulaInfractor} onChange={(e) => setCedulaInfractor(e.target.value)} required />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login input-icon">
                         <FaUser className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Nombre del Infractor"
-                            value={nombreInfractor}
-                            onChange={(e) => setNombreInfractor(e.target.value)}
-                            required
-                        />
+                        <input type="text" placeholder="Nombre del Infractor" value={nombreInfractor} onChange={(e) => setNombreInfractor(e.target.value)} required />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login input-icon">
                         <FaUser className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Apellido del Infractor"
-                            value={apellidoInfractor}
-                            onChange={(e) => setApellidoInfractor(e.target.value)}
-                            required
-                        />
+                        <input type="text" placeholder="Apellido del Infractor" value={apellidoInfractor} onChange={(e) => setApellidoInfractor(e.target.value)} required />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group-login input-icon">
                         <FaCalendarAlt className="icon" />
-                        <input
-                            type="date"
-                            placeholder="Fecha de la Infracción"
-                            value={fecha}
-                            onChange={(e) => setFecha(e.target.value)}
-                            required
-                        />
+                        <input type="date" placeholder="Fecha de la Infracción" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
                     </div>
 
-                    <div className="form-group">
-                        <label>Selecciona la Ubicación:</label>
-                        <MapContainer center={[10.0, -84.0]} zoom={13} className="leaflet-container">
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap'
-                            />
-                            <LocationMarker setLatitud={setLatitud} setLongitud={setLongitud} />
-                        </MapContainer>
-                    </div>
+                    <label>Selecciona la Ubicación:</label>
+                    <MapContainer center={selectedPosition} zoom={13} className="leaflet-container">
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <LocationMarker />
+                    </MapContainer>
 
-                    <div className="form-group">
+                    <div className="form-group-login">
                         <label>Tipo de Infracción:</label>
-                        <select
-                            multiple
-                            value={selectedInfracciones}
-                            onChange={(e) => {
-                                const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
-                                setSelectedInfracciones(selectedValues);
-                            }}
-                        >
+                        <select multiple value={selectedInfracciones} onChange={(e) => setSelectedInfracciones([...e.target.selectedOptions].map(opt => opt.value))}>
                             {infraccion.map((inf) => (
-                                <option key={inf.id} value={inf.id}>
-                                    {inf.nombre}
-                                </option>
+                                <option key={inf.id} value={inf.id}>{inf.nombre}</option>
                             ))}
                         </select>
                     </div>
-                    <button type="submit" className="btn-submit">Registrar Multa</button>
+
+                    <button type="submit" className="btn-login">Registrar Multa</button>
                 </form>
             </div>
         </div>

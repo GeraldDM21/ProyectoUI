@@ -19,8 +19,8 @@
 
 .crear-multa-container {
     background-color: var(--white);
-    padding: 20px;
-    max-width: 500px;
+    padding: 20px 30px;
+    max-width: 400px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
@@ -34,13 +34,12 @@
 }
 
 /* Estilo para los campos de entrada */
-.form-group {
+.form-group-login {
     position: relative;
     margin-bottom: 15px;
-    text-align: left;
 }
 
-.icon {
+.input-icon .icon {
     position: absolute;
     top: 50%;
     left: 10px;
@@ -52,7 +51,7 @@ input[type="text"],
 input[type="date"],
 select {
     width: 100%;
-    padding: 10px 10px 10px 30px;
+    padding: 10px 10px 10px 35px;
     border: 1px solid var(--cadet-gray);
     border-radius: 5px;
     font-size: 1em;
@@ -68,11 +67,24 @@ select:focus {
     border-color: var(--caledon);
 }
 
-/* Estilo para el grupo de búsqueda de ubicación */
-.search-location-group {
-    position: relative;
+/* Botón de búsqueda */
+.search-button {
+    padding: 8px 15px;
+    background-color: var(--caledon);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-left: 5px;
+    transition: background-color 0.3s;
 }
 
+.search-button:hover {
+    background-color: var(--payne-gray);
+}
+
+/* Lista de sugerencias */
 .suggestions-list {
     position: absolute;
     top: 100%;
@@ -98,34 +110,18 @@ select:focus {
     background-color: var(--lavender-blush);
 }
 
-/* Botón de búsqueda */
-.search-location-group button {
-    padding: 8px 15px;
-    background-color: var(--caledon);
-    color: var(--white);
-    border: none;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: background-color 0.3s;
-}
-
-.search-location-group button:hover {
-    background-color: var(--payne-gray);
-}
-
-/* Estilo para el mapa */
+/* Mapa de selección de ubicación */
 .leaflet-container {
-    height: 300px;
+    height: 250px;
     width: 100%;
     margin-top: 15px;
     border-radius: 8px;
     border: 1px solid var(--cadet-gray);
+    margin-bottom: 15px;
 }
 
 /* Botón de enviar */
-.btn-submit {
+.btn-login {
     width: 100%;
     padding: 10px;
     background-color: var(--caledon);
@@ -138,26 +134,21 @@ select:focus {
     transition: background-color 0.3s;
 }
 
-.btn-submit:hover {
+.btn-login:hover {
     background-color: var(--payne-gray);
 }
 
-/* Etiqueta de campo */
-.form-group label {
+/* Etiquetas de campo */
+.form-group-login label {
     display: block;
     font-weight: bold;
     color: var(--payne-gray);
     margin-bottom: 5px;
 }
 
-/* Mensaje de estado */
-.message {
-    margin-top: 10px;
-    font-weight: bold;
-    color: var(--caledon);
-}
-
+/* Mensajes de error */
 .error-message {
     color: var(--error-red);
     font-weight: bold;
+    margin-top: 10px;
 }
