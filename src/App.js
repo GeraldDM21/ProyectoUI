@@ -27,9 +27,10 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { auto } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
+import VerDeclaraciones from './components/VerDeclaraciones';
+import Pago from './components/Pago';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import VerDeclaraciones from './components/VerDeclaraciones';
 
 function App() {
     return (
@@ -67,6 +68,12 @@ function App() {
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
                 <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><CreacionDisputa /></ProtectedRoute>} />
+                <Route path="/pago" element={<ProtectedRoute role="UsuarioFinal"><Pago /></ProtectedRoute>} />
+               
+             
+
+
+
                 
                 {/* Funcionalidades compartidas entre usuario final y juez */}
                 <Route path="/ver-disputas" element={<ProtectedRoute role={["UsuarioFinal"]}><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
