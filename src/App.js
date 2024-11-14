@@ -50,7 +50,6 @@ function App() {
                 <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
                 <Route path="/dashboard-juez" element={<DashboardJuez />} />
 
-
                 {/* Funcionalidades específicas para cada rol */}
                 <Route path="/catalogo-infracciones" element={<ProtectedRoute role="Administrativo"><CatalogoInfracciones /></ProtectedRoute>} />
                 <Route path="/catalogo-infracciones-oficial" element={<ProtectedRoute role="Oficial"><CatalogoInfraccionesOficial /></ProtectedRoute>} />
@@ -64,17 +63,11 @@ function App() {
                 <Route path="/ver-multa-oficial" element={<ProtectedRoute role="Oficial"><VerMultaOficial /></ProtectedRoute>} />
                 <Route path="/Ver-Declaraciones" element={<ProtectedRoute role="Oficial"><VerDeclaraciones /></ProtectedRoute>} />
 
-
                 {/* Funcionalidades para usuario final */}
                 <Route path="/ver-multas" element={<ProtectedRoute role="UsuarioFinal"><VerMultas /></ProtectedRoute>} />
                 <Route path="/iniciar-disputa" element={<ProtectedRoute role="UsuarioFinal"><CreacionDisputa /></ProtectedRoute>} />
                 <Route path="/pago" element={<ProtectedRoute role="UsuarioFinal"><Pago /></ProtectedRoute>} />
                
-             
-
-
-
-                
                 {/* Funcionalidades compartidas entre usuario final y juez */}
                 <Route path="/ver-disputas" element={<ProtectedRoute role={["UsuarioFinal"]}><VerDisputas /></ProtectedRoute>} /> {/* Ver disputas */}
                 
