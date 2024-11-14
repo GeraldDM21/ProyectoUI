@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaEdit, FaAlignLeft, FaInfoCircle } from 'react-icons/fa';
 import '../Styles/CreacionDisputa.css';
+import HeaderUsuario from './HeaderUsuario';
 
 function CreacionDisputa() {
     const location = useLocation();
@@ -76,6 +77,7 @@ function CreacionDisputa() {
 
     return (
         <div className="crear-disputa-page">
+            <HeaderUsuario />
             <div className="crear-disputa-container">
                 <h2><FaEdit /> Crear Disputa</h2>
                 <form onSubmit={handleSubmit}>

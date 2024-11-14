@@ -4,7 +4,6 @@ import LogoutButton from './LogoutButton'; // Componente de logout existente
 import UploadWidget from './UploadWidget'; // Import the Cloudinary UploadWidget
 import Swal from 'sweetalert2';
 import '../Styles/Perfil.css';
-import HeaderUsuario from './HeaderUsuario'; // Importamos HeaderUsuario
 
 function Perfil() {
     const [userData, setUserData] = useState({
@@ -68,99 +67,6 @@ function Perfil() {
         }));
     };
 
-    const handleAdministrarPlacas = () => {
-        Swal.fire({
-            title: 'Administrar Placas',
-            html: `
-                <div id="placas-container">
-                    <div class="swal2-content-placa">
-                        <input type="text" id="new-placa-input" class="swal2-input-placa" placeholder="Nueva Placa" />
-                        <button id="add-placa-button" class="swal2-button">Agregar</button>
-                    </div>
-                    <table class="swal2-table-placa">
-                        <thead>
-                            <tr>
-                                <th>Placa</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${userData.placas.map((placa, index) => `
-                                <tr class="placa-item" data-index="${index}">
-                                    <td>${placa.id}</td>
-                                    <td><button class="swal2-button remove-placa-button" data-index="${index}">Eliminar</button></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `,
-            showCancelButton: true,
-            cancelButtonText: 'Cancelar',
-            confirmButtonText: 'Guardar Cambios',
-            customClass: {
-                confirmButton: 'swal2-guardar-button',
-            },
-            didOpen: () => {
-                const addPlacaButton = document.getElementById('add-placa-button');
-                const newPlacaInput = document.getElementById('new-placa-input');
-                const container = document.querySelector('#placas-container tbody');
-
-                addPlacaButton.addEventListener('click', () => {
-                    const newPlaca = newPlacaInput.value;
-                    if (newPlaca) {
-                        const newPlacaElement = document.createElement('tr');
-                        newPlacaElement.className = 'placa-item';
-                        newPlacaElement.innerHTML = `
-                            <td>${newPlaca}</td>
-                            <td><button class="swal2-button remove-placa-button">Eliminar</button></td>
-                        `;
-                        container.appendChild(newPlacaElement);
-                        newPlacaInput.value = '';
-
-                        newPlacaElement.querySelector('.remove-placa-button').addEventListener('click', (e) => {
-                            const index = Array.from(container.children).indexOf(newPlacaElement);
-                            setUserData(prevState => ({
-                                ...prevState,
-                                placas: prevState.placas.filter((_, i) => i !== index)
-                            }));
-                            newPlacaElement.remove();
-                        });
-
-                        setUserData(prevState => ({
-                            ...prevState,
-                            placas: [...prevState.placas, { id: newPlaca }]
-                        }));
-                    }
-                });
-
-                document.querySelectorAll('.remove-placa-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const index = e.target.getAttribute('data-index');
-                        setUserData(prevState => ({
-                            ...prevState,
-                            placas: prevState.placas.filter((_, i) => i !== parseInt(index))
-                        }));
-                        e.target.parentElement.parentElement.remove();
-                    });
-                });
-            },
-            preConfirm: () => {
-                const updatedPlacas = Array.from(document.querySelectorAll('.placa-item')).map(row => ({
-                    id: row.querySelector('td').innerText
-                }));
-                return updatedPlacas;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                setUserData(prevState => ({
-                    ...prevState,
-                    placas: result.value
-                }));
-            }
-        });
-    };
-
     const handleChangePassword = () => {
         Swal.fire({
             title: 'Cambiar Contraseña',
@@ -207,7 +113,6 @@ function Perfil() {
 
     return (
         <div className="dashboard-layout-perfil">
-            <HeaderUsuario />
             <aside className="sidebar-perfil">
                 <h2>Mi Perfil</h2>
                 {/* Foto de perfil e información personal en la barra lateral */}
@@ -262,19 +167,6 @@ function Perfil() {
                                 onChange={handleChange}
                                 required
                             />
-                        </div>
-                        <div className="form-group-perfil">
-                            <label>Placas Registradas</label>
-                            <textarea
-                                className="placas-textarea"
-                                name="placas"
-                                value={userData.placas.map(placa => placa.id).join('\n')}
-                                readOnly
-                                rows={userData.placas.length}
-                            />
-                        </div>
-                        <div className="form-group-perfil">
-                            <button type="button" className="btn-secondary-perfil" onClick={handleAdministrarPlacas}>Administrar Placas</button>
                         </div>
                         <div className="form-group-perfil">
                             <button type="submit" className="btn-primary-perfil">Guardar Cambios</button>

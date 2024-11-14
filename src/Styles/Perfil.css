@@ -12,7 +12,7 @@
 .dashboard-layout-perfil {
     display: flex;
     min-height: 100vh;
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--payne-gray) 30%, var(--cadet-gray) 100%);
 }
 
 /* Barra Lateral */
@@ -28,6 +28,7 @@
 
 .sidebar-perfil h2 {
     color: var(--primary-color);
+    margin-top: 60px;
     margin-bottom: 20px;
     font-size: 1.5em;
     font-weight: bold;
@@ -88,6 +89,7 @@
 
 /* Contenido Principal */
 .main-content-perfil {
+    margin-top: 60px;
     flex: 1;
     padding: 40px;
     display: flex;
@@ -150,7 +152,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 15px;
+    margin-top: 15px;
 }
 
 .perfil-form label {
@@ -170,6 +172,12 @@
     box-sizing: border-box;
 }
 
+.placas-textarea {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+}
+
 .perfil-form .form-control-perfil:focus {
     outline: none;
     border-color: var(--secondary-color);
@@ -178,7 +186,7 @@
 
 /* Botón Guardar Cambios */
 .btn-primary-perfil {
-    background-color: var(--input-border);
+    background-color: var(--primary-color);
     color: var(--white);
     font-size: 1em;
     font-weight: bold;
@@ -187,12 +195,11 @@
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 100%;
-    margin-top: 10px;
+    width: 40%;
 }
 
 .btn-primary-perfil:hover {
-    background-color: var(--primary-color);
+    background-color: var(--input-border);
 }
 
 /* Botón Cambiar Contraseña */
@@ -211,10 +218,11 @@
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: 40%;
 }
 
 .btn-secondary-perfil:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--input-border);
 }
 
 /* Mensaje de estado */
@@ -234,4 +242,73 @@
     .content-header h2 {
         font-size: 1.5em;
     }
+}
+
+#new-placa-input {
+    width: 70%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.swal2-table-placa {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.swal2-table-placa th, .swal2-table-placa td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--cadet-gray);
+}
+
+.swal2-table-placa th {
+    background-color: var(--input-border);
+    color: var(--white);
+    font-weight: bold;
+}
+
+#add-placa-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 12px 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 30%;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.remove-placa-button {
+    background-color: var(--error-color);
+    color: var(--white);
+    padding: 10px 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 40%;
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.swal2-guardar-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.swal2-content-placa {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }

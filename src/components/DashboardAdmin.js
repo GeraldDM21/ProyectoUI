@@ -20,7 +20,7 @@ function DashboardAdmin() {
                 <button onClick={() => navigate('/roles')} className="sidebar-button">
                     <i className="fas fa-users-cog"></i> Gestionar Roles
                 </button>
-                <button onClick={() => navigate('/perfil')} className="sidebar-button">
+                <button onClick={() => navigate('/perfil-trabajadores')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
                 </button>
                 <LogoutButton />

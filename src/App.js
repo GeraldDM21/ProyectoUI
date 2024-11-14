@@ -16,6 +16,7 @@ import CatalogoInfraccionesOficial from './components/CatalogoInfraccionesOficia
 import GestionUsuariosAdmin from './components/GestionUsuariosAdmin';
 import GestionRoles from './components/GestionRoles';
 import Perfil from './components/Perfil';
+import PerfilTrabajadores from './components/PerfilTrabajadores';
 import VerMultas from './components/VerMultas';
 import VerMultaOficial from './components/VerMultaOficial';
 import VerDisputas from './components/VerDisputas'; 
@@ -54,7 +55,8 @@ function App() {
                 <Route path="/catalogo-infracciones-oficial" element={<ProtectedRoute role="Oficial"><CatalogoInfraccionesOficial /></ProtectedRoute>} />
                 <Route path="/crear-usuario" element={<ProtectedRoute role="Administrativo"><GestionUsuariosAdmin /></ProtectedRoute>} />
                 <Route path="/roles" element={<ProtectedRoute role="Administrativo"><GestionRoles /></ProtectedRoute>} />
-                <Route path="/perfil" element={<ProtectedRoute role={["Juez", "UsuarioFinal", "Oficial", "Administrativo"]}><Perfil /></ProtectedRoute>} />
+                <Route path="/perfil" element={<ProtectedRoute role="UsuarioFinal"><Perfil /></ProtectedRoute>} />
+                <Route path="/perfil-trabajadores" element={<ProtectedRoute role={["Juez", "Oficial", "Administrativo"]}><PerfilTrabajadores /></ProtectedRoute>} />
                 
                 {/* Funcionalidades para oficial */}
                 <Route path="/crear-multa" element={<ProtectedRoute role="Oficial"><CrearMulta /></ProtectedRoute>} />

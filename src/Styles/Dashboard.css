@@ -18,7 +18,7 @@
 /* Menú lateral */
 .sidebar {
     width: 250px;
-    background-color: var(--lavander-blush);
+    background-color: var(--white);
     color: var(--payne-gray);
     padding: 20px;
     display: flex;

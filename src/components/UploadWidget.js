@@ -31,7 +31,7 @@ const UploadWidget = ({ onUpload }) => {
     }, [onUpload]);
 
     return (
-        <button type="button" onClick={() => widgetRef.current && widgetRef.current.open()}>
+        <button type="button" className="resolver-button" onClick={() => widgetRef.current && widgetRef.current.open()}>
             Subir Foto
         </button>
     );
