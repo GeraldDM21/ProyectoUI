@@ -79,6 +79,7 @@ function VerMultas() {
 
     // Función para manejar el pago de una multa
     const handlePago = (id) => {
+        navigate('/pago', { state: { multaId: id } });
         alert(`Pagar multa con ID: ${id}`);
         // Lógica real para procesar el pago
     };
