@@ -123,6 +123,7 @@ function Login() {
                     <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }

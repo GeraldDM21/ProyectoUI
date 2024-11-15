@@ -210,6 +210,7 @@ function VerDeclaraciones() {
                     </tbody>
                 </table>
             </div>
+            <ToastContainer />
         </div>
     );
 }

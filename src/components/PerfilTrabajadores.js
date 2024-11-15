@@ -186,6 +186,7 @@ function Perfil() {
                     {mensaje && <p className="text-info-perfil">{mensaje}</p>}
                 </div>
             </main>
+            <ToastContainer />
         </div>
     );
 }
