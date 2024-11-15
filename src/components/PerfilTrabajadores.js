@@ -52,7 +52,7 @@ function Perfil() {
             if (response.ok) {
                 console.log(userData);
               //  alert('Perfil actualizado con éxito.');
-                toast.succes('Perfil actualizado con éxito.');
+                toast.success('Perfil actualizado con éxito.');
 
                 window.location.reload();
             } else {
@@ -186,6 +186,7 @@ function Perfil() {
                     {mensaje && <p className="text-info-perfil">{mensaje}</p>}
                 </div>
             </main>
+            <ToastContainer />
         </div>
     );
 }

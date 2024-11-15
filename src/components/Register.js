@@ -193,6 +193,7 @@ function Register() {
                     <button type="submit" className="btn-login">Registrarse</button>
                 </form>
             </AuthFormContainer>
+            <ToastContainer />
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthFormContainer from './AuthFormContainer'; // Usando el mismo contenedor reutilizable
 import Header from './Header'; // Importa el componente Header
 import './Header.css'; // Importa el CSS del Header
@@ -8,6 +9,7 @@ import './Header.css'; // Importa el CSS del Header
 function ForgotPassword() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleForgotPassword = async (e) => {
         e.preventDefault();
@@ -17,7 +19,7 @@ function ForgotPassword() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify(email),
             });
 
             if (!response.ok) {
@@ -26,6 +28,7 @@ function ForgotPassword() {
 
             //setMessage('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
             toast.info('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
+            navigate('/login');
         } catch (error) {
             setMessage(error.message);
         }
@@ -54,6 +57,7 @@ function ForgotPassword() {
                     </form>
                 </AuthFormContainer>
             </div>
+            <ToastContainer />
         </div>
     );
 }
