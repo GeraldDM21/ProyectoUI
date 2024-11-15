@@ -55,7 +55,7 @@ function GestionRoles() {
                 setRoles([...roles, createdRole]);
                 setNuevoRol('');
               //  alert("Rol agregado exitosamente.");
-                toast.succes('Rol agregado exitosamente.');
+                toast.success('Rol agregado exitosamente.');
             } else {
                // setError("No se pudo agregar el rol.");
                 toast.console.warn('No se pudo agregar el rol.');
@@ -79,7 +79,7 @@ function GestionRoles() {
             if (response.ok) {
                 setRoles(roles.filter(role => role.id !== id));
               //  setSuccess("Rol eliminado exitosamente.");
-                toast.succes('Rol eliminado exitosamente.');
+                toast.success('Rol eliminado exitosamente.');
             } else {
               //  setError("No se pudo eliminar el rol.");
                 toast.error('No se pudo eliminar el rol.');
