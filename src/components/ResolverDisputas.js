@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaCheckCircle, FaGavel } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -29,7 +31,8 @@ function ResolverDisputas() {
             setDisputas(data);
         } catch (err) {
             console.error("Error al cargar disputas:", err);
-            setError('No se pudieron cargar las disputas.');
+           // setError('No se pudieron cargar las disputas.');
+            toast.error('No se pudieron cargar las disputas.');
         }
     };
 
@@ -113,7 +116,8 @@ function ResolverDisputas() {
             });
 
             if (response.ok) {
-                alert("¡Disputa actualizada con éxito!");
+               // alert("¡Disputa actualizada con éxito!");
+                toast.success('¡Disputa actualizada con éxito!');
                 setDisputas(disputas.map(d => 
                     d.id === id ? { ...d, estado, resolucion } : d
                 ));
@@ -140,11 +144,13 @@ function ResolverDisputas() {
 
                 window.location.reload();
             } else {
-                setError('No se pudo actualizar el estado de la disputa.');
+             //   setError('No se pudo actualizar el estado de la disputa.');
+                toast.error('No se pudo actualizar el estado de la disputa.');
             }
         } catch (error) {
             console.error("Error al actualizar disputa:", error);
-            setError('Error al actualizar el estado de la disputa.');
+           // setError('Error al actualizar el estado de la disputa.');
+            toast.error('Error al actualizar el estado de la disputa.');
         }
     };
 

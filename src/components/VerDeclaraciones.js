@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import './VerDeclaraciones.css';
@@ -25,7 +27,8 @@ function VerDeclaraciones() {
                 setDisputas(data);
             } catch (err) {
                 console.error("Error al cargar disputas:", err);
-                setError('No se pudieron cargar las disputas.');
+              //  setError('No se pudieron cargar las disputas.');
+                toast.error('No se pudieron cargar las disputas.');
             }
         };
         fetchDisputas(); 
@@ -51,7 +54,8 @@ function VerDeclaraciones() {
             });
 
             if (response.ok) {
-                alert('Declaración enviada con éxito.');
+               // alert('Declaración enviada con éxito.');
+                toast.succes('');
                 setDisputas(disputas.map(d => d.id === idDisputa ? updatedDisputa : d));
                 setDeclaraciones((prev) => ({ ...prev, [idDisputa]: '' }));
                 window.location.reload(); // Reload the page
@@ -60,7 +64,8 @@ function VerDeclaraciones() {
             }
         } catch (err) {
             console.error("Error al enviar declaración:", err);
-            setError('No se pudo enviar la declaración.');
+        //    setError('No se pudo enviar la declaración.');
+            toast.error('No se pudo enviar la declaración.');
         }
     };
 

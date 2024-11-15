@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaEdit, FaAlignLeft, FaInfoCircle } from 'react-icons/fa';
@@ -62,16 +64,19 @@ function CreacionDisputa() {
             });
 
             if (response.ok) {
-                alert("Disputa creada exitosamente.");
+              //  alert("Disputa creada exitosamente.");
+                toast.success('Disputa creada exitosamente.');
                 setRazon('');
                 setDescripcion('');
                 navigate('/ver-disputas');
             } else {
-                alert("Error al crear la disputa.");
+              //  alert("Error al crear la disputa.");
+                toast.error('Error al crear la disputa.');
             }
         } catch (error) {
             console.log("Error al conectar con el servidor:", error);
-            alert("Error de conexión. Intente nuevamente más tarde.");
+          //  alert("Error de conexión. Intente nuevamente más tarde.");
+            toast.error('Error de conexión. Intente nuevamente más tarde.');
         }
     };
 

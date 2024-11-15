@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useEffect, useState } from 'react';
 import { FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
@@ -27,7 +29,8 @@ function VerMultas() {
             setMultas(data);
         } catch (error) {
             console.error('Error al cargar multas:', error);
-            setError('No se pudo cargar las multas.');
+        //    setError('No se pudo cargar las multas.');
+            toast.error('No se pudo cargar las multas.');
         }
     };
 

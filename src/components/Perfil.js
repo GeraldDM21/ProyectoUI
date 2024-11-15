@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { FaUser, FaEnvelope, FaPhone, FaCamera, FaLock } from 'react-icons/fa';
 import LogoutButton from './LogoutButton'; // Componente de logout existente
@@ -50,7 +52,8 @@ function Perfil() {
 
             if (response.ok) {
                 console.log(userData);
-                alert('Perfil actualizado con éxito.');
+               // alert('Perfil actualizado con éxito.');
+                toast.success('Perfil actualizado con éxito.');
                 window.location.reload();
             } else {
                 throw new Error('No se pudo actualizar el perfil.');

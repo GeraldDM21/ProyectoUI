@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import '../Styles/VerDisputas.css';
@@ -26,7 +28,8 @@ function VerDisputas() {
             setDisputas(data);
         } catch (err) {
             console.error("Error al cargar disputas:", err);
-            setError('No se pudieron cargar las disputas.');
+         //   setError('No se pudieron cargar las disputas.');
+            toast.error('No se pudieron cargar las disputas.');
         }
     };
 

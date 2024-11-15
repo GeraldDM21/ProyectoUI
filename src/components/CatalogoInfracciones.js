@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react-toastify
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaSave, FaPlus, FaTrash } from 'react-icons/fa';
 import '../Styles/CatalogoInfracciones.css';
@@ -22,8 +24,10 @@ function CatalogoInfracciones() {
             const data = await response.json();
             setInfracciones(data);
         } catch (error) {
-            setError("No se pudo cargar el catálogo. Intente nuevamente más tarde.");
+         //   setError("No se pudo cargar el catálogo. Intente nuevamente más tarde.");
+            toast.error('No se pudo cargar el catálogo. Intente nuevamente más tarde.');
             console.error("Error al cargar infracciones:", error);
+            
         }
     };
 
@@ -39,7 +43,8 @@ function CatalogoInfracciones() {
     const handleSave = async (id) => {
         const parsedMonto = parseFloat(editedMonto);
         if (isNaN(parsedMonto)) {
-            setError("El monto debe ser un número válido.");
+          //  setError("El monto debe ser un número válido.");
+            toast.warn('El monto debe ser un número válido.');
             return;
         }
 
@@ -61,12 +66,15 @@ function CatalogoInfracciones() {
                 )));
                 setEditIndex(null);
                 setEditedMonto('');
-                alert("Monto actualizado correctamente.");
+                //alert("Monto actualizado correctamente.");
+                toast.success('Monto actualizado correctamente.');
             } else {
-                alert("No se pudo actualizar el monto.");
+               // alert("No se pudo actualizar el monto.");
+                toast.error('No se pudo actualizar el monto.');
             }
         } catch (error) {
-            alert("Error al actualizar el monto.");
+          //  alert("Error al actualizar el monto.");
+            toast.error('Error al actualizar el monto.');
             console.log("Error al guardar el monto:", error);
         }
     };
@@ -78,13 +86,15 @@ function CatalogoInfracciones() {
         setSuccess('');
 
         if (!newInfraccion.nombre || !newInfraccion.costo) {
-            setError("Ambos campos son obligatorios.");
+          //  setError("Ambos campos son obligatorios.");
+            toast.warn('Ambos campos son obligatorios.');
             return;
         }
 
         const parsedMonto = parseFloat(newInfraccion.costo);
         if (isNaN(parsedMonto)) {
-            setError("El monto debe ser un número válido.");
+           // setError("El monto debe ser un número válido.");
+            toast.warn('El monto debe ser un número válido.');
             return;
         }
 
@@ -104,12 +114,15 @@ function CatalogoInfracciones() {
                 const createdInfraccion = await response.json();
                 setInfracciones([...infracciones, createdInfraccion]);
                 setNewInfraccion({ nombre: '', costo: '' });
-                alert("Infracción agregada exitosamente.");
+                //alert("Infracción agregada exitosamente.");
+                toast.success('Infracción agregada exitosamente.');
             } else {
-                setError("No se pudo agregar la infracción.");
+               // setError("No se pudo agregar la infracción.");
+                toast.error('No se pudo agregar la infracción.');
             }
         } catch (error) {
-            setError("Error al agregar la infracción.");
+         //   setError("Error al agregar la infracción.");
+            toast.error('Error al agregar la infracción.');
             console.error("Error al agregar infracción:", error);
         }
     };
@@ -123,12 +136,17 @@ function CatalogoInfracciones() {
 
             if (response.ok) {
                 setInfracciones(infracciones.filter(infraccion => infraccion.id !== id));
-                alert("Infracción eliminada correctamente.");
+               // alert("Infracción eliminada correctamente.");
+                toast.success('Infracción eliminada correctamente.');
             } else {
-                alert("No se pudo eliminar la infracción.");
+              //  alert("No se pudo eliminar la infracción.");
+                toast.error('No se pudo eliminar la infracción.');
+
             }
         } catch (error) {
-            alert("Error al eliminar la infracción.");
+          //  alert("Error al eliminar la infracción.");
+            toast.error('Error al eliminar la infracción.');
+
             console.log("Error al eliminar infracción:", error);
         }
     };

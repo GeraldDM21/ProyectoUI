@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaUserPlus, FaUser, FaIdCard, FaEnvelope, FaLock, FaPhoneAlt, FaBriefcase, FaSearch, FaTrash, FaUserEdit } from 'react-icons/fa';
 import '../Styles/GestionUsuariosAdmin.css';
@@ -36,7 +38,9 @@ function GestionUsuariosAdmin() {
             setRoles(data);
         } catch (error) {
             console.error("Error al cargar los roles:", error);
-            setError("Error al cargar los roles.");
+          //  setError("Error al cargar los roles.");
+            toast.error('Error al cargar los roles.');
+
         }
     };
 
@@ -77,12 +81,14 @@ function GestionUsuariosAdmin() {
             });
 
             if (response.ok) {
-                alert('¡Registro exitoso!');
+              //  alert('¡Registro exitoso!');
+                toast.success('¡Registro exitoso!');
                 fetchUsuarios();
                 window.location.reload();
             }
             else {
-                alert('Error al registrar el usuario.');
+               // alert('Error al registrar el usuario.');
+               toast.error('Error al registrar el usuario.');
             }
         } catch (error) {
             console.log(error);
@@ -113,12 +119,17 @@ function GestionUsuariosAdmin() {
 
                 if (deleteUserResponse.ok) {
                     setUsuarios(usuarios.filter(user => user.id !== id));
-                    alert("Usuario eliminado exitosamente.");
+                    //alert("Usuario eliminado exitosamente.");
+                    toast.success('Usuario eliminado exitosamente.');
                 } else {
-                    alert("No se pudo eliminar el usuario del sistema de autenticación.");
+                    //alert("No se pudo eliminar el usuario del sistema de autenticación.");
+                 toast.warn('No se pudo eliminar el usuario del sistema de autenticación.');
+
                 }
             } else {
-                setMessage("No se pudo eliminar el usuario.");
+               // setMessage("No se pudo eliminar el usuario.");
+                 toast.error('No se pudo eliminar el usuario.');
+
             }
         } catch (error) {
             console.error("Error al eliminar usuario:", error);

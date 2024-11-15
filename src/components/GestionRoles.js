@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import '../Styles/GestionRoles.css';
@@ -22,7 +24,8 @@ function GestionRoles() {
             setRoles(data);
         } catch (error) {
             console.error("Error al cargar los roles:", error);
-            setError("Error al cargar los roles.");
+           // setError("Error al cargar los roles.");
+            toast.error('Error al cargar los roles.');
         }
     };
 
@@ -33,7 +36,8 @@ function GestionRoles() {
         setSuccess('');
 
         if (!nuevoRol.trim()) {
-            setError("El nombre del rol es obligatorio.");
+           // setError("El nombre del rol es obligatorio.");
+            toast.warn('El nombre del rol es obligatorio.');
             return;
         }
 
@@ -50,13 +54,16 @@ function GestionRoles() {
                 const createdRole = await response.json();
                 setRoles([...roles, createdRole]);
                 setNuevoRol('');
-                alert("Rol agregado exitosamente.");
+              //  alert("Rol agregado exitosamente.");
+                toast.succes('Rol agregado exitosamente.');
             } else {
-                setError("No se pudo agregar el rol.");
+               // setError("No se pudo agregar el rol.");
+                toast.console.warn('No se pudo agregar el rol.');
             }
         } catch (error) {
             console.error("Error al agregar el rol:", error);
-            setError("Error al agregar el rol.");
+            //setError("Error al agregar el rol.");
+            toast.error('Error al agregar el rol.');
         }
     };
 
@@ -71,13 +78,17 @@ function GestionRoles() {
 
             if (response.ok) {
                 setRoles(roles.filter(role => role.id !== id));
-                setSuccess("Rol eliminado exitosamente.");
+              //  setSuccess("Rol eliminado exitosamente.");
+                toast.succes('Rol eliminado exitosamente.');
             } else {
-                setError("No se pudo eliminar el rol.");
+              //  setError("No se pudo eliminar el rol.");
+                toast.error('No se pudo eliminar el rol.');
             }
         } catch (error) {
             console.error("Error al eliminar el rol:", error);
-            setError("Error al eliminar el rol.");
+           // setError("Error al eliminar el rol.");
+            toast.error('Error al eliminar el rol.');
+
         }
     };
 
