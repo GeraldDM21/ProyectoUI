@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { FaBook } from 'react-icons/fa';
 import '../Styles/CatalogoInfraccionesOficial.css';
@@ -19,7 +21,8 @@ function CatalogoInfraccionesOficial() {
             setInfracciones(data);
         } catch (error) {
             console.error("Error al cargar el catálogo de infracciones:", error);
-            setError("No se pudo cargar el catálogo. Intente nuevamente más tarde.");
+            //setError("No se pudo cargar el catálogo. Intente nuevamente más tarde.");
+            toast.error('No se pudo cargar el catálogo. Intente nuevamente más tarde.');
         }
     };
 

@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react-toastify
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Importa el Header
@@ -62,14 +64,17 @@ function Register() {
             });
 
             if (response.ok) {
-                showAlert('¡Registro exitoso!', 'success');
+              //  showAlert('¡Registro exitoso!', 'success');
+                toast.succes('¡Registro exitoso!', 'success');
                 navigate('/login');
             } else {
-                showAlert('Error al registrar el usuario.', 'error');
+                //showAlert('Error al registrar el usuario.', 'error');
+                toast.error('Error al registrar el usuario.', 'error');
             }
         } catch (error) {
             console.log(error);
-            showAlert('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
+          //  showAlert('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
+            toast.error('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
         }
 
         // Limpiar los campos después de enviar el formulario

@@ -28,7 +28,7 @@ function Pago() {
     const handlePago = () => {
         // Validación para el pago por SINPE
         if (metodoPago === 'sinpe' && !comprobante) {
-            setError('Por favor, suba el comprobante de transferencia.');
+          //  setError('Por favor, suba el comprobante de transferencia.');
             toast.error('Por favor, suba el comprobante de transferencia.');
             return;
         }
@@ -40,15 +40,16 @@ function Pago() {
         // Simulación de la lógica para procesar el pago
         if (metodoPago === 'paypal') {
             // Aquí iría la lógica real para procesar el pago por PayPal
-            setMensajeExito('Pago procesado exitosamente con PayPal.');
+           // setMensajeExito('Pago procesado exitosamente con PayPal.');
             toast.success('Pago procesado exitosamente con PayPal.');
             generarFactura();
         } else if (metodoPago === 'sinpe') {
             // Aquí iría la lógica real para procesar el pago por SINPE
-            setMensajeExito('Pago enviado exitosamente con SINPE.');
+           // setMensajeExito('Pago enviado exitosamente con SINPE.');
+            toast.success('Pago enviado exitosamente con SINPE.');
             generarFactura();
         } else {
-            setError('Seleccione un método de pago para continuar.');
+            //setError('Seleccione un método de pago para continuar.');
             toast.error('Seleccione un método de pago para continuar.');
         }
     };
@@ -58,7 +59,7 @@ function Pago() {
         // Aquí puedes implementar la generación real de PDF y XML si es necesario
         console.log('Generando factura en PDF y XML...');
         // Simulación de generación de factura
-        alert('Pago exitoso.');
+       // alert('Pago exitoso.');
     };
 
     return (

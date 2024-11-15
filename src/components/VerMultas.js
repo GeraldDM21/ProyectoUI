@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useEffect, useState } from 'react';
 import { FaDollarSign, FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
@@ -31,7 +33,8 @@ function VerMultas() {
             setMultas(data);
         } catch (error) {
             console.error('Error al cargar multas:', error);
-            setError('No se pudo cargar las multas.');
+       //     setError('No se pudo cargar las multas.');
+            toast.error('No se pudo cargar las multas.');
         }
     };
 
@@ -87,7 +90,8 @@ function VerMultas() {
     const handleDisputa = (multa) => {
         const existingDisputa = disputas.find(disputa => disputa.idMulta === multa.id);
         if (existingDisputa) {
-            alert('Ya existe una disputa para esta multa.');
+         //   alert('Ya existe una disputa para esta multa.');
+            toast.warn('Ya existe una disputa para esta multa.');
         } else {
             navigate('/iniciar-disputa', { state: { multa } });
         }

@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -171,7 +173,8 @@ function CrearMulta() {
             });
 
             if (response.ok) {
-                alert('Multa creada exitosamente');
+               // alert('Multa creada exitosamente');
+                toast.success('Multa creada exitosamente');
                 // Resetea los campos
                 setNombreInfractor('');
                 setApellidoInfractor('');

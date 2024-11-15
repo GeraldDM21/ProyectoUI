@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react-toastify
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Importa el componente Header
@@ -22,7 +24,8 @@ function Login() {
             });
 
             if (!response.ok) {
-                alert('Usuario o contraseña incorrectos');
+                //alert('Usuario o contraseña incorrectos');
+                toast.error('Usuario o contraseña incorrectos');
                 return;
             }
 
@@ -52,7 +55,8 @@ function Login() {
             navigate('/juez');
         } else {
             console.error('Rol no reconocido:', role);
-            setError("Rol de usuario no reconocido.");
+           // setError("Rol de usuario no reconocido.");
+            toast.error('Rol de usuario no reconocido.');
         }
     };
 

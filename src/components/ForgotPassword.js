@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useState } from 'react';
 import AuthFormContainer from './AuthFormContainer'; // Usando el mismo contenedor reutilizable
 import Header from './Header'; // Importa el componente Header
@@ -22,7 +24,8 @@ function ForgotPassword() {
                 throw new Error('No se pudo enviar el correo de restablecimiento.');
             }
 
-            setMessage('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
+            //setMessage('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
+            toast.info('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
         } catch (error) {
             setMessage(error.message);
         }
