@@ -55,7 +55,7 @@ function VerDeclaraciones() {
 
             if (response.ok) {
                // alert('Declaración enviada con éxito.');
-                toast.succes('');
+                toast.success('Declaración enviada con éxito.');
                 setDisputas(disputas.map(d => d.id === idDisputa ? updatedDisputa : d));
                 setDeclaraciones((prev) => ({ ...prev, [idDisputa]: '' }));
                 window.location.reload(); // Reload the page
@@ -204,7 +204,7 @@ function VerDeclaraciones() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="7" className="no-data">No hay disputas pendientes por declarar.</td>
                             </tr>
                         )}
                     </tbody>
