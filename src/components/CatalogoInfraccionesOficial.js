@@ -55,6 +55,7 @@ function CatalogoInfraccionesOficial() {
                     </tbody>
                 </table>
             </div>
+            <ToastContainer />
         </div>
     );
 }

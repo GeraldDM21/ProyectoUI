@@ -261,6 +261,7 @@ function ResolverDisputas() {
                     </tbody>
                 </table>
             </div>
+            <ToastContainer />
         </div>
     );
 }

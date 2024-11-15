@@ -54,6 +54,7 @@ function ForgotPassword() {
                     </form>
                 </AuthFormContainer>
             </div>
+            <ToastContainer />
         </div>
     );
 }

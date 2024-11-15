@@ -241,6 +241,7 @@ function CatalogoInfracciones() {
                     </tbody>
                 </table>
             </div>
+            <ToastContainer />
         </div>
     );
 }
