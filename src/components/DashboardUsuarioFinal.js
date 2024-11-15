@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
+import ReporteUsuarioFinal from './ReporteUsuarioFinal';
 import '../Styles/Dashboard.css';
 
 function DashboardUsuarioFinal() {
@@ -13,11 +14,6 @@ function DashboardUsuarioFinal() {
                 <button onClick={() => navigate('/ver-multas')} className="sidebar-button">
                     <i className="fas fa-file-invoice"></i> Administrar Multas
                 </button>
-                {/*
-                <button onClick={() => navigate('/iniciar-disputa')} className="sidebar-button">
-                    <i className="fas fa-exclamation-circle"></i> Crear Disputa
-                </button> 
-                */}
                 <button onClick={() => navigate('/ver-disputas')} className="sidebar-button">
                     <i className="fas fa-clipboard-list"></i> Ver Disputas
                 </button>
@@ -33,6 +29,7 @@ function DashboardUsuarioFinal() {
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de usuario final. Aquí puedes ver tus multas, crear disputas y revisar el estado de tus disputas.</p>
+                    <ReporteUsuarioFinal />
                 </div>
             </main>
         </div>
