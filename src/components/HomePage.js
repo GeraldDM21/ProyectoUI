@@ -52,7 +52,7 @@ function HomePage() {
             <h3 className="mapa-calor-title">Mapa de Calor de Multas</h3>
             </div>
 
-            <div className="mapa-calor-container">
+            <div className="heatmap-section">
                  <MapContainer center={[9.934819, -84.088046]} zoom={5} className="map-container">
                       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                       <HeatMap points={heatmapPoints} />
