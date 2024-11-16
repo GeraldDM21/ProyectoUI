@@ -65,7 +65,7 @@ function Register() {
 
             if (response.ok) {
               //  showAlert('¡Registro exitoso!', 'success');
-                toast.succes('¡Registro exitoso!', 'success');
+                toast.success('¡Registro exitoso!', 'success');
                 navigate('/login');
             } else {
                 //showAlert('Error al registrar el usuario.', 'error');

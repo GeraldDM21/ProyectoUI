@@ -3,11 +3,12 @@ import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react
 import React, { useState } from 'react';
 import './Pago.css';
 import { useLocation } from 'react-router-dom';
-import HeaderUsuario from './HeaderUsuario';  // Importar el HeaderUsuario
+import HeaderUsuario from './HeaderUsuario';  
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 function Pago() {
     const location = useLocation();
-    const { multaId } = location.state.multaId || {};  // Recuperar el id de la multa pasada desde VerMultas.js
+    const { multaId, total } = location.state || {};  // Recuperar el id de la multa pasada desde VerMultas.js
     const [metodoPago, setMetodoPago] = useState('');
     const [comprobante, setComprobante] = useState(null);
     const [error, setError] = useState('');
@@ -28,7 +29,6 @@ function Pago() {
     const handlePago = () => {
         // Validación para el pago por SINPE
         if (metodoPago === 'sinpe' && !comprobante) {
-          //  setError('Por favor, suba el comprobante de transferencia.');
             toast.error('Por favor, suba el comprobante de transferencia.');
             return;
         }
@@ -39,28 +39,22 @@ function Pago() {
 
         // Simulación de la lógica para procesar el pago
         if (metodoPago === 'paypal') {
-            // Aquí iría la lógica real para procesar el pago por PayPal
-           // setMensajeExito('Pago procesado exitosamente con PayPal.');
             toast.success('Pago procesado exitosamente con PayPal.');
             generarFactura();
         } else if (metodoPago === 'sinpe') {
-            // Aquí iría la lógica real para procesar el pago por SINPE
-           // setMensajeExito('Pago enviado exitosamente con SINPE.');
             toast.success('Pago enviado exitosamente con SINPE.');
             generarFactura();
         } else {
-            //setError('Seleccione un método de pago para continuar.');
             toast.error('Seleccione un método de pago para continuar.');
         }
     };
 
-    // Función para simular la generación de factura en PDF y XML
     const generarFactura = () => {
-        // Aquí puedes implementar la generación real de PDF y XML si es necesario
         console.log('Generando factura en PDF y XML...');
-        // Simulación de generación de factura
-       // alert('Pago exitoso.');
     };
+
+    const EXCHANGE_RATE_CRC_TO_USD = 0.00195;
+    const totalInUSD = (total * EXCHANGE_RATE_CRC_TO_USD).toFixed(2); // Convierte CRC a USD
 
     return (
         <div className="pago-page">
@@ -78,7 +72,6 @@ function Pago() {
                     </label>
                 </div>
 
-                {/* Cargar comprobante solo si se elige SINPE */}
                 {metodoPago === 'sinpe' && (
                     <div className="comprobante-upload">
                         <label>Suba el comprobante de transferencia:</label>
@@ -87,19 +80,35 @@ function Pago() {
                     </div>
                 )}
 
-                {/* Botón de pago específico para PayPal */}
                 {metodoPago === 'paypal' && (
                     <div className="paypal-button">
-                        <button onClick={handlePago} className="paypal-btn">
-                            <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_150x38.png" alt="PayPal" />
-                        
-                        </button>
+                        <PayPalButtons
+                            style={{ layout: 'vertical' }}
+                            createOrder={(data, actions) => {
+                                return actions.order.create({
+                                    purchase_units: [
+                                        {
+                                            amount: {
+                                                currency_code: 'USD', // Cambia a una moneda soportada como USD
+                                                value: totalInUSD,
+                
+                                            },
+                                        },
+                                    ],
+                                });
+                            }}
+                            onApprove={(data, actions) => {
+                                return actions.order.capture().then((details) => {
+                                    toast.success(`Pago procesado exitosamente por ${details.payer.name.given_name}`);
+                                    generarFactura();
+                                });
+                            }}
+                            onError={(err) => {
+                                toast.error('Error al procesar el pago con PayPal.');
+                            }}
+                        />
                     </div>
                 )}
-
-                {/* Mostrar mensaje de éxito o error */}
-                {mensajeExito && <p className="success-message">{mensajeExito}</p>}
-                {error && <p className="error-message">{error}</p>}
             </div>
             <ToastContainer />
         </div>
