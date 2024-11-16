@@ -23,7 +23,7 @@
     flex-direction: column;          /* Coloca el contenido en columna */
     justify-content: center;         /* Centra verticalmente el contenido */
     align-items: center;             /* Centra horizontalmente el contenido */
-    max-width: 500px;/* Aumenta el ancho */
+    max-width: 800px;/* Aumenta el ancho */
     min-height: 300px; /* Aumenta la altura mínima */
     margin: 0 auto;
     padding: 30px;
@@ -32,6 +32,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-family: Arial, sans-serif;
+    margin-top: 100px;
+    margin-bottom: 50px;
    /* flex-grow: 1;*/
     /*top: 100px;*/
 }
@@ -106,6 +108,10 @@ body {
 
 .enviar-button:hover {
     background-color: #88A0A8;
+}
+
+.paypal-button {
+    width: 500px;
 }
 
 /* Estilo para el botón de PayPal */
