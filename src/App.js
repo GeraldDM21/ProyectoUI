@@ -31,10 +31,12 @@ import VerDeclaraciones from './components/VerDeclaraciones';
 import Pago from './components/Pago';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 function App() {
     return (
-        <Router>
+        <PayPalScriptProvider options={{ "client-id": "Acwdxf1Y8u9TvfUuLqX9xlj_St81gclYXlM7flkd8Twsl24WLagCkzj1RYrohijCsHTpLPcwxyrGQd4M" }}>
+         <Router>
             <Routes>
                 {/* Rutas públicas */}
                 <Route path="/" element={<HomePage />} />
@@ -77,6 +79,7 @@ function App() {
 
             </Routes>
         </Router>
+             </PayPalScriptProvider>
     );
 }
 

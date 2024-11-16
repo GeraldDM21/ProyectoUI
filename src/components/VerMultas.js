@@ -81,8 +81,8 @@ function VerMultas() {
     };
 
     // Función para manejar el pago de una multa
-    const handlePago = (id) => {
-        navigate('/pago', { state: { multaId: id } });
+    const handlePago = (id, total) => {
+        navigate('/pago', { state: { multaId: id, total } });
         // Lógica real para procesar el pago
     };
 
@@ -144,7 +144,7 @@ function VerMultas() {
                                     <td>{`₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                                     <td>{multa.pagada ? 'Sí' : 'No'}</td>
                                     <td className="action-buttons">
-                                        <button className="pay-button" onClick={() => handlePago(multa.id)}>Pagar</button>
+                                        <button className="pay-button" onClick={() => handlePago(multa.id, multa.total)}>Pagar</button>
                                         <button className="dispute-button" onClick={() => handleDisputa(multa)}>Disputar</button>
                                     </td>
                                 </tr>
