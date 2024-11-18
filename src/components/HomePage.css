@@ -180,7 +180,7 @@ body {
 
 
 /* Contenedor principal del mapa */
-.mapa-calor-container {
+.heatmap-section {
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center;
@@ -191,6 +191,7 @@ body {
     margin-top: 20px auto;
     height: 400px;
     width: 70%;
+    max-width: 1000px; /* Establece el ancho maximo*/
     border-radius: 20px;
     overflow: hidden;
     border: 2px solid #B4CEB3;
