@@ -53,7 +53,7 @@ function Pago() {
         console.log('Generando factura en PDF y XML...');
     };
 
-    const EXCHANGE_RATE_CRC_TO_USD = 0.00195;
+    const EXCHANGE_RATE_CRC_TO_USD = 0.0020;
     const totalInUSD = (total * EXCHANGE_RATE_CRC_TO_USD).toFixed(2); // Convierte CRC a USD
 
     return (

@@ -14,7 +14,6 @@ function Register() {
     const [contrasena, setContrasena] = useState('');
     const [telefono, setTelefono] = useState('');
     const [fotoCedula, setFotoCedula] = useState(null);
-    const [fotoPerfil, setFotoPerfil] = useState(null);
     const [numPlaca, setPlaca] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertType, setAlertType] = useState('');
@@ -43,7 +42,6 @@ function Register() {
                 password: contrasena,
                 telefono,
                 fotoCedula,
-                fotoPerfil,
                 idRol: 1,
                 placas: [
                     {
@@ -72,7 +70,7 @@ function Register() {
                 toast.error('Error al registrar el usuario.', 'error');
             }
         } catch (error) {
-            console.log(error);
+            toast.error(error);
           //  showAlert('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
             toast.error('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
         }
@@ -86,7 +84,6 @@ function Register() {
         setTelefono('');
         setPlaca('');
         setFotoCedula(null);
-        setFotoPerfil(null);
     };
 
     return (
@@ -185,10 +182,6 @@ function Register() {
                     <div className="form-group-login">
                         <label className="file-label">Foto de Cédula</label>
                         <UploadWidget onUpload={setFotoCedula} />
-                    </div>
-                    <div className="form-group-login">
-                        <label className="file-label">Foto de Perfil</label>
-                        <UploadWidget onUpload={setFotoPerfil} />
                     </div>
                     <button type="submit" className="btn-login">Registrarse</button>
                 </form>
