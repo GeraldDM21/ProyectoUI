@@ -11,11 +11,12 @@
 .ver-multas-page {
     display: flex;
     flex-direction: column;
-    gap: 150px;
+    gap: 100px;
     justify-content:center;
     align-items:center;
     min-height: 100vh;
     background: linear-gradient(135deg, var(--cadet-gray) 25%, var(--caledon) 75%);
+    margin-top: 20px;
 }
 
 /* Contenedor Principal */
