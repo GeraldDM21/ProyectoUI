@@ -14,12 +14,11 @@ function ForgotPassword() {
     const handleForgotPassword = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://localhost:7201/api/Auth/ForgotPassword', {
+            const response = await fetch(`https://localhost:7201/api/Auth/ForgotPassword?email=${encodeURIComponent(email)}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(email),
             });
 
             if (!response.ok) {
@@ -28,7 +27,6 @@ function ForgotPassword() {
 
             //setMessage('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
             toast.info('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
-            navigate('/login');
         } catch (error) {
             setMessage(error.message);
         }

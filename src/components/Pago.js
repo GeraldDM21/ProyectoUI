@@ -5,30 +5,33 @@ import './Pago.css';
 import { useLocation } from 'react-router-dom';
 import HeaderUsuario from './HeaderUsuario';  
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import UploadWidget from './UploadWidget';
+
 
 function Pago() {
     const location = useLocation();
     const { multaId, total } = location.state || {};  // Recuperar el id de la multa pasada desde VerMultas.js
     const [metodoPago, setMetodoPago] = useState('');
-    const [comprobante, setComprobante] = useState(null);
+    const [fotoSinpe, setFotoSinpe] = useState(null);
     const [error, setError] = useState('');
     const [mensajeExito, setMensajeExito] = useState('');
+    const userId = localStorage.getItem('userId');
 
     const handleMetodoChange = (event) => {
         setMetodoPago(event.target.value);
-        setComprobante(null);  // Reiniciar comprobante si cambia el método de pago
+        setFotoSinpe(null);  // Reiniciar comprobante si cambia el método de pago
         setError('');
         setMensajeExito('');
     };
 
     const handleComprobanteChange = (event) => {
-        setComprobante(event.target.files[0]);
+        setFotoSinpe(event.target.files[0]);
         setError('');
     };
 
     const handlePago = () => {
         // Validación para el pago por SINPE
-        if (metodoPago === 'sinpe' && !comprobante) {
+        if (metodoPago === 'sinpe' && !fotoSinpe) {
             toast.error('Por favor, suba el comprobante de transferencia.');
             return;
         }
@@ -75,7 +78,7 @@ function Pago() {
                 {metodoPago === 'sinpe' && (
                     <div className="comprobante-upload">
                         <label>Suba el comprobante de transferencia:</label>
-                        <input type="file" accept=".jpg,.jpeg,.png,.pdf" onChange={handleComprobanteChange} />
+                        <UploadWidget onUpload={setFotoSinpe} />
                         <button onClick={handlePago} className="enviar-button">Enviar</button>
                     </div>
                 )}
