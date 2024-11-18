@@ -1,96 +1,152 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Chart from 'chart.js/auto';
+import React, { useState, useEffect } from 'react';
+import { Chart } from 'chart.js/auto';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-
 function ReporteUsuarioFinal() {
-    const chartRef = useRef(null);
-    const [dataMultas, setDataMultas] = useState({
-        labels: ['Multas Pagadas', 'Multas por Cancelar'],
-        values: [],
-    });
+    const [multas, setMultas] = useState([]);
+    const [desde, setDesde] = useState('');
+    const [hasta, setHasta] = useState('');
+    const chartRef = React.useRef(null); // Referencia al gráfico
 
-    // Fetch de datos del backend
-    const fetchData = async () => {
-        try {
-            const response = await fetch('https://tu-backend.com/api/multas/usuario-final');
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos del backend');
-            }
-            const result = await response.json();
-
-            setDataMultas({
-                labels: ['Multas Pagadas', 'Multas por Cancelar'],
-                values: [result.pagadas, result.porCancelar],
-            });
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
+    // Cargar multas desde el backend
     useEffect(() => {
-        fetchData();
+        const fetchMultas = async () => {
+            try {
+                const response = await fetch('https://localhost:7201/api/Multas');
+                const data = await response.json();
+                setMultas(data);
+            } catch (error) {
+                console.error('Error al cargar las multas:', error);
+            }
+        };
+
+        fetchMultas();
     }, []);
 
-    useEffect(() => {
-        if (chartRef.current) chartRef.current.destroy();
-
-        chartRef.current = new Chart(document.getElementById('chartMultas'), {
-            type: 'bar',
-            data: {
-                labels: dataMultas.labels,
-                datasets: [
-                    {
-                        label: 'Multas',
-                        data: dataMultas.values,
-                        backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } },
+    // Filtrar multas por rango de fechas
+    const filtrarMultas = () => {
+        if (!desde || !hasta) return multas;
+        return multas.filter((multa) => {
+            const fechaMulta = new Date(multa.fecha);
+            const fechaDesde = new Date(desde);
+            const fechaHasta = new Date(hasta);
+            return fechaMulta >= fechaDesde && fechaMulta <= fechaHasta;
         });
-
-        return () => {
-            if (chartRef.current) chartRef.current.destroy();
-        };
-    }, [dataMultas]);
-
-    const exportToPDF = () => {
-        const doc = new jsPDF();
-        doc.text('Informe de Multas - Usuario Final', 10, 10);
-        doc.autoTable({
-            head: [['Tipo', 'Cantidad']],
-            body: [
-                ['Multas Pagadas', dataMultas.values[0]],
-                ['Multas por Cancelar', dataMultas.values[1]],
-            ],
-        });
-        doc.save('informe_multas_usuario_final.pdf');
     };
 
-    const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet([
-            { Tipo: 'Multas Pagadas', Cantidad: dataMultas.values[0] },
-            { Tipo: 'Multas por Cancelar', Cantidad: dataMultas.values[1] },
-        ]);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Multas');
-        XLSX.writeFile(workbook, 'informe_multas_usuario_final.xlsx');
+    // Preparar datos para el gráfico
+    const prepararDatosGrafico = () => {
+        const multasFiltradas = filtrarMultas();
+        const pagadas = multasFiltradas.filter((multa) => multa.pagada).length;
+        const porCancelar = multasFiltradas.filter((multa) => !multa.pagada).length;
+
+        return {
+            labels: ['Multas Pagadas', 'Multas por Cancelar'],
+            datasets: [
+                {
+                    label: 'Multas',
+                    data: [pagadas, porCancelar],
+                    backgroundColor: ['#B4CEB3', '#546A76'], // Colores
+                },
+            ],
+        };
+    };
+
+    // Renderizar gráfico
+    const renderChart = () => {
+        const ctx = document.getElementById('chartUsuarioFinal').getContext('2d');
+
+        // Destruir gráfico existente si existe
+        if (chartRef.current) {
+            chartRef.current.destroy();
+        }
+
+        // Crear nuevo gráfico
+        chartRef.current = new Chart(ctx, {
+            type: 'bar',
+            data: prepararDatosGrafico(),
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Informe de Multas - Usuario Final',
+                    },
+                },
+            },
+        });
+    };
+
+    useEffect(() => {
+        renderChart();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [multas, desde, hasta]);
+
+    // Exportar a Excel
+    const exportarExcel = () => {
+        const multasFiltradas = filtrarMultas();
+        const datos = multasFiltradas.map((multa) => ({
+            Fecha: multa.fecha,
+            Estado: multa.pagada ? 'Pagada' : 'Por Cancelar',
+            Monto: multa.monto,
+        }));
+
+        const hoja = XLSX.utils.json_to_sheet(datos);
+        const libro = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(libro, hoja, 'Multas');
+        XLSX.writeFile(libro, 'InformeMultasUsuarioFinal.xlsx');
+    };
+
+    // Exportar a PDF
+    const exportarPDF = () => {
+        const multasFiltradas = filtrarMultas();
+        const doc = new jsPDF();
+        doc.text('Informe de Multas - Usuario Final', 10, 10);
+
+        autoTable(doc, {
+            startY: 20,
+            head: [['Fecha', 'Estado', 'Monto']],
+            body: multasFiltradas.map((multa) => [
+                multa.fecha,
+                multa.pagada ? 'Pagada' : 'Por Cancelar',
+                multa.monto,
+            ]),
+        });
+
+        doc.save('InformeMultasUsuarioFinal.pdf');
     };
 
     return (
         <div className="reporte-container">
             <h3>Informe de Multas - Usuario Final</h3>
-            <div className="chart-container">
-                <canvas id="chartMultas"></canvas>
+            <div className="filter-container">
+                <div>
+                    <label htmlFor="desde">Desde:</label>
+                    <input
+                        type="date"
+                        id="desde"
+                        value={desde}
+                        onChange={(e) => setDesde(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="hasta">Hasta:</label>
+                    <input
+                        type="date"
+                        id="hasta"
+                        value={hasta}
+                        onChange={(e) => setHasta(e.target.value)}
+                    />
+                </div>
+                <button onClick={renderChart} className="btn-filter">Filtrar</button>
             </div>
-            <div className="export-buttons">
-                <button onClick={exportToExcel} className="btn-export">Exportar a Excel</button>
-                <button onClick={exportToPDF} className="btn-export">Exportar a PDF</button>
+            <canvas id="chartUsuarioFinal"></canvas>
+            <div>
+                <button onClick={exportarExcel} className="btn-export">Exportar a Excel</button>
+                <button onClick={exportarPDF} className="btn-export">Exportar a PDF</button>
             </div>
         </div>
     );

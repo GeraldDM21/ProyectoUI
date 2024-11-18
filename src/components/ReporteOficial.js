@@ -1,135 +1,178 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Chart } from 'chart.js';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Chart, registerables } from 'chart.js';
+import 'chart.js/auto';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
-function ReporteOficial() {
-    const chartRef = useRef(null);
-    const myChart = useRef(null);
-    const [multasData, setMultasData] = useState([]);
-    const [declaracionesData, setDeclaracionesData] = useState([]);
+Chart.register(...registerables);
 
-    // Función para obtener datos desde la API
-    const fetchData = async () => {
-        try {
-            const multasResponse = await fetch('https://api.example.com/multas'); // Cambia esta URL por la de tu API de multas
-            const declaracionesResponse = await fetch('https://api.example.com/declaraciones'); // Cambia esta URL por la de tu API de declaraciones
+const ReporteOficial = () => {
+    const [multas, setMultas] = useState([]);
+    const [disputas, setDisputas] = useState([]);
+    const [filteredMultas, setFilteredMultas] = useState([]);
+    const [filteredDisputas, setFilteredDisputas] = useState([]);
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
+    const chartRef = useRef(null); // Uso de referencia para el canvas
 
-            const multas = await multasResponse.json();
-            const declaraciones = await declaracionesResponse.json();
-
-            setMultasData(multas);
-            setDeclaracionesData(declaraciones);
-        } catch (error) {
-            console.error('Error al obtener datos:', error);
-        }
-    };
-
+    // Fetch inicial para obtener multas y disputas
     useEffect(() => {
-        fetchData(); // Llama a fetchData cuando el componente se monta
+        const fetchData = async () => {
+            try {
+                const multasResponse = await fetch('https://tu-backend.com/api/multas');
+                const disputasResponse = await fetch('https://tu-backend.com/api/disputas');
+                const multasData = await multasResponse.json();
+                const disputasData = await disputasResponse.json();
+
+                setMultas(multasData);
+                setDisputas(disputasData);
+                setFilteredMultas(multasData);
+                setFilteredDisputas(disputasData);
+            } catch (error) {
+                console.error('Error al cargar datos:', error);
+            }
+        };
+
+        fetchData();
     }, []);
 
-    useEffect(() => {
-        // Destruir el gráfico anterior si existe
-        if (myChart.current) {
-            myChart.current.destroy();
+    // Renderizar gráfico
+    const renderChart = useCallback(() => {
+        if (chartRef.current) {
+            // Destruir instancia previa si existe
+            chartRef.current.destroy();
         }
 
-        // Crear nuevo gráfico con datos de la API
-        const ctx = chartRef.current.getContext('2d');
-        myChart.current = new Chart(ctx, {
+        const ctx = document.getElementById('chartOficial').getContext('2d');
+
+        chartRef.current = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                labels: ['Multas Creadas', 'Disputas Creadas'],
                 datasets: [
                     {
-                        label: 'Multas Creadas',
-                        data: generateMonthlyData(multasData),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    },
-                    {
-                        label: 'Declaraciones',
-                        data: generateMonthlyData(declaracionesData),
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
+                        label: 'Cantidad',
+                        data: [filteredMultas.length, filteredDisputas.length],
+                        backgroundColor: ['#4CAF50', '#FFC107'],
                     },
                 ],
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
                     },
                 },
             },
         });
+    }, [filteredMultas, filteredDisputas]);
 
-        return () => {
-            if (myChart.current) {
-                myChart.current.destroy();
-            }
-        };
-    }, [multasData, declaracionesData]);
+    useEffect(() => {
+        renderChart();
+    }, [filteredMultas, filteredDisputas, renderChart]);
 
-    // Función para generar datos mensuales a partir de los datos obtenidos de la API
-    const generateMonthlyData = (data) => {
-        const monthlyData = new Array(12).fill(0); // Array de 12 elementos para cada mes
-        data.forEach(item => {
-            const month = new Date(item.fecha).getMonth(); // Suponiendo que los objetos tienen una propiedad `fecha`
-            monthlyData[month]++;
+    // Filtrar datos por rango de fechas
+    const handleFilter = () => {
+        const inicio = new Date(fechaInicio);
+        const fin = new Date(fechaFin);
+
+        const multasFiltradas = multas.filter((multa) => {
+            const fechaMulta = new Date(multa.fecha);
+            return fechaMulta >= inicio && fechaMulta <= fin;
         });
-        return monthlyData;
+
+        const disputasFiltradas = disputas.filter((disputa) => {
+            const fechaDisputa = new Date(disputa.fecha);
+            return fechaDisputa >= inicio && fechaDisputa <= fin;
+        });
+
+        setFilteredMultas(multasFiltradas);
+        setFilteredDisputas(disputasFiltradas);
     };
 
-    // Función para exportar a PDF
+    // Exportar a Excel
+    const exportToExcel = () => {
+        let csv = 'Tipo,Fecha\n';
+
+        filteredMultas.forEach((multa) => {
+            csv += `Multa,${multa.fecha}\n`;
+        });
+
+        filteredDisputas.forEach((disputa) => {
+            csv += `Disputa,${disputa.fecha}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, 'reporte_oficial.csv');
+    };
+
+    // Exportar a PDF
     const exportToPDF = () => {
         const doc = new jsPDF();
-        doc.text('Informe de Multas Creadas y Declaraciones', 10, 10);
-        
-        const data = generateReportData(); // Datos para la tabla
-        
+        doc.setFontSize(16);
+        doc.text('Informe de Multas y Disputas - Oficial', 14, 20);
+
+        const multasRows = filteredMultas.map((multa) => [multa.id, multa.fecha]);
+        const disputasRows = filteredDisputas.map((disputa) => [disputa.id, disputa.fecha]);
+
         doc.autoTable({
-            head: [['Mes', 'Multas Creadas', 'Declaraciones']],
-            body: data,
+            head: [['ID', 'Fecha']],
+            body: multasRows,
+            startY: 30,
+            theme: 'grid',
+            headStyles: { fillColor: [76, 175, 80] },
         });
-        
+
+        doc.autoTable({
+            head: [['ID', 'Fecha']],
+            body: disputasRows,
+            startY: doc.lastAutoTable.finalY + 10,
+            theme: 'grid',
+            headStyles: { fillColor: [255, 193, 7] },
+        });
+
         doc.save('reporte_oficial.pdf');
-    };
-
-    // Función para exportar a Excel
-    const exportToExcel = () => {
-        const data = generateReportData();
-        const worksheet = XLSX.utils.aoa_to_sheet([['Mes', 'Multas Creadas', 'Declaraciones'], ...data]);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
-        
-        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        const excelData = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(excelData, 'reporte_oficial.xlsx');
-    };
-
-    // Genera los datos para el reporte basado en los datos mensuales
-    const generateReportData = () => {
-        const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        const multasMensuales = generateMonthlyData(multasData);
-        const declaracionesMensuales = generateMonthlyData(declaracionesData);
-
-        return labels.map((label, index) => [label, multasMensuales[index], declaracionesMensuales[index]]);
     };
 
     return (
         <div className="reporte-container">
-            <h3>Informe de Multas Creadas y Declaraciones</h3>
-            <canvas ref={chartRef} id="myChart" />
-            <button onClick={exportToExcel} className="btn-export">Exportar a Excel</button>
-            <button onClick={exportToPDF} className="btn-export">Exportar a PDF</button>
+            <h3>Informe de Multas y Disputas - Oficial</h3>
+            <div className="filter-container">
+                <div>
+                    <label htmlFor="fechaInicio">Desde:</label>
+                    <input
+                        type="date"
+                        id="fechaInicio"
+                        value={fechaInicio}
+                        onChange={(e) => setFechaInicio(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="fechaFin">Hasta:</label>
+                    <input
+                        type="date"
+                        id="fechaFin"
+                        value={fechaFin}
+                        onChange={(e) => setFechaFin(e.target.value)}
+                    />
+                </div>
+                <button className="btn-filter" onClick={handleFilter}>
+                    Filtrar
+                </button>
+            </div>
+            <canvas id="chartOficial"></canvas>
+            <div>
+                <button className="btn-export" onClick={exportToExcel}>
+                    Exportar a Excel
+                </button>
+                <button className="btn-export" onClick={exportToPDF}>
+                    Exportar a PDF
+                </button>
+            </div>
         </div>
     );
-}
+};
 
 export default ReporteOficial;

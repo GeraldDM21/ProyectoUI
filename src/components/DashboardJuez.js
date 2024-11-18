@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 import '../Styles/Dashboard.css';
+import ReporteJuez from './ReporteJuez'; 
 
 function DashboardJuez() {
     const navigate = useNavigate();
@@ -28,6 +29,9 @@ function DashboardJuez() {
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de juez. Aquí puedes revisar y resolver disputas.</p>
+
+                    {/* Sección del informe */}
+                    <ReporteJuez />
                 </div>
             </main>
         </div>

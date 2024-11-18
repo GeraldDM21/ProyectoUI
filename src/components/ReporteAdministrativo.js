@@ -1,162 +1,225 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Chart from 'chart.js/auto';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import * as XLSX from 'xlsx';
+import React, { useEffect, useState } from "react";
+import { Chart } from "chart.js/auto";
 
 function ReporteAdministrativo() {
-    const chartRefEstados = useRef(null);
-    const chartRefTipoZona = useRef(null);
-    
-    const [dataEstados, setDataEstados] = useState({
-        labels: ['Creadas', 'Pagadas', 'Pendientes', 'En Disputa'],
-        values: [],
-    });
-    const [dataTipoZonaFecha, setDataTipoZonaFecha] = useState({
-        labels: [],
-        tipoValues: [],
-        zonaValues: [],
-        fechaValues: [],
-    });
+  const [multas, setMultas] = useState([]);
+  const [multasFiltradas, setMultasFiltradas] = useState([]);
+  const [chart, setChart] = useState(null);
+  const [fechaDesde, setFechaDesde] = useState("");
+  const [fechaHasta, setFechaHasta] = useState("");
+  const [cedulaFiltro, setCedulaFiltro] = useState("");
+  const [zonaFiltro, setZonaFiltro] = useState("");
 
+  useEffect(() => {
+    // Simulación de datos desde el backend (deberías conectar esto a tu API real)
     const fetchData = async () => {
-        try {
-            const response = await fetch('https://tu-backend.com/api/reportes/administrativo');
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos del backend');
-            }
-            const result = await response.json();
-
-            setDataEstados({
-                labels: ['Creadas', 'Pagadas', 'Pendientes', 'En Disputa'],
-                values: result.estadoMultas,
-            });
-            setDataTipoZonaFecha({
-                labels: result.tipoLabels,  // Ej. ["Tipo1", "Tipo2", "Tipo3"]
-                tipoValues: result.tipoValues,  // Cantidades por tipo de multa
-                zonaValues: result.zonaValues,  // Cantidades por zona
-                fechaValues: result.fechaValues, // Cantidades por fecha
-            });
-        } catch (error) {
-            console.error('Error:', error);
-        }
+      try {
+        const response = await fetch("https://localhost:7201/api/Multas");
+        const data = await response.json();
+        setMultas(data);
+        setMultasFiltradas(data);
+      } catch (error) {
+        console.error("Error al obtener las multas:", error);
+      }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-        if (chartRefEstados.current) chartRefEstados.current.destroy();
-        if (chartRefTipoZona.current) chartRefTipoZona.current.destroy();
+  // Aplicar filtros
+  const filtrarMultas = () => {
+    let filtrado = [...multas];
 
-        chartRefEstados.current = new Chart(document.getElementById('chartEstados'), {
-            type: 'bar',
-            data: {
-                labels: dataEstados.labels,
-                datasets: [
-                    {
-                        label: 'Estados de Multas',
-                        data: dataEstados.values,
-                        backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } },
-        });
+    if (fechaDesde) {
+      filtrado = filtrado.filter(
+        (multa) => new Date(multa.fecha) >= new Date(fechaDesde)
+      );
+    }
 
-        chartRefTipoZona.current = new Chart(document.getElementById('chartTipoZona'), {
-            type: 'bar',
-            data: {
-                labels: dataTipoZonaFecha.labels,
-                datasets: [
-                    {
-                        label: 'Multas por Tipo',
-                        data: dataTipoZonaFecha.tipoValues,
-                        backgroundColor: 'rgba(153, 102, 255, 0.5)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
-                    },
-                    {
-                        label: 'Multas por Zona',
-                        data: dataTipoZonaFecha.zonaValues,
-                        backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 1,
-                    },
-                    {
-                        label: 'Multas por Fecha',
-                        data: dataTipoZonaFecha.fechaValues,
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } },
-        });
+    if (fechaHasta) {
+      filtrado = filtrado.filter(
+        (multa) => new Date(multa.fecha) <= new Date(fechaHasta)
+      );
+    }
 
-        return () => {
-            if (chartRefEstados.current) chartRefEstados.current.destroy();
-            if (chartRefTipoZona.current) chartRefTipoZona.current.destroy();
-        };
-    }, [dataEstados, dataTipoZonaFecha]);
+    if (cedulaFiltro) {
+      filtrado = filtrado.filter(
+        (multa) =>
+          multa.cedulaInfractor &&
+          multa.cedulaInfractor.toString().includes(cedulaFiltro)
+      );
+    }
 
-    const exportToPDF = () => {
-        const doc = new jsPDF();
-        doc.text('Informe de Multas - Administrativo', 10, 10);
+    if (zonaFiltro) {
+      filtrado = filtrado.filter(
+        (multa) => multa.zona && multa.zona.toLowerCase().includes(zonaFiltro.toLowerCase())
+      );
+    }
+
+    setMultasFiltradas(filtrado);
+  };
+
+  // Calcular estadísticas
+  const porcentajePagadas =
+    (multasFiltradas.filter((multa) => multa.pagada).length /
+      multasFiltradas.length) *
+    100 || 0;
+
+  const porcentajePorPagar =
+    (multasFiltradas.filter((multa) => !multa.pagada).length /
+      multasFiltradas.length) *
+    100 || 0;
+
+  const multasPorZona = multasFiltradas.reduce((acumulado, multa) => {
+    if (multa.zona) {
+      acumulado[multa.zona] = (acumulado[multa.zona] || 0) + 1;
+    }
+    return acumulado;
+  }, {});
+
+  // Renderizar gráfico
+  useEffect(() => {
+    if (chart) {
+      chart.destroy(); // Destruir gráfico anterior
+    }
+
+    const ctx = document.getElementById("chartAdministrativo").getContext("2d");
+
+    const nuevoChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["% Pagadas", "% Por Pagar"],
+        datasets: [
+          {
+            label: "Porcentaje de Multas",
+            data: [porcentajePagadas, porcentajePorPagar],
+            backgroundColor: ["#88A0A8", "#B4CEB3"],
+          },
+        ],
+      },
+    });
+
+    setChart(nuevoChart);
+
+    return () => {
+      if (nuevoChart) {
+        nuevoChart.destroy();
+      }
+    };
+  }, [multasFiltradas]);
+
+  // Descargar Excel
+  const exportarExcel = () => {
+    const filas = multasFiltradas.map((multa) => ({
+      Fecha: multa.fecha,
+      Cedula: multa.cedulaInfractor,
+      Zona: multa.zona,
+      Pagada: multa.pagada ? "Sí" : "No",
+    }));
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [
+        "Fecha,Cedula,Zona,Pagada",
+        ...filas.map(
+          (fila) =>
+            `${fila.Fecha},${fila.Cedula},${fila.Zona},${fila.Pagada}`
+        ),
+      ].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "reporte_multas_administrativo.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Descargar PDF
+  const exportarPDF = () => {
+    import("jspdf").then((jsPDF) => {
+      import("jspdf-autotable").then(() => {
+        const doc = new jsPDF.default();
+        doc.text("Reporte Administrativo", 10, 10);
+
+        const filas = multasFiltradas.map((multa) => [
+          multa.fecha,
+          multa.cedulaInfractor,
+          multa.zona,
+          multa.pagada ? "Sí" : "No",
+        ]);
+
         doc.autoTable({
-            head: [['Estado', 'Cantidad']],
-            body: dataEstados.labels.map((label, index) => [label, dataEstados.values[index]]),
+          head: [["Fecha", "Cédula", "Zona", "Pagada"]],
+          body: filas,
         });
-        doc.autoTable({
-            head: [['Tipo/Zona/Fecha', 'Cantidad']],
-            body: dataTipoZonaFecha.labels.map((label, index) => [
-                label,
-                `${dataTipoZonaFecha.tipoValues[index]} / ${dataTipoZonaFecha.zonaValues[index]} / ${dataTipoZonaFecha.fechaValues[index]}`,
-            ]),
-        });
-        doc.save('informe-multas-administrativo.pdf');
-    };
 
-    const exportToExcel = () => {
-        const workbook = XLSX.utils.book_new();
+        doc.save("reporte_multas_administrativo.pdf");
+      });
+    });
+  };
 
-        const estadosSheet = XLSX.utils.json_to_sheet(dataEstados.labels.map((label, index) => ({
-            Estado: label,
-            Cantidad: dataEstados.values[index],
-        })));
-        XLSX.utils.book_append_sheet(workbook, estadosSheet, 'Estados de Multas');
+  return (
+    <div className="reporte-container">
+      <h3>Informe de Multas - Administrativo</h3>
 
-        const tipoZonaFechaSheet = XLSX.utils.json_to_sheet(dataTipoZonaFecha.labels.map((label, index) => ({
-            'Tipo/Zona/Fecha': label,
-            Cantidad: `${dataTipoZonaFecha.tipoValues[index]} / ${dataTipoZonaFecha.zonaValues[index]} / ${dataTipoZonaFecha.fechaValues[index]}`,
-        })));
-        XLSX.utils.book_append_sheet(workbook, tipoZonaFechaSheet, 'Multas por Tipo, Zona y Fecha');
-
-        XLSX.writeFile(workbook, 'informe-multas-administrativo.xlsx');
-    };
-
-    return (
-        <div className="reporte-container">
-            <h3>Informe de Multas - Administrativo</h3>
-
-            <div className="chart-container">
-                <canvas id="chartEstados"></canvas>
-            </div>
-
-            <div className="chart-container">
-                <canvas id="chartTipoZona"></canvas>
-            </div>
-
-            <div className="buttons-container">
-                <button onClick={exportToExcel} className="btn-export">Exportar a Excel</button>
-                <button onClick={exportToPDF} className="btn-export">Exportar a PDF</button>
-            </div>
+      <div className="filter-container">
+        <div>
+          <label htmlFor="fechaDesde">Desde:</label>
+          <input
+            type="date"
+            id="fechaDesde"
+            value={fechaDesde}
+            onChange={(e) => setFechaDesde(e.target.value)}
+          />
         </div>
-    );
+        <div>
+          <label htmlFor="fechaHasta">Hasta:</label>
+          <input
+            type="date"
+            id="fechaHasta"
+            value={fechaHasta}
+            onChange={(e) => setFechaHasta(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="cedulaFiltro">Cédula:</label>
+          <input
+            type="text"
+            id="cedulaFiltro"
+            placeholder="Cédula"
+            value={cedulaFiltro}
+            onChange={(e) => setCedulaFiltro(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="zonaFiltro">Zona:</label>
+          <input
+            type="text"
+            id="zonaFiltro"
+            placeholder="Zona"
+            value={zonaFiltro}
+            onChange={(e) => setZonaFiltro(e.target.value)}
+          />
+        </div>
+        <button className="btn-filter" onClick={filtrarMultas}>
+          Filtrar
+        </button>
+      </div>
+
+      <canvas id="chartAdministrativo"></canvas>
+
+      <div className="btn-group">
+        <button className="btn-export" onClick={exportarExcel}>
+          Exportar a Excel
+        </button>
+        <button className="btn-export" onClick={exportarPDF}>
+          Exportar a PDF
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default ReporteAdministrativo;
