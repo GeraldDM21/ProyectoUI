@@ -9,9 +9,10 @@ function ReporteAdministrativo() {
   const [fechaHasta, setFechaHasta] = useState("");
   const [cedulaFiltro, setCedulaFiltro] = useState("");
   const [zonaFiltro, setZonaFiltro] = useState("");
+  const [zonas, setZonas] = useState([]); // Lista de zonas desde el backend
 
   useEffect(() => {
-    // Simulación de datos desde el backend (deberías conectar esto a tu API real)
+    // Simulación de datos desde el backend
     const fetchData = async () => {
       try {
         const response = await fetch("https://localhost:7201/api/Multas");
@@ -23,7 +24,19 @@ function ReporteAdministrativo() {
       }
     };
 
+    // Obtener las zonas únicas desde el backend
+    const fetchZonas = async () => {
+      try {
+        const response = await fetch("https://localhost:7201/api/Multas/Zonas");
+        const data = await response.json();
+        setZonas(data); // Suponemos que `data` es una lista de nombres de zonas
+      } catch (error) {
+        console.error("Error al obtener las zonas:", error);
+      }
+    };
+
     fetchData();
+    fetchZonas();
   }, []);
 
   // Aplicar filtros
@@ -52,7 +65,8 @@ function ReporteAdministrativo() {
 
     if (zonaFiltro) {
       filtrado = filtrado.filter(
-        (multa) => multa.zona && multa.zona.toLowerCase().includes(zonaFiltro.toLowerCase())
+        (multa) =>
+          multa.zona && multa.zona.toLowerCase() === zonaFiltro.toLowerCase()
       );
     }
 
@@ -61,14 +75,12 @@ function ReporteAdministrativo() {
 
   // Calcular estadísticas
   const porcentajePagadas =
-    (multasFiltradas.filter((multa) => multa.pagada).length /
-      multasFiltradas.length) *
-    100 || 0;
+    (multasFiltradas.filter((multa) => multa.pagada).length / multasFiltradas.length) *
+      100 || 0;
 
   const porcentajePorPagar =
-    (multasFiltradas.filter((multa) => !multa.pagada).length /
-      multasFiltradas.length) *
-    100 || 0;
+    (multasFiltradas.filter((multa) => !multa.pagada).length / multasFiltradas.length) *
+      100 || 0;
 
   const multasPorZona = multasFiltradas.reduce((acumulado, multa) => {
     if (multa.zona) {
@@ -88,12 +100,16 @@ function ReporteAdministrativo() {
     const nuevoChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["% Pagadas", "% Por Pagar"],
+        labels: ["% Pagadas", "% Por Pagar", ...Object.keys(multasPorZona)],
         datasets: [
           {
-            label: "Porcentaje de Multas",
-            data: [porcentajePagadas, porcentajePorPagar],
-            backgroundColor: ["#88A0A8", "#B4CEB3"],
+            label: "Porcentaje de Multas y Multas por Zona",
+            data: [
+              porcentajePagadas,
+              porcentajePorPagar,
+              ...Object.values(multasPorZona),
+            ],
+            backgroundColor: ["#88A0A8", "#B4CEB3", "#FFC107", "#4CAF50", "#2196F3"],
           },
         ],
       },
@@ -106,7 +122,7 @@ function ReporteAdministrativo() {
         nuevoChart.destroy();
       }
     };
-  }, [multasFiltradas]);
+  }, [multasFiltradas, porcentajePagadas, porcentajePorPagar, multasPorZona]);
 
   // Descargar Excel
   const exportarExcel = () => {
@@ -195,13 +211,18 @@ function ReporteAdministrativo() {
         </div>
         <div>
           <label htmlFor="zonaFiltro">Zona:</label>
-          <input
-            type="text"
+          <select
             id="zonaFiltro"
-            placeholder="Zona"
             value={zonaFiltro}
             onChange={(e) => setZonaFiltro(e.target.value)}
-          />
+          >
+            <option value="">Todas</option>
+            {zonas.map((zona, index) => (
+              <option key={index} value={zona}>
+                {zona}
+              </option>
+            ))}
+          </select>
         </div>
         <button className="btn-filter" onClick={filtrarMultas}>
           Filtrar
