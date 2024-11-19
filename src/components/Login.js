@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Importa el componente Header
 import './Header.css'; // Importa el CSS del Header
 import '../Styles/Login.css';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 function Login() {
     const [userName, setUsername] = useState('');
@@ -24,21 +25,61 @@ function Login() {
             });
 
             if (!response.ok) {
-                //alert('Usuario o contraseña incorrectos');
                 toast.error('Usuario o contraseña incorrectos');
                 return;
             }
 
             const data = await response.json();
-            console.log('Datos recibidos:', data); // Verifica los datos recibidos
+            console.log('Datos recibidos:', data);
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
             localStorage.setItem('userId', data.userId);
 
             console.log('Rol:', data.role, 'ID:', data.userId);
 
-            navigateToDashboard(data.role);
- 
+            // Check if two-factor authentication is enabled
+            const userResponse = await fetch(`https://localhost:7201/api/Usuarios/${data.userId}`);
+            const userData = await userResponse.json();
+
+            if (userData.isTwoFactorEnabled) {
+                Swal.fire({
+                    title: 'Por favor ingresa el código de autenticación.',
+                    html: `
+                        <input type="text" id="totpCode" class="swal2-input-placa" placeholder="Código de autenticación" />
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ingresar',
+                    customClass: {
+                        confirmButton: 'swal2-guardar-button',
+                    },
+                    preConfirm: () => {
+                        const totpCode = Swal.getPopup().querySelector('#totpCode').value;
+                        if (!totpCode) {
+                            Swal.showValidationMessage('Por favor ingresa el código de autenticación');
+                        }
+                        return { totpCode };
+                    }
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const { totpCode } = result.value;
+                        const verifyResponse = await fetch('https://localhost:7201/api/TwoFactorAuth/validate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email: userName, totpCode }),
+                        });
+
+                        if (verifyResponse.ok) {
+                            navigateToDashboard(data.role);
+                        } else {
+                            toast.error('Código de autenticación incorrecto');
+                        }
+                    }
+                });
+            } else {
+                navigateToDashboard(data.role);
+            }
         } catch (error) {
             alert(error.message);
         }
@@ -55,7 +96,6 @@ function Login() {
             navigate('/juez');
         } else {
             console.error('Rol no reconocido:', role);
-           // setError("Rol de usuario no reconocido.");
             toast.error('Rol de usuario no reconocido.');
         }
     };
