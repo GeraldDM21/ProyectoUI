@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
+import ReporteOficial from './ReporteOficial'; // Importamos el componente
 import '../Styles/Dashboard.css';
 
 function DashboardOficial() {
@@ -10,7 +11,6 @@ function DashboardOficial() {
         <div className="dashboard-layout">
             <aside className="sidebar">
                 <h2>Oficial</h2>
-                {/* Redirige a la ruta correcta de solo lectura del catálogo */}
                 <button onClick={() => navigate('/catalogo-infracciones-oficial')} className="sidebar-button">
                     <i className="fas fa-book"></i> Ver Catálogo
                 </button>
@@ -35,6 +35,9 @@ function DashboardOficial() {
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de oficial. Aquí puedes gestionar multas y ver el catálogo de infracciones.</p>
+                    
+                    {/* Añadir el componente de ReporteOficial */}
+                    <ReporteOficial />
                 </div>
             </main>
         </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Dashboard.css';
 import LogoutButton from './LogoutButton';
+import ReporteAdministrativo from './ReporteAdministrativo'; 
 
 function DashboardAdmin() {
     const navigate = useNavigate();
@@ -33,6 +34,9 @@ function DashboardAdmin() {
                 </header>
                 <div className="content-body">
                     <p>Bienvenido al panel de administración. Aquí puedes gestionar usuarios, roles y el catálogo de infracciones.</p>
+                    
+                    {/* Componente de reporte administrativo */}
+                    <ReporteAdministrativo />
                 </div>
             </main>
         </div>
