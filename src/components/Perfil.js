@@ -19,7 +19,8 @@ function Perfil() {
         fotoCedula: '',
         fotoPerfil: '',
         idRol: '',
-        placas: []
+        placas: [],
+        isTwoFactorEnabled: false
     });
     const [mensaje, setMensaje] = useState('');
     const userId = localStorage.getItem('userId'); 
@@ -164,7 +165,8 @@ function Perfil() {
         });
     };
 
-    const handleChangePassword = () => {
+    const handleChangePassword = async (e) => {
+        e.preventDefault(); // Prevent form submission
         Swal.fire({
             title: 'Cambiar Contraseña',
             html: `
@@ -206,6 +208,99 @@ function Perfil() {
                 }
             }
         });
+    };
+
+    const handleEnable2FA = async (e) => {
+        e.preventDefault(); // Prevent form submission
+        try {
+            const { value: password } = await Swal.fire({
+                title: 'Confirmar Contraseña',
+                input: 'password',
+                inputLabel: 'Por favor, ingrese su contraseña para confirmar',
+                inputPlaceholder: 'Contraseña',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    confirmButton: 'swal2-guardar-button'
+                }
+            });
+
+            if (password) {
+                const loginResponse = await fetch('https://localhost:7201/api/Auth/Login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userName: userData.correo,
+                        password: password
+                    }),
+                });
+
+                if (loginResponse.ok) {
+                    if (userData.isTwoFactorEnabled) {
+                        const disable2FAResponse = await fetch('https://localhost:7201/api/TwoFactorAuth/disable', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: userData.correo,
+                                password: password
+                            }),
+                        });
+
+                        if (disable2FAResponse.ok) {
+                            setUserData(prevState => ({
+                                ...prevState,
+                                isTwoFactorEnabled: false
+                            }));
+                            Swal.fire('Doble factor de autenticación ha sido deshabilitado.', '', 'success');
+                        } else {
+                            throw new Error('No se pudo deshabilitar la autenticación de dos factores.');
+                        }
+                    } else {
+                        const enable2FAResponse = await fetch('https://localhost:7201/api/TwoFactorAuth/enable', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: userData.correo,
+                                password: password
+                            }),
+                        });
+
+                        if (enable2FAResponse.ok) {
+                            const data = await enable2FAResponse.json();
+                            setUserData(prevState => ({
+                                ...prevState,
+                                isTwoFactorEnabled: true
+                            }));
+                            Swal.fire({
+                                title: 'Escanea el código QR con tu aplicación de autenticación.',
+                                html: `<img src="${data.qrCodeBase64}" alt="QR Code" />`,
+                                confirmButtonText: 'Cerrar',
+                                customClass: {
+                                    confirmButton: 'swal2-guardar-button'
+                                }
+                            });
+                        } else {
+                            throw new Error('No se pudo habilitar la autenticación de dos factores.');
+                        }
+                    }
+                } else {
+                    throw new Error('Contraseña incorrecta.');
+                }
+            }
+        } catch (error) {
+            Swal.fire('Error', error.message, 'error');
+        }
     };
 
     return (
@@ -280,15 +375,17 @@ function Perfil() {
                             <button type="button" className="btn-secondary-perfil" onClick={handleAdministrarPlacas}>Administrar Placas</button>
                         </div>
                         <div className="form-group-perfil">
+                            <button type="button" className="btn btn-secondary-perfil" onClick={handleChangePassword}>Cambiar Contraseña</button>
+                        </div>
+                        <div className="form-group-perfil">
+                            <button type="button" className="btn btn-secondary-perfil" onClick={handleEnable2FA}>
+                                {userData.isTwoFactorEnabled ? 'Deshabilitar 2FA' : 'Habilitar 2FA'}
+                            </button>
+                        </div>
+                        <div className="form-group-perfil">
                             <button type="submit" className="btn-primary-perfil">Guardar Cambios</button>
                         </div>
                     </form>
-
-                    {/* Cambiar Contraseña */}
-                    <div className="cambiar-password">
-                        <h3>Opciones de Seguridad</h3>
-                        <button className="btn btn-secondary-perfil" onClick={handleChangePassword}>Cambiar Contraseña</button>
-                    </div>
 
                     {mensaje && <p className="text-info-perfil">{mensaje}</p>}
                 </div>

@@ -204,8 +204,12 @@
 
 /* Botón Cambiar Contraseña */
 .cambiar-password {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     margin-top: 20px;
     text-align: center;
+    gap: 10px;
 }
 
 .btn-secondary-perfil {
