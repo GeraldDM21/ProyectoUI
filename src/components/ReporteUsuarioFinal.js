@@ -116,7 +116,7 @@ function ReporteUsuarioFinal() {
             body: multasFiltradas.map((multa) => [
                 new Date(multa.fecha).toLocaleDateString(),
                 multa.pagada ? 'Pagada' : 'Por Cancelar',
-                `${String.fromCharCode(8353)}${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                multa.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
             ]),
         });
 

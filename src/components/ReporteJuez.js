@@ -7,12 +7,13 @@ function ReporteJuez() {
   const [chart, setChart] = useState(null);
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     // Simulación de datos desde el backend (conectar con tu API real)
     const fetchData = async () => {
       try {
-        const response = await fetch("https://localhost:7201/api/Disputas");
+        const response = await fetch(`https://localhost:7201/api/Disputas/IdJuez/${userId}`);
         const data = await response.json();
         setDisputas(data);
         setDisputasFiltradas(data);
@@ -44,10 +45,12 @@ function ReporteJuez() {
   };
 
   // Calcular estadísticas
+  const pendientes =
+    disputasFiltradas.filter((disputa) => disputa.resolucion === "Pendiente").length;
   const aprobadas =
-    disputasFiltradas.filter((disputa) => disputa.estado === "Aprobada").length;
+    disputasFiltradas.filter((disputa) => disputa.resolucion === "Anulación de Multa").length;
   const denegadas =
-    disputasFiltradas.filter((disputa) => disputa.estado === "Denegada").length;
+    disputasFiltradas.filter((disputa) => disputa.resolucion === "Multa Validada").length;
 
   // Renderizar gráfico
   useEffect(() => {
@@ -60,12 +63,12 @@ function ReporteJuez() {
     const nuevoChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["Disputas Aprobadas", "Disputas Denegadas"],
+        labels: ["Disputas Pendientes", "Disputas Aprobadas", "Disputas Denegadas"],
         datasets: [
           {
             label: "Disputas",
-            data: [aprobadas, denegadas],
-            backgroundColor: ["#88A0A8", "#B4CEB3"],
+            data: [pendientes, aprobadas, denegadas],
+            backgroundColor: ["#88A0A8", "#B4CEB3", "#88A0A8"],
           },
         ],
       },
@@ -84,15 +87,17 @@ function ReporteJuez() {
   const exportarExcel = () => {
     const filas = disputasFiltradas.map((disputa) => ({
       Fecha: disputa.fecha,
+      Razón: disputa.razon,
+      Descripción: disputa.descripcion,
       Estado: disputa.estado,
-      Motivo: disputa.motivo,
+      Resolución: disputa.resolucion,
     }));
 
     const csvContent =
       "data:text/csv;charset=utf-8," +
       [
-        "Fecha,Estado,Motivo",
-        ...filas.map((fila) => `${fila.Fecha},${fila.Estado},${fila.Motivo}`),
+        "Fecha,Razon,Descripcion,Estado,Resolucion",
+        ...filas.map((fila) => `${fila.Fecha},${fila.Razón},${fila.Descripción},${fila.Estado},${fila.Resolución}`),
       ].join("\n");
 
     const encodedUri = encodeURI(csvContent);
@@ -113,12 +118,14 @@ function ReporteJuez() {
 
         const filas = disputasFiltradas.map((disputa) => [
           disputa.fecha,
+          disputa.razon,
+          disputa.descripcion,
           disputa.estado,
-          disputa.motivo,
+          disputa.resolucion,
         ]);
 
         doc.autoTable({
-          head: [["Fecha", "Estado", "Motivo"]],
+          head: [["Fecha", "Razón", "Descripción", "Estado", "Resolución"]],
           body: filas,
         });
 
