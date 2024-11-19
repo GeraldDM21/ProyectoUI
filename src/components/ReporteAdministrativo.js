@@ -8,8 +8,6 @@ function ReporteAdministrativo() {
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
   const [cedulaFiltro, setCedulaFiltro] = useState("");
-  const [zonaFiltro, setZonaFiltro] = useState("");
-  const [zonas, setZonas] = useState([]); // Estado para las zonas
 
   useEffect(() => {
     // Obtener multas desde el backend
@@ -24,25 +22,7 @@ function ReporteAdministrativo() {
       }
     };
 
-    // Obtener zonas desde el backend
-    const fetchZonas = async () => {
-      try {
-        const response = await fetch("https://localhost:7201/api/Multas/Zonas");
-        const data = await response.json();
-        if (Array.isArray(data)) {
-          setZonas(data); // Suponemos que `data` es un array de zonas
-        } else {
-          console.error("El backend no devolvió un array de zonas:", data);
-          setZonas([]);
-        }
-      } catch (error) {
-        console.error("Error al obtener las zonas:", error);
-        setZonas([]);
-      }
-    };
-
     fetchData();
-    fetchZonas();
   }, []);
 
   // Aplicar filtros
@@ -69,13 +49,6 @@ function ReporteAdministrativo() {
       );
     }
 
-    if (zonaFiltro) {
-      filtrado = filtrado.filter(
-        (multa) =>
-          multa.zona && multa.zona.toLowerCase() === zonaFiltro.toLowerCase()
-      );
-    }
-
     setMultasFiltradas(filtrado);
   };
 
@@ -88,13 +61,6 @@ function ReporteAdministrativo() {
     (multasFiltradas.filter((multa) => !multa.pagada).length / multasFiltradas.length) *
       100 || 0;
 
-  const multasPorZona = multasFiltradas.reduce((acumulado, multa) => {
-    if (multa.zona) {
-      acumulado[multa.zona] = (acumulado[multa.zona] || 0) + 1;
-    }
-    return acumulado;
-  }, {});
-
   // Renderizar gráfico
   useEffect(() => {
     if (chart) {
@@ -106,20 +72,12 @@ function ReporteAdministrativo() {
     const nuevoChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["% Pagadas", "% Por Pagar", ...Object.keys(multasPorZona)],
+        labels: ["% Pagadas", "% Por Pagar"],
         datasets: [
           {
-            label: "Porcentaje de Multas y Multas por Zona",
-            data: [
-              porcentajePagadas,
-              porcentajePorPagar,
-              ...Object.values(multasPorZona),
-            ],
-            backgroundColor: [
-              "#88A0A8",
-              "#B4CEB3",
-              ...Object.keys(multasPorZona).map(() => "#FFC107"),
-            ],
+            label: "Porcentaje de Multas",
+            data: [porcentajePagadas, porcentajePorPagar],
+            backgroundColor: ["#88A0A8", "#B4CEB3"],
           },
         ],
       },
@@ -132,24 +90,23 @@ function ReporteAdministrativo() {
         nuevoChart.destroy();
       }
     };
-  }, [multasFiltradas, porcentajePagadas, porcentajePorPagar, multasPorZona]);
+  }, [multasFiltradas, porcentajePagadas, porcentajePorPagar]);
 
   // Descargar Excel
   const exportarExcel = () => {
     const filas = multasFiltradas.map((multa) => ({
       Fecha: multa.fecha,
       Cedula: multa.cedulaInfractor,
-      Zona: multa.zona,
       Pagada: multa.pagada ? "Sí" : "No",
     }));
 
     const csvContent =
       "data:text/csv;charset=utf-8," +
       [
-        "Fecha,Cedula,Zona,Pagada",
+        "Fecha,Cedula,Pagada",
         ...filas.map(
           (fila) =>
-            `${fila.Fecha},${fila.Cedula},${fila.Zona},${fila.Pagada}`
+            `${fila.Fecha},${fila.Cedula},${fila.Pagada}`
         ),
       ].join("\n");
 
@@ -172,12 +129,11 @@ function ReporteAdministrativo() {
         const filas = multasFiltradas.map((multa) => [
           multa.fecha,
           multa.cedulaInfractor,
-          multa.zona,
           multa.pagada ? "Sí" : "No",
         ]);
 
         doc.autoTable({
-          head: [["Fecha", "Cédula", "Zona", "Pagada"]],
+          head: [["Fecha", "Cédula", "Pagada"]],
           body: filas,
         });
 
@@ -218,22 +174,6 @@ function ReporteAdministrativo() {
             value={cedulaFiltro}
             onChange={(e) => setCedulaFiltro(e.target.value)}
           />
-        </div>
-        <div>
-          <label htmlFor="zonaFiltro">Zona:</label>
-          <select
-            id="zonaFiltro"
-            value={zonaFiltro}
-            onChange={(e) => setZonaFiltro(e.target.value)}
-          >
-            <option value="">Todas</option>
-            {Array.isArray(zonas) &&
-              zonas.map((zona, index) => (
-                <option key={index} value={zona}>
-                  {zona}
-                </option>
-              ))}
-          </select>
         </div>
         <button className="btn-filter" onClick={filtrarMultas}>
           Filtrar

@@ -9,7 +9,7 @@ function ReporteUsuarioFinal() {
     const [desde, setDesde] = useState('');
     const [hasta, setHasta] = useState('');
     const chartRef = React.useRef(null); 
-    const userId = localStorage.getItem('userId'); 
+    const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde el localStorage
 
     // Cargar multas desde el backend
     useEffect(() => {
@@ -116,7 +116,7 @@ function ReporteUsuarioFinal() {
             body: multasFiltradas.map((multa) => [
                 new Date(multa.fecha).toLocaleDateString(),
                 multa.pagada ? 'Pagada' : 'Por Cancelar',
-                `₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                `${String.fromCharCode(8353)}${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             ]),
         });
 
