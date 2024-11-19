@@ -9,12 +9,13 @@ function ReporteOficial({ oficialID }) {
   const [multasFiltradas, setMultasFiltradas] = useState([]);
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
+  const userId = localStorage.getItem('userId'); 
   const chartRef = React.useRef(null);
 
   useEffect(() => {
     const fetchMultasOficial = async () => {
       try {
-        const response = await fetch(`https://localhost:7201/api/Multas/IdOficial/${oficialID}`);
+        const response = await fetch(`https://localhost:7201/api/Multas/IdOficial/${userId}`);
         if (!response.ok) {
           throw new Error("Error al obtener las multas del oficial");
         }
@@ -51,7 +52,7 @@ function ReporteOficial({ oficialID }) {
     chartRef.current = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["Multas Creadas", "Disputas Creadas"],
+        labels: ["Multas Creadas", "Declaraciones Enviadas"],
         datasets: [
           {
             label: "Totales",
@@ -76,7 +77,7 @@ function ReporteOficial({ oficialID }) {
       Fecha: multa.fecha,
       Estado: multa.pagada ? "Pagada" : "No Pagada",
       Zona: multa.zona,
-      Monto: multa.monto,
+      Monto: `₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
     }));
 
     const hoja = XLSX.utils.json_to_sheet(filas);
@@ -94,7 +95,7 @@ function ReporteOficial({ oficialID }) {
       multa.fecha,
       multa.pagada ? "Pagada" : "No Pagada",
       multa.zona,
-      multa.monto,
+      multa.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
     ]);
 
     autoTable(doc, {
@@ -107,7 +108,7 @@ function ReporteOficial({ oficialID }) {
 
   return (
     <div className="reporte-container">
-      <h3>Informe de Multas y Disputas - Oficial</h3>
+      <h3>Informe de Multas y Declaraciones - Oficial</h3>
       <div className="filter-container">
         <div>
           <label>Desde:</label>
