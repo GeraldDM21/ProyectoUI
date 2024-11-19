@@ -15,7 +15,7 @@ function ReporteUsuarioFinal() {
     useEffect(() => {
         const fetchMultas = async () => {
             try {
-                const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}/NotResolved`);
+                const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}`);
                 if (!response.ok) {
                     throw new Error('Error al cargar las multas.');
                 }
