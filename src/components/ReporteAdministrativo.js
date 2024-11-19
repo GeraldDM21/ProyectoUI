@@ -9,10 +9,10 @@ function ReporteAdministrativo() {
   const [fechaHasta, setFechaHasta] = useState("");
   const [cedulaFiltro, setCedulaFiltro] = useState("");
   const [zonaFiltro, setZonaFiltro] = useState("");
-  const [zonas, setZonas] = useState([]); // Lista de zonas desde el backend
+  const [zonas, setZonas] = useState([]); // Estado para las zonas
 
   useEffect(() => {
-    // Simulación de datos desde el backend
+    // Obtener multas desde el backend
     const fetchData = async () => {
       try {
         const response = await fetch("https://localhost:7201/api/Multas");
@@ -24,14 +24,20 @@ function ReporteAdministrativo() {
       }
     };
 
-    // Obtener las zonas únicas desde el backend
+    // Obtener zonas desde el backend
     const fetchZonas = async () => {
       try {
         const response = await fetch("https://localhost:7201/api/Multas/Zonas");
         const data = await response.json();
-        setZonas(data); // Suponemos que `data` es una lista de nombres de zonas
+        if (Array.isArray(data)) {
+          setZonas(data); // Suponemos que `data` es un array de zonas
+        } else {
+          console.error("El backend no devolvió un array de zonas:", data);
+          setZonas([]);
+        }
       } catch (error) {
         console.error("Error al obtener las zonas:", error);
+        setZonas([]);
       }
     };
 
@@ -109,7 +115,11 @@ function ReporteAdministrativo() {
               porcentajePorPagar,
               ...Object.values(multasPorZona),
             ],
-            backgroundColor: ["#88A0A8", "#B4CEB3", "#FFC107", "#4CAF50", "#2196F3"],
+            backgroundColor: [
+              "#88A0A8",
+              "#B4CEB3",
+              ...Object.keys(multasPorZona).map(() => "#FFC107"),
+            ],
           },
         ],
       },
@@ -217,11 +227,12 @@ function ReporteAdministrativo() {
             onChange={(e) => setZonaFiltro(e.target.value)}
           >
             <option value="">Todas</option>
-            {zonas.map((zona, index) => (
-              <option key={index} value={zona}>
-                {zona}
-              </option>
-            ))}
+            {Array.isArray(zonas) &&
+              zonas.map((zona, index) => (
+                <option key={index} value={zona}>
+                  {zona}
+                </option>
+              ))}
           </select>
         </div>
         <button className="btn-filter" onClick={filtrarMultas}>

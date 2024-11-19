@@ -8,22 +8,26 @@ function ReporteUsuarioFinal() {
     const [multas, setMultas] = useState([]);
     const [desde, setDesde] = useState('');
     const [hasta, setHasta] = useState('');
-    const chartRef = React.useRef(null); // Referencia al gráfico
+    const chartRef = React.useRef(null); 
+    const userId = localStorage.getItem('userId'); 
 
     // Cargar multas desde el backend
     useEffect(() => {
         const fetchMultas = async () => {
             try {
-                const response = await fetch('https://localhost:7201/api/Multas');
+                const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}/NotResolved`);
+                if (!response.ok) {
+                    throw new Error('Error al cargar las multas.');
+                }
                 const data = await response.json();
-                setMultas(data);
+                setMultas(data); 
             } catch (error) {
                 console.error('Error al cargar las multas:', error);
             }
         };
 
         fetchMultas();
-    }, []);
+    }, [userId]);
 
     // Filtrar multas por rango de fechas
     const filtrarMultas = () => {
@@ -89,9 +93,9 @@ function ReporteUsuarioFinal() {
     const exportarExcel = () => {
         const multasFiltradas = filtrarMultas();
         const datos = multasFiltradas.map((multa) => ({
-            Fecha: multa.fecha,
+            Fecha: new Date(multa.fecha).toLocaleDateString(),
             Estado: multa.pagada ? 'Pagada' : 'Por Cancelar',
-            Monto: multa.monto,
+            Monto: `₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         }));
 
         const hoja = XLSX.utils.json_to_sheet(datos);
@@ -110,9 +114,9 @@ function ReporteUsuarioFinal() {
             startY: 20,
             head: [['Fecha', 'Estado', 'Monto']],
             body: multasFiltradas.map((multa) => [
-                multa.fecha,
+                new Date(multa.fecha).toLocaleDateString(),
                 multa.pagada ? 'Pagada' : 'Por Cancelar',
-                multa.monto,
+                `₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             ]),
         });
 
