@@ -28,7 +28,7 @@ function ForgotPassword() {
             //setMessage('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
             toast.info('Correo de restablecimiento enviado. Por favor revisa tu correo electrónico.');
         } catch (error) {
-            setMessage(error.message);
+            console.log(error.message);
         }
     };
 
