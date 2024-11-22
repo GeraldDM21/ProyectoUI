@@ -176,7 +176,7 @@ function ResolverDisputas() {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                handleUpdateDisputa(disputa, 'Resuelta', result.value.resolution);
+                handleUpdateDisputa(disputa, 'Resuelta', disputa.necesitaDeclaracion, result.value.resolution);
             }
         });
     };
