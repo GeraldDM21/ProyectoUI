@@ -91,11 +91,12 @@ function ResolverDisputas() {
     };
 
     const handleUpdateDisputa = async (disputa, estado, necesitaDeclaracion, resolucion) => {
-        const { id, razon, descripcion, declaracion, idMulta, idUsuarioFinal, idOficial, idJuez } = disputa;
+        const { id, razon, descripcion, fecha, declaracion, idMulta, idUsuarioFinal, idOficial, idJuez } = disputa;
         const disputaData = {
             id, 
             razon, 
             descripcion, 
+            fecha,
             estado,
             resolucion,
             necesitaDeclaracion,
@@ -194,6 +195,7 @@ function ResolverDisputas() {
                             <th>ID</th>
                             <th>Razón</th>
                             <th>Descripción</th>
+                            <th>Fecha</th>
                             <th>Estado</th>
                             <th>Resolución</th>
                             <th>Detalles de Multa</th>
@@ -208,6 +210,7 @@ function ResolverDisputas() {
                                         <td>{disputa.id}</td>
                                         <td>{disputa.razon}</td>
                                         <td>{disputa.descripcion}</td>
+                                        <td>{new Date(disputa.fecha).toLocaleDateString()}</td>
                                         <td>{disputa.estado}</td>
                                         <td>{disputa.resolucion}</td>
                                         <td>

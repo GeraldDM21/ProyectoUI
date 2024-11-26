@@ -20,6 +20,9 @@ function DashboardUsuarioFinal() {
                 <button onClick={() => navigate('/perfil')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
                 </button>
+                <button onClick={() => navigate('/notificaciones')} className="sidebar-button">
+                    <i className="fas fa-bell"></i> Notificaciones
+                </button>
                 <LogoutButton />
             </aside>
 

@@ -44,6 +44,7 @@ function CreacionDisputa() {
         const disputaData = { 
             razon, 
             descripcion, 
+            fecha: new Date().toISOString(),
             estado,
             resolucion: 'Pendiente',
             declaracion: 'Oficial no ha declarado.',
