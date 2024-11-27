@@ -50,7 +50,7 @@ function ReporteJuez() {
   const aprobadas =
     disputasFiltradas.filter((disputa) => disputa.resolucion === "Anulación de Multa").length;
   const denegadas =
-    disputasFiltradas.filter((disputa) => disputa.resolucion === "Multa Validada").length;
+    disputasFiltradas.filter((disputa) => disputa.resolucion === "Multa Validada" || disputa.resolucion === "Usuario pagó la multa.").length;
 
   // Renderizar gráfico
   useEffect(() => {
