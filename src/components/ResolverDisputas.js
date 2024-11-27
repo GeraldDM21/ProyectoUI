@@ -8,9 +8,9 @@ import HeaderJuez from './HeaderJuez';
 
 function ResolverDisputas() {
     const [disputas, setDisputas] = useState([]);
-    const [filteredDisputas, setFilteredDisputas] = useState([]); // Disputas filtradas
-    const [filtro, setFiltro] = useState(''); // Texto del filtro
     const [error, setError] = useState('');
+    const [selectedDisputa, setSelectedDisputa] = useState(null);
+    const [newStatus, setNewStatus] = useState('');
     const [detailsVisible, setDetailsVisible] = useState({});
     const [multaDetails, setMultaDetails] = useState({});
     const [officialDetails, setOfficialDetails] = useState({});
@@ -29,9 +29,9 @@ function ResolverDisputas() {
             
             const data = await response.json();
             setDisputas(data);
-            setFilteredDisputas(data); // Inicialmente, mostrar todas las disputas
         } catch (err) {
             console.error("Error al cargar disputas:", err);
+           // setError('No se pudieron cargar las disputas.');
             toast.error('No se pudieron cargar las disputas.');
         }
     };
@@ -171,7 +171,6 @@ function ResolverDisputas() {
                 setDisputas(disputas.map(d => 
                     d.id === id ? { ...d, estado, resolucion } : d
                 ));
-              
                 setSelectedDisputa(null);
                 setNewStatus('');
 
@@ -194,10 +193,12 @@ function ResolverDisputas() {
                 }
 
             } else {
+             //   setError('No se pudo actualizar el estado de la disputa.');
                 toast.error('No se pudo actualizar el estado de la disputa.');
             }
         } catch (error) {
             console.error("Error al actualizar disputa:", error);
+           // setError('Error al actualizar el estado de la disputa.');
             toast.error('Error al actualizar el estado de la disputa.');
         }
     };
@@ -229,21 +230,6 @@ function ResolverDisputas() {
         });
     };
 
-    // Filtrar disputas según el texto ingresado
-    useEffect(() => {
-        if (filtro.trim() === '') {
-            setFilteredDisputas(disputas); // Mostrar todas las disputas si no hay filtro
-        } else {
-            setFilteredDisputas(
-                disputas.filter((disputa) =>
-                    `${disputa.razon} ${disputa.descripcion} ${disputa.estado} ${disputa.resolucion}`
-                        .toLowerCase()
-                        .includes(filtro.toLowerCase())
-                )
-            );
-        }
-    }, [filtro, disputas]);
-
     return (
         <div className="ver-disputas-background">
             <HeaderJuez />
@@ -251,16 +237,6 @@ function ResolverDisputas() {
             <div className="ver-disputas-container">
                 <h2><FaGavel /> Lista de Disputas</h2>
                 {error && <p className="error-message">{error}</p>}
-
-                {/* Barra de búsqueda */}
-                <input
-                    type="text"
-                    placeholder="Buscar por razón, descripción, estado o resolución..."
-                    value={filtro}
-                    onChange={(e) => setFiltro(e.target.value)}
-                    className="filtro-input"
-                />
-
                 <table className="ver-disputas-table">
                     <thead>
                         <tr>
@@ -275,8 +251,8 @@ function ResolverDisputas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredDisputas.length > 0 ? (
-                            filteredDisputas.map((disputa) => (
+                        {disputas.length > 0 ? (
+                            disputas.map((disputa) => (
                                 <React.Fragment key={disputa.id}>
                                     <tr>
                                         <td>{disputa.id}</td>
@@ -305,7 +281,27 @@ function ResolverDisputas() {
                                     {detailsVisible[disputa.idMulta] && multaDetails[disputa.idMulta] && (
                                         <tr className="multa-details-row">
                                             <td colSpan="7">
-                                                {/* Detalles de la multa */}
+                                                <div className="multa-details">
+                                                    <p><strong>ID Multa:</strong> {multaDetails[disputa.idMulta].id}</p>
+                                                    <p><strong>Cédula Infractor:</strong> {multaDetails[disputa.idMulta].cedulaInfractor}</p>
+                                                    <p><strong>Nombre Completo:</strong> {`${multaDetails[disputa.idMulta].nombreInfractor} ${multaDetails[disputa.idMulta].apellidoInfractor}`}</p>
+                                                    <p><strong>Fecha:</strong> {new Date(multaDetails[disputa.idMulta].fecha).toLocaleDateString()}</p>
+                                                    <p><strong>Placa:</strong> {multaDetails[disputa.idMulta].multaPlacas ? multaDetails[disputa.idMulta].multaPlacas.map(placa => placa.placasId).join(', ') : 'N/A'}</p>
+                                                    <p><strong>Infracciones:</strong></p>
+                                                    <ul>
+                                                        {multaDetails[disputa.idMulta].infraccionMultas ? multaDetails[disputa.idMulta].infraccionMultas.map(infraccion => {
+                                                            const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
+                                                            return (
+                                                                <li key={infraccion.catalogoInfraccionesId}>
+                                                                    {infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId}
+                                                                </li>
+                                                            );
+                                                        }) : <li>N/A</li>}
+                                                    </ul>
+                                                    <p><strong>Monto Total:</strong> ₡{(multaDetails[disputa.idMulta].total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                    <p><strong>Nombre del Oficial:</strong> {officialDetails[multaDetails[disputa.idMulta].idOficial] ? `${officialDetails[multaDetails[disputa.idMulta].idOficial].nombre} ${officialDetails[multaDetails[disputa.idMulta].idOficial].apellido}` : 'N/A'}</p>
+                                                    <p><strong>Declaracion del Oficial:</strong> {disputa.declaracion}</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     )}

@@ -1,5 +1,5 @@
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'; 
 import React, { useEffect, useState } from 'react';
 import { FaDollarSign, FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
@@ -12,11 +12,9 @@ function VerMultas() {
     const [error, setError] = useState('');
     const [infracciones, setInfracciones] = useState([]);
     const [pastMultas, setPastMultas] = useState([]);
-    const [filtroPendientes, setFiltroPendientes] = useState(''); // Filtro para multas pendientes
-    const [filtroPasadas, setFiltroPasadas] = useState(''); // Filtro para multas pasadas
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         fetchMultas();
         fetchInfracciones();
@@ -27,7 +25,7 @@ function VerMultas() {
     // Función para obtener las multas desde el backend
     const fetchMultas = async () => {
         try {
-            const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}/NotResolved`);
+            const response = await fetch(`https://localhost:7201/api/Multas/IdInfractor/${userId}/NotResolved`); // Reemplaza con la URL correcta de tu API
             if (!response.ok) {
                 throw new Error('Error al cargar las multas');
             }
@@ -35,6 +33,7 @@ function VerMultas() {
             setMultas(data);
         } catch (error) {
             console.error('Error al cargar multas:', error);
+       //     setError('No se pudo cargar las multas.');
             toast.error('No se pudo cargar las multas.');
         }
     };
@@ -84,45 +83,28 @@ function VerMultas() {
     // Función para manejar el pago de una multa
     const handlePago = (multa) => {
         navigate('/pago', { state: { multa } });
+        // Lógica real para procesar el pago
     };
 
     // Función para crear una disputa para una multa
     const handleDisputa = (multa) => {
         const existingDisputa = disputas.find(disputa => disputa.idMulta === multa.id);
         if (existingDisputa) {
+         //   alert('Ya existe una disputa para esta multa.');
             toast.warn('Ya existe una disputa para esta multa.');
         } else {
             navigate('/iniciar-disputa', { state: { multa } });
         }
     };
 
-    // Filtrar multas pendientes
-    const multasPendientesFiltradas = multas.filter((multa) =>
-        `${multa.cedulaInfractor} ${multa.nombreInfractor} ${multa.apellidoInfractor}`
-            .toLowerCase()
-            .includes(filtroPendientes.toLowerCase())
-    );
-
-    // Filtrar multas pasadas
-    const multasPasadasFiltradas = pastMultas.filter((multa) =>
-        `${multa.cedulaInfractor} ${multa.nombreInfractor} ${multa.apellidoInfractor}`
-            .toLowerCase()
-            .includes(filtroPasadas.toLowerCase())
-    );
-
     return (
         <div className="ver-multas-page">
+            {/* Aquí colocamos el HeaderUsuario */}
             <HeaderUsuario />
 
             <div className="ver-multas-container">
                 <h2><FaExclamationCircle /> Mis Multas Pendientes</h2>
-                <input
-                    type="text"
-                    placeholder="Buscar en multas pendientes..."
-                    value={filtroPendientes}
-                    onChange={(e) => setFiltroPendientes(e.target.value)}
-                    className="filtro-input"
-                />
+                {error && <p className="error-message">{error}</p>}
                 <table className="multas-table">
                     <thead>
                         <tr>
@@ -139,8 +121,8 @@ function VerMultas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {multasPendientesFiltradas.length > 0 ? (
-                            multasPendientesFiltradas.map((multa) => (
+                        {multas.length > 0 ? (
+                            multas.map((multa) => (
                                 <tr key={multa.id}>
                                     <td>{multa.id}</td>
                                     <td>{multa.cedulaInfractor}</td>
@@ -152,13 +134,18 @@ function VerMultas() {
                                         {multa.infraccionMultas.map(infraccion => {
                                             const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
                                             return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
-                                        }).join(', ')}
+                                        }).map((nombre, index) => (
+                                            <span key={index}>
+                                                {nombre}
+                                                <br />
+                                            </span>
+                                        ))}
                                     </td>
                                     <td>{`₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                                     <td>{multa.pagada ? 'Sí' : 'No'}</td>
-                                    <td>
-                                        <button onClick={() => handlePago(multa)}>Pagar</button>
-                                        <button onClick={() => handleDisputa(multa)}>Disputar</button>
+                                    <td className="action-buttons">
+                                        <button className="pay-button" onClick={() => handlePago(multa)}>Pagar</button>
+                                        <button className="dispute-button" onClick={() => handleDisputa(multa)}>Disputar</button>
                                     </td>
                                 </tr>
                             ))
@@ -173,13 +160,6 @@ function VerMultas() {
 
             <div className="ver-multas-container">
                 <h2><FaDollarSign /> Mis Multas Pasadas</h2>
-                <input
-                    type="text"
-                    placeholder="Buscar en multas pasadas..."
-                    value={filtroPasadas}
-                    onChange={(e) => setFiltroPasadas(e.target.value)}
-                    className="filtro-input"
-                />
                 <table className="multas-table">
                     <thead>
                         <tr>
@@ -195,8 +175,8 @@ function VerMultas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {multasPasadasFiltradas.length > 0 ? (
-                            multasPasadasFiltradas.map((multa) => (
+                        {pastMultas.length > 0 ? (
+                            pastMultas.map((multa) => (
                                 <tr key={multa.id}>
                                     <td>{multa.id}</td>
                                     <td>{multa.cedulaInfractor}</td>
@@ -208,7 +188,12 @@ function VerMultas() {
                                         {multa.infraccionMultas.map(infraccion => {
                                             const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
                                             return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
-                                        }).join(', ')}
+                                        }).map((nombre, index) => (
+                                            <span key={index}>
+                                                {nombre}
+                                                <br />
+                                            </span>
+                                        ))}
                                     </td>
                                     <td>{`₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                                     <td>{multa.pagada ? 'Sí' : 'No'}</td>
