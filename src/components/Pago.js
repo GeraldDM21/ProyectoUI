@@ -7,7 +7,6 @@ import HeaderUsuario from './HeaderUsuario';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import UploadWidget from './UploadWidget';
 
-
 function Pago() {
     const location = useLocation();
     const multa = location.state?.multa || {};
@@ -29,6 +28,28 @@ function Pago() {
         setFotoSinpe(event.target.files[0]);
         setError('');
     };
+
+    const notificacionCambioDeEstado = async (idUsuario) => {
+        const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                titulo: `Cambio de estado de multa.`,
+                descripcion: `La multa ${multa.id} ha cambiado de estado.`,
+                fecha: new Date().toISOString(),
+                leido: false,
+                idUsuario: idUsuario
+            }),
+        });
+
+        if (notificacionUsuarioFinal.ok) {
+            console.log('Notificación creada exitosamente.');
+        } else {
+            console.error('Error al crear la notificación.');
+        }
+    }
 
     const handlePago = async () => {
         // Validación para el pago por SINPE
@@ -84,10 +105,35 @@ function Pago() {
 
                                 if (!updateDisputaResponse.ok) {
                                     toast.error('Error al actualizar la disputa.');
+                                } else {
+                                    notificacionCambioDeEstado(disputa.idUsuarioFinal);
+                                    notificacionCambioDeEstado(disputa.idOficial);
+                                    notificacionCambioDeEstado(disputa.idJuez);
                                 }
                             }
                         }
                     }
+
+                    const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            titulo: `Pago de multa exitoso.`,
+                            descripcion: `Se ha procesado el pago de la multa ${multa.id} exitosamente.`,
+                            fecha: new Date().toISOString(),
+                            leido: false,
+                            idUsuario: userId
+                        }),
+                    });
+
+                    if (notificacionUsuarioFinal.ok) {
+                        console.log('Notificación creada exitosamente.');
+                    } else {
+                        console.error('Error al crear la notificación.');
+                    }
+
                     navigate('/ver-multas');
                 } else {
                     toast.error('Error al actualizar la multa.');
@@ -140,9 +186,34 @@ function Pago() {
 
                                 if (!updateDisputaResponse.ok) {
                                     toast.error('Error al actualizar la disputa.');
+                                } else {
+                                    notificacionCambioDeEstado(disputa.idUsuarioFinal);
+                                    notificacionCambioDeEstado(disputa.idOficial);
+                                    notificacionCambioDeEstado(disputa.idJuez);
                                 }
                             }
                         }
+                    }
+
+                    const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            titulo: `Pago de multa exitoso.`,
+                            descripcion: `Se ha procesado el pago de la multa ${multa.id} exitosamente.`,
+                            fecha: new Date().toISOString(),
+                            leido: false,
+                            idUsuario: userId
+                        }),
+                    });
+
+                    if (notificacionUsuarioFinal.ok) {
+                        console.log('Notificación creada exitosamente.');
+                    }
+                    else {
+                        console.error('Error al crear la notificación.');
                     }
                     navigate('/ver-multas');
                 } else {

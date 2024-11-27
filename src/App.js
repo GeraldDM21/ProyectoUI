@@ -29,6 +29,7 @@ import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
 import VerDeclaraciones from './components/VerDeclaraciones';
 import Pago from './components/Pago';
+import Notificaciones from './components/Notificaciones';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/oficial" element={<ProtectedRoute role="Oficial"><DashboardOficial /></ProtectedRoute>} />
                 <Route path="/juez" element={<ProtectedRoute role="Juez"><DashboardJuez /></ProtectedRoute>} />
                 <Route path="/dashboard-juez" element={<DashboardJuez />} />
+                <Route path="/notificaciones" element={<ProtectedRoute role={["UsuarioFinal", "Juez", "Oficial", "Administrativo"]}><Notificaciones /></ProtectedRoute>} />
 
                 {/* Funcionalidades específicas para cada rol */}
                 <Route path="/catalogo-infracciones" element={<ProtectedRoute role="Administrativo"><CatalogoInfracciones /></ProtectedRoute>} />

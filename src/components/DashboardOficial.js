@@ -23,6 +23,9 @@ function DashboardOficial() {
                 <button onClick={() => navigate('/Ver-Declaraciones')} className="sidebar-button">
                     <i className="fas fa-file-alt"></i> Ver Declaraciones
                 </button>
+                <button onClick={() => navigate('/notificaciones')} className="sidebar-button">
+                    <i className="fas fa-bell"></i> Notificaciones
+                </button>
                 <button onClick={() => navigate('/perfil-trabajadores')} className="sidebar-button">
                     <i className="fas fa-user-edit"></i> Editar Perfil
                 </button>
