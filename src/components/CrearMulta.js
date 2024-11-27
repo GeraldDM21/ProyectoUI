@@ -173,6 +173,28 @@ function CrearMulta() {
             });
 
             if (response.ok) {
+                console.log(userIdInfractor);
+
+                if (userIdInfractor && userIdInfractor.id) {
+                    const notificationUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            titulo: 'Nueva Multa',
+                            descripcion: 'Se ha registrado una nueva multa a su nombre.',
+                            fecha: new Date().toISOString(),
+                            leido: false,
+                            idUsuario: userIdInfractor.id
+                        })
+                    });
+
+                    if (!notificationUsuarioFinal.ok) {
+                        console.error('Error al enviar notificación al usuario final');
+                    } 
+                }
+
                // alert('Multa creada exitosamente');
                 toast.success('Multa creada exitosamente');
                 // Resetea los campos

@@ -122,6 +122,7 @@ function VerDisputas() {
                             <th>ID</th>
                             <th>Razón</th>
                             <th>Descripción</th>
+                            <th>Fecha</th>
                             <th>Estado</th>
                             <th>Resolución</th>
                             <th>Ver Información de Multa</th>
@@ -135,6 +136,7 @@ function VerDisputas() {
                                         <td>{disputa.id}</td>
                                         <td>{disputa.razon}</td>
                                         <td>{disputa.descripcion}</td>
+                                        <td>{new Date(disputa.fecha).toLocaleDateString()}</td>
                                         <td>{disputa.estado}</td>
                                         <td>{disputa.resolucion}</td>
                                         <td>

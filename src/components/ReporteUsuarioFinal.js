@@ -44,15 +44,16 @@ function ReporteUsuarioFinal() {
     const prepararDatosGrafico = () => {
         const multasFiltradas = filtrarMultas();
         const pagadas = multasFiltradas.filter((multa) => multa.pagada).length;
-        const porCancelar = multasFiltradas.filter((multa) => !multa.pagada).length;
+        const porCancelar = multasFiltradas.filter((multa) => !multa.pagada && !multa.resuelta).length;
+        const resueltas = multasFiltradas.filter((multa) => multa.resuelta).length;
 
         return {
-            labels: ['Multas Pagadas', 'Multas por Cancelar'],
+            labels: ['Multas Pagadas', 'Multas por Cancelar', 'Multas Resueltas'],
             datasets: [
                 {
                     label: 'Multas',
-                    data: [pagadas, porCancelar],
-                    backgroundColor: ['#B4CEB3', '#546A76'], // Colores
+                    data: [pagadas, porCancelar, resueltas],
+                    backgroundColor: ['#B4CEB3', '#546A76', '#B4CEB3'], // Colores
                 },
             ],
         };

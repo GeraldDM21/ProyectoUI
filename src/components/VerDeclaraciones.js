@@ -51,6 +51,28 @@ function VerDeclaraciones() {
         setExpandedDisputaId(expandedDisputaId === id ? null : id);
     };
 
+    const notificacionCambioDeEstado = async (idUsuario, disputaID) => {
+        const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                titulo: `Oficial ha actualizado una disputa`,
+                descripcion: `El oficial ha actualizado la disputa ${disputaID}.`,
+                fecha: new Date().toISOString(),
+                leido: false,
+                idUsuario: idUsuario
+            }),
+        });
+
+        if (notificacionUsuarioFinal.ok) {
+            console.log('Notificación creada exitosamente.');
+        } else {
+            console.error('Error al crear la notificación.');
+        }
+    }
+
     const handleEnviarDeclaracion = async (idDisputa) => {
         try {
             const declaracion = declaraciones[idDisputa] || '';
@@ -66,6 +88,10 @@ function VerDeclaraciones() {
             });
 
             if (response.ok) {
+                notificacionCambioDeEstado(disputa.idUsuarioFinal, disputa.id);
+                notificacionCambioDeEstado(disputa.idJuez, disputa.id);
+
+               // alert('Declaración enviada con éxito.');
                 toast.success('Declaración enviada con éxito.');
                 setDisputas(disputas.map(d => d.id === idDisputa ? updatedDisputa : d));
                 setFilteredDisputas(filteredDisputas.map(d => d.id === idDisputa ? updatedDisputa : d)); // Actualizar las disputas filtradas
