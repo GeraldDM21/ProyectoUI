@@ -90,6 +90,51 @@ function ResolverDisputas() {
         }
     };
 
+    const notificacionCambioDeEstado = async (idUsuario, disputaID) => {
+        const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                titulo: `Cambio de estado de disputa.`,
+                descripcion: `Ha habido un cambio de estado de la disputa ${disputaID}.`,
+                fecha: new Date().toISOString(),
+                leido: false,
+                idUsuario: idUsuario
+            }),
+        });
+
+        if (notificacionUsuarioFinal.ok) {
+            console.log('Notificación creada exitosamente.');
+        } else {
+            console.error('Error al crear la notificación.');
+        }
+    }
+
+    const notificacionNecesitaDeclaracion = async (idUsuario, disputaID) => {
+        const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                titulo: `Necesita declaración para disputa.`,
+                descripcion: `Se necesita una declaración para la disputa ${disputaID}.`,
+                fecha: new Date().toISOString(),
+                leido: false,
+                idUsuario: idUsuario
+            }),
+        });
+
+        if (notificacionUsuarioFinal.ok) {
+            console.log('Notificación creada exitosamente.');
+        }
+        else {
+            console.error('Error al crear la notificación.');
+        }
+    }
+
     const handleUpdateDisputa = async (disputa, estado, necesitaDeclaracion, resolucion) => {
         const { id, razon, descripcion, fecha, declaracion, idMulta, idUsuarioFinal, idOficial, idJuez } = disputa;
         const disputaData = {
@@ -117,6 +162,10 @@ function ResolverDisputas() {
             });
 
             if (response.ok) {
+
+                notificacionCambioDeEstado(idUsuarioFinal, disputaData.id);
+                notificacionCambioDeEstado(idJuez, disputaData.id);
+                
                // alert("¡Disputa actualizada con éxito!");
                 toast.success('¡Disputa actualizada con éxito!');
                 setDisputas(disputas.map(d => 
@@ -143,7 +192,6 @@ function ResolverDisputas() {
                     if (!updateMultaResponse.ok) throw new Error('No se pudo actualizar la multa.');
                 }
 
-                window.location.reload();
             } else {
              //   setError('No se pudo actualizar el estado de la disputa.');
                 toast.error('No se pudo actualizar el estado de la disputa.');
@@ -219,7 +267,10 @@ function ResolverDisputas() {
                                             </button>
                                         </td>
                                         <td>
-                                            <button className="resolver-button" onClick={() => handleUpdateDisputa(disputa, 'Esperando Declaración del Oficial', true ,disputa.resolucion)}>
+                                            <button className="resolver-button" onClick={() => {
+                                                handleUpdateDisputa(disputa, 'Esperando Declaración del Oficial', true ,disputa.resolucion);
+                                                notificacionNecesitaDeclaracion(disputa.idOficial, disputa.id);
+                                            }}>
                                                 Solicitar Declaración
                                             </button>
                                             <button className="resolver-button" onClick={() => handleResolverClick(disputa)}>

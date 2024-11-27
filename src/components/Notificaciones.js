@@ -5,96 +5,106 @@ import { FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
 import { useNavigate } from 'react-router-dom';
 
-function VerMultas() {
-    const [multas, setMultas] = useState([]);
+function VerNotificaciones() {
+    const [notificaciones, setNotificaciones] = useState([]);
     const [error, setError] = useState('');
-    const [infracciones, setInfracciones] = useState([]);
+    const [detailsVisible, setDetailsVisible] = useState({});
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetchMultas();
-        fetchInfracciones();
+        fetchNotificaciones();
     }, []);
 
-    // Función para obtener las multas desde el backend
-    const fetchMultas = async () => {
+    const fetchNotificaciones = async () => {
         try {
-            const response = await fetch(`https://localhost:7201/api/Multas/IdOficial/${userId}`); // Reemplaza con la URL correcta de tu API
+            const response = await fetch(`https://localhost:7201/api/Notificaciones/UsuarioID/${userId}`);
             if (!response.ok) {
-                throw new Error('Error al cargar las multas');
+                throw new Error('Error al cargar las notificaciones');
             }
             const data = await response.json();
-            setMultas(data);
+            setNotificaciones(data);
         } catch (error) {
-            console.error('Error al cargar multas:', error);
-        //    setError('No se pudo cargar las multas.');
-            toast.error('No se pudo cargar las multas.');
+            console.error('Error al cargar notificaciones:', error);
+            toast.error('No se pudo cargar las notificaciones.');
         }
     };
 
-    // Función para obtener las infracciones desde el backend
-    const fetchInfracciones = async () => {
+    const handleVerDetallesClick = (idNotificacion) => {
+        setDetailsVisible((prevVisible) => ({
+            ...prevVisible,
+            [idNotificacion]: !prevVisible[idNotificacion]
+        }));
+    };
+
+    const handleMarcarLeidoClick = async (notificacion) => {
         try {
-            const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
+            const response = await fetch(`https://localhost:7201/api/Notificaciones/${notificacion.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ...notificacion, leido: true })
+            });
             if (!response.ok) {
-                throw new Error('Error al cargar las infracciones');
+                throw new Error('Error al marcar la notificación como leída');
             }
-            const data = await response.json();
-            setInfracciones(data);
+            toast.success('Notificación marcada como leída');
+            fetchNotificaciones(); // Refresh notifications
         } catch (error) {
-            console.error('Error al cargar infracciones:', error);
+            console.error('Error al marcar la notificación como leída:', error);
+            toast.error('No se pudo marcar la notificación como leída.');
         }
     };
 
     return (
         <div className="ver-multas-page">
-
             <div className="ver-multas-container">
                 <h2><FaExclamationCircle /> Mis Notificaciones</h2>
                 {error && <p className="error-message">{error}</p>}
                 <table className="multas-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Cédula</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Título</th>
                             <th>Fecha</th>
-                            <th>Placas</th>
-                            <th>Infracciones</th>
-                            <th>Monto Total</th>
-                            <th>Resuelta</th>
+                            <th>Ver Detalles</th>
+                            <th>Marcar Leído</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {multas.length > 0 ? (
-                            multas.map((multa) => (
-                                <tr key={multa.id}>
-                                    <td>{multa.id}</td>
-                                    <td>{multa.cedulaInfractor}</td>
-                                    <td>{multa.nombreInfractor}</td>
-                                    <td>{multa.apellidoInfractor}</td>
-                                    <td>{new Date(multa.fecha).toLocaleDateString()}</td>
-                                    <td>{multa.multaPlacas.map(placa => placa.placasId).join(', ')}</td>
-                                    <td>
-                                        {multa.infraccionMultas.map(infraccion => {
-                                            const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
-                                            return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
-                                        }).map((nombre, index) => (
-                                            <span key={index}>
-                                                {nombre}
-                                                <br />
-                                            </span>
-                                        ))}
-                                    </td>
-                                    <td>{`₡${(multa.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
-                                    <td>{multa.resuelta ? 'Sí' : 'No'}</td>
-                                </tr>
+                        {notificaciones.length > 0 ? (
+                            notificaciones.map((notificacion) => (
+                                <React.Fragment key={notificacion.id}>
+                                    <tr>
+                                        <td>{notificacion.titulo}</td>
+                                        <td>{new Date(notificacion.fecha).toLocaleDateString()}</td>
+                                        <td>
+                                            <button className='view-button' onClick={() => handleVerDetallesClick(notificacion.id)}>
+                                                {detailsVisible[notificacion.id] ? 'Ocultar Detalles' : 'Ver Detalles'}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            {!notificacion.leido && (
+                                                <button className='view-button' onClick={() => handleMarcarLeidoClick(notificacion)}>
+                                                    Marcar Leído
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    {detailsVisible[notificacion.id] && (
+                                        <tr className="notificacion-details-row">
+                                            <td colSpan="5">
+                                                <div className="notificacion-details">
+                                                    <p><strong>Descripción:</strong> {notificacion.descripcion}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="10">No hay multas disponibles</td>
+                                <td colSpan="5">No hay notificaciones disponibles</td>
                             </tr>
                         )}
                     </tbody>
@@ -105,4 +115,4 @@ function VerMultas() {
     );
 }
 
-export default VerMultas;
+export default VerNotificaciones;

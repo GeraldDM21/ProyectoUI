@@ -65,7 +65,61 @@ function CreacionDisputa() {
             });
 
             if (response.ok) {
-              //  alert("Disputa creada exitosamente.");
+
+                const notificacionUsuarioFinal = await fetch('https://localhost:7201/api/Notificaciones', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        titulo: `Se ha creado una nueva disputa para la multa ${multa.id}.`,
+                        descripcion: `Se ha creado una nueva disputa para la multa ${multa.id}.
+                                    Razón: ${razon}.
+                                    Descripción: ${descripcion}.`,
+                        fecha: new Date().toISOString(),
+                        leido: false,
+                        idUsuario: userId
+                    }),
+                });
+
+                const notificacionOficial = await fetch('https://localhost:7201/api/Notificaciones', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        titulo: `Se ha creado una nueva disputa para la multa ${multa.id}.`,
+                        descripcion: `Se ha creado una nueva disputa para la multa ${multa.id}.
+                                    Razón: ${razon}.
+                                    Descripción: ${descripcion}.`,
+                        fecha: new Date().toISOString(),
+                        leido: false,
+                        idUsuario: multa.idOficial
+                    }),
+                });
+
+                const notificacionJuez = await fetch('https://localhost:7201/api/Notificaciones', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        titulo: `Nueva asignación de disputa para la multa ${multa.id}.`,
+                        descripcion: `Se le ha asignado una nueva disputa para la multa ${multa.id}.
+                                    Razón: ${razon}.
+                                    Descripción: ${descripcion}.`,
+                        fecha: new Date().toISOString(),
+                        leido: false,
+                        idUsuario: randomJuez.id
+                    }),
+                });
+
+                if (notificacionUsuarioFinal.ok && notificacionOficial.ok && notificacionJuez.ok) {
+                    console.log('Notificaciones creadas exitosamente.');
+                } else {
+                    console.error('Error al crear las notificaciones.');
+                }
+                //  alert("Disputa creada exitosamente.");
                 toast.success('Disputa creada exitosamente.');
                 setRazon('');
                 setDescripcion('');
