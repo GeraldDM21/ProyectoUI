@@ -1,5 +1,5 @@
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import '../Styles/VerDisputas.css';
@@ -7,6 +7,8 @@ import HeaderUsuario from './HeaderUsuario';
 
 function VerDisputas() {
     const [disputas, setDisputas] = useState([]);
+    const [filteredDisputas, setFilteredDisputas] = useState([]); // Disputas filtradas
+    const [filtro, setFiltro] = useState(''); // Texto del filtro
     const [error, setError] = useState('');
     const [detailsVisible, setDetailsVisible] = useState({});
     const [multaDetails, setMultaDetails] = useState({});
@@ -23,12 +25,11 @@ function VerDisputas() {
         try {
             const response = await fetch(`https://localhost:7201/api/Disputas/IdInfractor/${userId}`);
             if (!response.ok) throw new Error('No se pudo cargar la lista de disputas.');
-            
             const data = await response.json();
             setDisputas(data);
+            setFilteredDisputas(data); // Inicialmente mostramos todas las disputas
         } catch (err) {
             console.error("Error al cargar disputas:", err);
-         //   setError('No se pudieron cargar las disputas.');
             toast.error('No se pudieron cargar las disputas.');
         }
     };
@@ -36,9 +37,7 @@ function VerDisputas() {
     const fetchInfracciones = async () => {
         try {
             const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
-            if (!response.ok) {
-                throw new Error('Error al cargar las infracciones');
-            }
+            if (!response.ok) throw new Error('Error al cargar las infracciones');
             const data = await response.json();
             setInfracciones(data);
         } catch (error) {
@@ -50,7 +49,6 @@ function VerDisputas() {
         try {
             const response = await fetch(`https://localhost:7201/api/Multas/${idMulta}`);
             if (!response.ok) throw new Error('No se pudo cargar los detalles de la multa.');
-            
             const data = await response.json();
             setMultaDetails((prevDetails) => ({
                 ...prevDetails,
@@ -66,7 +64,6 @@ function VerDisputas() {
         try {
             const response = await fetch(`https://localhost:7201/api/Usuarios/${idOficial}`);
             if (!response.ok) throw new Error('No se pudo cargar los detalles del oficial.');
-            
             const data = await response.json();
             setOfficialDetails((prevDetails) => ({
                 ...prevDetails,
@@ -87,6 +84,21 @@ function VerDisputas() {
         }
     };
 
+    // Filtrar disputas según el texto ingresado
+    useEffect(() => {
+        if (filtro.trim() === '') {
+            setFilteredDisputas(disputas); // Si no hay filtro, mostrar todas las disputas
+        } else {
+            setFilteredDisputas(
+                disputas.filter((disputa) =>
+                    `${disputa.razon} ${disputa.descripcion} ${disputa.estado} ${disputa.resolucion}`
+                        .toLowerCase()
+                        .includes(filtro.toLowerCase())
+                )
+            );
+        }
+    }, [filtro, disputas]);
+
     return (
         <div className="ver-disputas-background">
             <HeaderUsuario />
@@ -94,6 +106,16 @@ function VerDisputas() {
             <div className="ver-disputas-container">
                 <h2><FaExclamationTriangle /> Lista de Disputas</h2>
                 {error && <p className="error-message">{error}</p>}
+
+                {/* Barra de búsqueda */}
+                <input
+                    type="text"
+                    placeholder="Buscar disputa por razón, descripción, estado, resolución..."
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                    className="filtro-input"
+                />
+
                 <table className="ver-disputas-table">
                     <thead>
                         <tr>
@@ -107,8 +129,8 @@ function VerDisputas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {disputas.length > 0 ? (
-                            disputas.map((disputa) => (
+                        {filteredDisputas.length > 0 ? (
+                            filteredDisputas.map((disputa) => (
                                 <React.Fragment key={disputa.id}>
                                     <tr>
                                         <td>{disputa.id}</td>
@@ -125,7 +147,7 @@ function VerDisputas() {
                                     </tr>
                                     {detailsVisible[disputa.idMulta] && multaDetails[disputa.idMulta] && (
                                         <tr className="multa-details-row">
-                                            <td colSpan="5">
+                                            <td colSpan="6">
                                                 <div className="multa-details">
                                                     <p><strong>ID Multa:</strong> {multaDetails[disputa.idMulta].id}</p>
                                                     <p><strong>Cédula Infractor:</strong> {multaDetails[disputa.idMulta].cedulaInfractor}</p>
@@ -141,11 +163,11 @@ function VerDisputas() {
                                                                     {infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId}
                                                                 </li>
                                                             );
-                                                        }) : <li>N/A</li>}  
+                                                        }) : <li>N/A</li>}
                                                     </ul>
                                                     <p><strong>Monto Total:</strong> ₡{(multaDetails[disputa.idMulta].total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                                     <p><strong>Nombre del Oficial:</strong> {officialDetails[multaDetails[disputa.idMulta].idOficial] ? `${officialDetails[multaDetails[disputa.idMulta].idOficial].nombre} ${officialDetails[multaDetails[disputa.idMulta].idOficial].apellido}` : 'N/A'}</p>
-                                                    <p><strong>Declaracion del Oficial:</strong> {disputa.declaracion}</p>
+                                                    <p><strong>Declaración del Oficial:</strong> {disputa.declaracion}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -154,7 +176,7 @@ function VerDisputas() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="5" className="no-data">No se encontraron disputas.</td>
+                                <td colSpan="6" className="no-data">No se encontraron disputas.</td>
                             </tr>
                         )}
                     </tbody>
