@@ -1,5 +1,5 @@
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from 'react';
 import { FaExclamationCircle } from 'react-icons/fa';
 import '../Styles/VerMultas.css';
@@ -8,11 +8,13 @@ import HeaderOficial from './HeaderOficial';
 
 function VerMultas() {
     const [multas, setMultas] = useState([]);
+    const [filteredMultas, setFilteredMultas] = useState([]); // Multas filtradas
+    const [filtro, setFiltro] = useState(''); // Texto del filtro
     const [error, setError] = useState('');
     const [infracciones, setInfracciones] = useState([]);
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         fetchMultas();
         fetchInfracciones();
@@ -27,9 +29,9 @@ function VerMultas() {
             }
             const data = await response.json();
             setMultas(data);
+            setFilteredMultas(data); // Inicialmente todas las multas están disponibles
         } catch (error) {
             console.error('Error al cargar multas:', error);
-        //    setError('No se pudo cargar las multas.');
             toast.error('No se pudo cargar las multas.');
         }
     };
@@ -48,14 +50,46 @@ function VerMultas() {
         }
     };
 
+    // Filtrar multas según el texto ingresado
+    useEffect(() => {
+        if (filtro.trim() === '') {
+            setFilteredMultas(multas); // Si no hay filtro, mostrar todas las multas
+        } else {
+            setFilteredMultas(
+                multas.filter((multa) => {
+                    const infraccionesTexto = multa.infraccionMultas
+                        .map((infraccion) => {
+                            const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
+                            return infraccionDetail ? infraccionDetail.nombre : '';
+                        })
+                        .join(' ');
+                    return (
+                        `${multa.cedulaInfractor} ${multa.nombreInfractor} ${multa.apellidoInfractor} ${multa.multaPlacas.map(placa => placa.placasId).join(', ')} ${infraccionesTexto}`
+                            .toLowerCase()
+                            .includes(filtro.toLowerCase())
+                    );
+                })
+            );
+        }
+    }, [filtro, multas, infracciones]);
+
     return (
         <div className="ver-multas-page">
-            {/* Aquí colocamos el HeaderUsuario */}
             <HeaderOficial />
 
             <div className="ver-multas-container">
                 <h2><FaExclamationCircle /> Mis Multas Creadas</h2>
                 {error && <p className="error-message">{error}</p>}
+
+                {/* Barra de búsqueda */}
+                <input
+                    type="text"
+                    placeholder="Buscar por cédula, nombre, placas o infracciones..."
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                    className="filtro-input"
+                />
+
                 <table className="multas-table">
                     <thead>
                         <tr>
@@ -71,8 +105,8 @@ function VerMultas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {multas.length > 0 ? (
-                            multas.map((multa) => (
+                        {filteredMultas.length > 0 ? (
+                            filteredMultas.map((multa) => (
                                 <tr key={multa.id}>
                                     <td>{multa.id}</td>
                                     <td>{multa.cedulaInfractor}</td>
@@ -81,7 +115,7 @@ function VerMultas() {
                                     <td>{new Date(multa.fecha).toLocaleDateString()}</td>
                                     <td>{multa.multaPlacas.map(placa => placa.placasId).join(', ')}</td>
                                     <td>
-                                        {multa.infraccionMultas.map(infraccion => {
+                                        {multa.infraccionMultas.map((infraccion) => {
                                             const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
                                             return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
                                         }).map((nombre, index) => (

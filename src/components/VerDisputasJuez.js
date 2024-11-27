@@ -7,6 +7,8 @@ import HeaderJuez from './HeaderJuez';
 
 function VerDisputas() {
     const [disputas, setDisputas] = useState([]);
+    const [filteredDisputas, setFilteredDisputas] = useState([]); // Disputas filtradas
+    const [filtro, setFiltro] = useState(''); // Texto del filtro
     const [error, setError] = useState('');
     const [detailsVisible, setDetailsVisible] = useState({});
     const [multaDetails, setMultaDetails] = useState({});
@@ -26,9 +28,9 @@ function VerDisputas() {
             
             const data = await response.json();
             setDisputas(data);
+            setFilteredDisputas(data); // Inicialmente, mostrar todas las disputas
         } catch (err) {
             console.error("Error al cargar disputas:", err);
-            //setError('No se pudieron cargar las disputas.');
             toast.error('No se pudieron cargar las disputas.');
         }
     };
@@ -87,13 +89,37 @@ function VerDisputas() {
         }
     };
 
+    // Filtrar disputas según el texto ingresado
+    useEffect(() => {
+        if (filtro.trim() === '') {
+            setFilteredDisputas(disputas); // Si no hay filtro, mostrar todas las disputas
+        } else {
+            setFilteredDisputas(
+                disputas.filter((disputa) => (
+                    `${disputa.razon} ${disputa.descripcion} ${disputa.estado} ${disputa.resolucion}`
+                        .toLowerCase()
+                        .includes(filtro.toLowerCase())
+                ))
+            );
+        }
+    }, [filtro, disputas]);
+
     return (
         <div className="ver-disputas-background">
             <HeaderJuez />
-
             <div className="ver-disputas-container">
                 <h2><FaExclamationTriangle /> Lista de Disputas Resueltas</h2>
                 {error && <p className="error-message">{error}</p>}
+
+                {/* Barra de búsqueda */}
+                <input
+                    type="text"
+                    placeholder="Buscar por razón, descripción, estado o resolución..."
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                    className="filtro-input"
+                />
+
                 <table className="ver-disputas-table">
                     <thead>
                         <tr>
@@ -107,8 +133,8 @@ function VerDisputas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {disputas.length > 0 ? (
-                            disputas.map((disputa) => (
+                        {filteredDisputas.length > 0 ? (
+                            filteredDisputas.map((disputa) => (
                                 <React.Fragment key={disputa.id}>
                                     <tr>
                                         <td>{disputa.id}</td>
@@ -145,7 +171,7 @@ function VerDisputas() {
                                                     </ul>
                                                     <p><strong>Monto Total:</strong> ₡{(multaDetails[disputa.idMulta].total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                                     <p><strong>Nombre del Oficial:</strong> {officialDetails[multaDetails[disputa.idMulta].idOficial] ? `${officialDetails[multaDetails[disputa.idMulta].idOficial].nombre} ${officialDetails[multaDetails[disputa.idMulta].idOficial].apellido}` : 'N/A'}</p>
-                                                    <p><strong>Declaracion del Oficial:</strong> {disputa.declaracion}</p>
+                                                    <p><strong>Declaración del Oficial:</strong> {disputa.declaracion}</p>
                                                 </div>
                                             </td>
                                         </tr>
