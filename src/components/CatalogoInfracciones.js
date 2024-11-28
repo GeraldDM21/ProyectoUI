@@ -1,5 +1,5 @@
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de react-toastify
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaSave, FaPlus, FaTrash } from 'react-icons/fa';
 import '../Styles/CatalogoInfracciones.css';
@@ -7,15 +7,23 @@ import HeaderAdmin from './HeaderAdmin';
 
 function CatalogoInfracciones() {
     const [infracciones, setInfracciones] = useState([]);
+    const [filteredInfracciones, setFilteredInfracciones] = useState([]); // Lista filtrada
     const [editIndex, setEditIndex] = useState(null);
     const [editedMonto, setEditedMonto] = useState('');
     const [newInfraccion, setNewInfraccion] = useState({ nombre: '', costo: '' });
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
 
     useEffect(() => {
         fetchInfracciones();
     }, []);
+
+    useEffect(() => {
+        // Filtrar infracciones basándose en el término de búsqueda
+        const filtered = infracciones.filter(infraccion =>
+            infraccion.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredInfracciones(filtered);
+    }, [searchTerm, infracciones]);
 
     // Función para obtener las infracciones desde el backend
     const fetchInfracciones = async () => {
@@ -23,11 +31,10 @@ function CatalogoInfracciones() {
             const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
             const data = await response.json();
             setInfracciones(data);
+            setFilteredInfracciones(data); // Inicialmente, la lista filtrada es igual a la lista completa
         } catch (error) {
-         //   setError("No se pudo cargar el catálogo. Intente nuevamente más tarde.");
             toast.error('No se pudo cargar el catálogo. Intente nuevamente más tarde.');
             console.error("Error al cargar infracciones:", error);
-            
         }
     };
 
@@ -35,15 +42,12 @@ function CatalogoInfracciones() {
     const handleEdit = (index, costo) => {
         setEditIndex(index);
         setEditedMonto(costo);
-        setSuccess('');
-        setError('');
     };
 
     // Función para guardar el monto editado en el backend
     const handleSave = async (id) => {
         const parsedMonto = parseFloat(editedMonto);
         if (isNaN(parsedMonto)) {
-          //  setError("El monto debe ser un número válido.");
             toast.warn('El monto debe ser un número válido.');
             return;
         }
@@ -54,10 +58,11 @@ function CatalogoInfracciones() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     id: id,
                     nombre: infracciones.find(inf => inf.id === id).nombre,
-                    costo: parsedMonto }),
+                    costo: parsedMonto,
+                }),
             });
 
             if (response.ok) {
@@ -66,34 +71,27 @@ function CatalogoInfracciones() {
                 )));
                 setEditIndex(null);
                 setEditedMonto('');
-                //alert("Monto actualizado correctamente.");
                 toast.success('Monto actualizado correctamente.');
             } else {
-               // alert("No se pudo actualizar el monto.");
                 toast.error('No se pudo actualizar el monto.');
             }
         } catch (error) {
-          //  alert("Error al actualizar el monto.");
             toast.error('Error al actualizar el monto.');
-            console.log("Error al guardar el monto:", error);
+            console.error("Error al guardar el monto:", error);
         }
     };
 
     // Función para agregar una nueva infracción
     const handleAddInfraccion = async (e) => {
         e.preventDefault();
-        setError('');
-        setSuccess('');
 
         if (!newInfraccion.nombre || !newInfraccion.costo) {
-          //  setError("Ambos campos son obligatorios.");
             toast.warn('Ambos campos son obligatorios.');
             return;
         }
 
         const parsedMonto = parseFloat(newInfraccion.costo);
         if (isNaN(parsedMonto)) {
-           // setError("El monto debe ser un número válido.");
             toast.warn('El monto debe ser un número válido.');
             return;
         }
@@ -114,14 +112,11 @@ function CatalogoInfracciones() {
                 const createdInfraccion = await response.json();
                 setInfracciones([...infracciones, createdInfraccion]);
                 setNewInfraccion({ nombre: '', costo: '' });
-                //alert("Infracción agregada exitosamente.");
                 toast.success('Infracción agregada exitosamente.');
             } else {
-               // setError("No se pudo agregar la infracción.");
                 toast.error('No se pudo agregar la infracción.');
             }
         } catch (error) {
-         //   setError("Error al agregar la infracción.");
             toast.error('Error al agregar la infracción.');
             console.error("Error al agregar infracción:", error);
         }
@@ -136,30 +131,22 @@ function CatalogoInfracciones() {
 
             if (response.ok) {
                 setInfracciones(infracciones.filter(infraccion => infraccion.id !== id));
-               // alert("Infracción eliminada correctamente.");
                 toast.success('Infracción eliminada correctamente.');
             } else {
-              //  alert("No se pudo eliminar la infracción.");
                 toast.error('No se pudo eliminar la infracción.');
-
             }
         } catch (error) {
-          //  alert("Error al eliminar la infracción.");
             toast.error('Error al eliminar la infracción.');
-
-            console.log("Error al eliminar infracción:", error);
+            console.error("Error al eliminar infracción:", error);
         }
     };
 
     return (
         <div className="catalogo-background">
-            {/* HeaderAdmin con rutas y títulos personalizados */}
             <HeaderAdmin regresarRuta="/" tituloPrincipal="Tránsito 360" tituloRegresar="Regresar" />
 
             <div className="catalogo-infracciones-container">
                 <h2>Administrar Catálogo de Infracciones</h2>
-                {error && <p className="error-message">{error}</p>}
-                {success && <p className="success-message">{success}</p>}
 
                 {/* Formulario para agregar una nueva infracción */}
                 <form onSubmit={handleAddInfraccion} className="add-infraccion-form">
@@ -180,6 +167,15 @@ function CatalogoInfracciones() {
                     <button type="submit" className="add-button"><FaPlus /> Agregar Infracción</button>
                 </form>
 
+                {/* Campo de búsqueda debajo del botón agregar */}
+                <input
+                    type="text"
+                    placeholder="Buscar infracción..."
+                    className="search-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+
                 {/* Tabla de infracciones */}
                 <table className="infracciones-table">
                     <thead>
@@ -190,8 +186,8 @@ function CatalogoInfracciones() {
                         </tr>
                     </thead>
                     <tbody>
-                        {infracciones.length > 0 ? (
-                            infracciones.map((infraccion, index) => (
+                        {filteredInfracciones.length > 0 ? (
+                            filteredInfracciones.map((infraccion, index) => (
                                 <tr key={infraccion.id}>
                                     <td>{infraccion.nombre}</td>
                                     <td>

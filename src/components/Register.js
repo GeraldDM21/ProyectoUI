@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Importa el Header
 import AuthFormContainer from './AuthFormContainer';
 import UploadWidget from './UploadWidget';
+import { wait } from '@testing-library/user-event/dist/utils';
 
 function Register() {
     const [cedula, setCedula] = useState('');
@@ -32,9 +33,12 @@ function Register() {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Aquí puedes manejar la lógica de envío al backend
         try {
-            const usuarioFinal = {
+            // Check if numPlaca exists and UsuarioId is null
+            const placaResponse = await fetch(`https://localhost:7201/api/Placas/${numPlaca}`);
+            const placaData = await placaResponse.json();
+
+            let usuarioFinal = {
                 cedula,
                 nombre,
                 apellido,
@@ -43,16 +47,23 @@ function Register() {
                 telefono,
                 fotoCedula,
                 idRol: 1,
-                placas: [
+            };
+
+            if (placaResponse.ok && placaData.usuarioId === null) {
+                // Do not include placas in usuarioFinal
+            } else if (!placaResponse.ok) {
+                // Include placas in usuarioFinal
+                usuarioFinal.placas = [
                     {
                         id: numPlaca,
                     }
-                ]
-            };
+                ];
+            }
 
             console.log(usuarioFinal);
 
-            const response = await fetch('https://localhost:7201/api/Auth/Register', {
+            // Register the user
+            const registerResponse = await fetch('https://localhost:7201/api/Auth/Register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,17 +72,35 @@ function Register() {
                 body: JSON.stringify(usuarioFinal)
             });
 
-            if (response.ok) {
-              //  showAlert('¡Registro exitoso!', 'success');
+            if (registerResponse.ok) {
+                const registeredUser = await registerResponse.json();
+                console.log(registeredUser);
+
+                if (placaResponse.ok && placaData.usuarioId === null) {
+                    // Update UsuarioId in Placas
+                    const updateResponse = await fetch(`https://localhost:7201/api/Placas/${numPlaca}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                        body: JSON.stringify({ id: numPlaca, usuarioId: registeredUser })
+                    });
+
+                    if (!updateResponse.ok) {
+                        throw new Error('Failed to update UsuarioId in Placas');
+                    }
+                }
+
                 toast.success('¡Registro exitoso!', 'success');
                 navigate('/login');
             } else {
-                //showAlert('Error al registrar el usuario.', 'error');
+                const errorData = await registerResponse.json();
+                console.error('Register error:', errorData);
                 toast.error('Error al registrar el usuario.', 'error');
             }
         } catch (error) {
-            toast.error(error);
-          //  showAlert('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
+            console.error('Catch error:', error);
             toast.error('Hubo un error con la solicitud. Intenta de nuevo más tarde.', 'error');
         }
 

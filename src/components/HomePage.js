@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import HeatMap from './HeatMap';
 import './HomePage.css';
 
@@ -9,22 +10,64 @@ function HomePage() {
     const navigate = useNavigate();
     const [plate, setPlate] = useState(''); 
     const [results, setResults] = useState([]);
+    const [heatmapPoints, setHeatmapPoints] = useState([]);
+    const [infracciones, setInfracciones] = useState([]);
 
-    const heatmapPoints = [
-        [9.934819, -84.088046], // San José
-        [34.0522, -118.2437, 0.4],   // Los Ángeles
-        [40.7128, -74.0060, 0.8],    // Nueva York .
-    ];
+    useEffect(() => {
+        const fetchHeatmapPoints = async () => {
+            try {
+                const response = await fetch('https://localhost:7201/api/Multas');
+                const data = await response.json();
+                setHeatmapPoints(data.map(multa => [multa.latitud, multa.longitud]));
+            } catch (error) {
+                console.error('Error fetching heatmap points:', error);
+            }
+        };
+
+        const fetchInfracciones = async () => {
+            try {
+                const response = await fetch('https://localhost:7201/api/CatalogoInfracciones');
+                const data = await response.json();
+                setInfracciones(data);
+            } catch (error) {
+                console.error('Error fetching infracciones:', error);
+            }
+        };
+
+        fetchHeatmapPoints();
+        fetchInfracciones();
+    }, []);
+
+    const blueIcon = new L.Icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        shadowSize: [41, 41]
+    });
 
     const handleLogin = () => navigate('/login');
     const handleRegister = () => navigate('/register');
 
-    const handleSearch = () => {
-        // Se simula un resultado de búsqueda, se puede conectar con una API o base de datos.
-        setResults([
-            { nombre: 'Fabio', apellido: 'Chacon', cedula: '111222333',Placa:'BGP-000',Infracciones:'Exceso de velocidad', longitud: -84.088046,latitud: 7.634416,fecha:'2024-05-15'},
-        
-        ]);
+    const handleSearch = async () => {
+        try {
+            const response = await fetch(`https://localhost:7201/api/Multas/PlacaID/${plate}`);
+            const data = await response.json();
+
+            const mappedResults = data.map(result => ({
+                ...result,
+                infracciones: result.infraccionMultas.map(infraccion => {
+                    const infraccionDetail = infracciones.find(i => i.id === infraccion.catalogoInfraccionesId);
+                    return infraccionDetail ? infraccionDetail.nombre : infraccion.catalogoInfraccionesId;
+                }).join(', '),
+                placa: result.multaPlacas.map(placa => placa.placasId).join(', ')
+            }));
+
+            setResults(mappedResults);
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
     };
 
     return (
@@ -40,30 +83,27 @@ function HomePage() {
                 </div>
             </header>
 
-            
-
             <div className="transito-container">
                 <h1 className="transito-title">Tránsito 360</h1>
             </div>
 
-
             <h2></h2>
             <div className="mapa-calor-container">
-            <h3 className="mapa-calor-title">Mapa de Calor de Multas</h3>
+                <h3 className="mapa-calor-title">Mapa de Calor de Multas</h3>
             </div>
 
             <div className="heatmap-section">
-                 <MapContainer center={[9.934819, -84.088046]} zoom={5} className="map-container">
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                      <HeatMap points={heatmapPoints} />
+                <MapContainer center={[9.934819, -84.088046]} zoom={5} className="map-container">
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <HeatMap points={heatmapPoints} />
+                    {heatmapPoints.map((point, index) => (
+                        <Marker key={index} position={point} icon={blueIcon} />
+                    ))}
                 </MapContainer>
-           </div>
-
-        
-
+            </div>
 
             <div className="section-container">
-            <h3 className="consulta-placa-title">Consulta por Placa</h3>
+                <h3 className="consulta-placa-title">Consulta por Placa</h3>
                 <div className="consulta-form">
                     <input
                         type="text"
@@ -81,22 +121,18 @@ function HomePage() {
                             <th>Cédula</th>
                             <th>Placa</th>
                             <th>Infracciones</th>
-                            <th>Longitud</th>
-                            <th>Latitud</th>
                             <th>Fecha</th>
                         </tr>
                     </thead>
                     <tbody>
                         {results.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.nombre}</td>
-                                <td>{result.apellido}</td>
-                                <td>{result.cedula}</td>
-                                <td>{result.Placa}</td>
-                                <td>{result.Infracciones}</td>
-                                <td>{result.longitud}</td>
-                                <td>{result.latitud}</td>
-                                <td>{result.fecha}</td>
+                                <td>{result.nombreInfractor}</td>
+                                <td>{result.apellidoInfractor}</td>
+                                <td>{result.cedulaInfractor}</td>
+                                <td>{result.placa}</td>
+                                <td>{result.infracciones}</td>
+                                <td>{result.fecha ? new Date(result.fecha).toLocaleDateString() : ''}</td>
                             </tr>
                         ))}
                     </tbody>
