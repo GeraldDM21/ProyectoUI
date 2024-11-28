@@ -155,13 +155,6 @@ function Login() {
                     </button>
                 </form>
 
-                <div className="mt-4">
-                    <h4>Iniciar sesión como:</h4>
-                    <button onClick={() => handleTestLogin('Administrativo')} className="btn btn-secondary">Admin</button>
-                    <button onClick={() => handleTestLogin('UsuarioFinal')} className="btn btn-secondary">Usuario</button>
-                    <button onClick={() => handleTestLogin('Oficial')} className="btn btn-secondary">Oficial</button>
-                    <button onClick={() => handleTestLogin('Juez')} className="btn btn-secondary">Juez</button>
-                </div>
             </div>
             <ToastContainer />
         </div>

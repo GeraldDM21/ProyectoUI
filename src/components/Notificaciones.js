@@ -57,6 +57,22 @@ function VerNotificaciones() {
         }
     };
 
+    const handleEliminarClick = async (notificacionId) => {
+        try {
+            const response = await fetch(`https://localhost:7201/api/Notificaciones/${notificacionId}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Error al eliminar la notificación');
+            }
+            toast.success('Notificación eliminada');
+            fetchNotificaciones(); // Refresh notifications
+        } catch (error) {
+            console.error('Error al eliminar la notificación:', error);
+            toast.error('No se pudo eliminar la notificación.');
+        }
+    };
+
     return (
         <div className="ver-multas-page">
             <div className="ver-multas-container">
@@ -69,6 +85,7 @@ function VerNotificaciones() {
                             <th>Fecha</th>
                             <th>Ver Detalles</th>
                             <th>Marcar Leído</th>
+                            <th>Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,6 +106,11 @@ function VerNotificaciones() {
                                                     Marcar Leído
                                                 </button>
                                             )}
+                                        </td>
+                                        <td>
+                                            <button className='view-button' onClick={() => handleEliminarClick(notificacion.id)}>
+                                                Eliminar
+                                            </button>
                                         </td>
                                     </tr>
                                     {detailsVisible[notificacion.id] && (
