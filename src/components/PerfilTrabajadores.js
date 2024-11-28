@@ -218,63 +218,67 @@ function Perfil() {
                     <p><FaEnvelope /> {userData.correo}</p>
                     <p><FaPhone /> {userData.telefono}</p>
                 </div>
+                <button type="button" className="sidebar-button" onClick={handleChangePassword}>
+                    <i className="fas fa-key"></i> Cambiar Contraseña
+                </button>
+                <button type="button" className="sidebar-button" onClick={handleEnable2FA}>
+                    <i className="fas fa-shield-alt"></i>{userData.isTwoFactorEnabled ? 'Deshabilitar 2FA' : 'Habilitar 2FA'}
+                </button>
                 <LogoutButton /> {/* Botón de cerrar sesión */}
             </aside>
 
             <main className="main-content-perfil">
-                <div className="content-body-perfil">
-                    {/* Foto de perfil con opción de actualización */}
-                    <div className="foto-perfil">
+                 {/* Foto de perfil con opción de actualización */}
+                 <div className="foto-perfil">
                         <img src={userData.fotoPerfil || 'https://via.placeholder.com/150'} alt="Foto de perfil" />
                         <UploadWidget onUpload={(url) => setUserData(prevState => ({ ...prevState, fotoPerfil: url }))} /> {/* Cloudinary Upload Widget */}
-                    </div>
+                </div>     
+                <div>                     
 
                     {/* Formulario de edición de perfil */}
                     <form onSubmit={handleUpdateProfile} className="perfil-form">
-                        <div className="form-group-perfil">
-                            <label>Nombre</label>
-                            <input
-                                type="text"
-                                className="form-control-perfil"
-                                name="nombre"
-                                value={userData.nombre}
-                                onChange={handleChange}
-                                required
-                            />
+                        <div className="content-body-perfil">
+
+                            <div className="form-group-perfil">
+                                <label>Nombre</label>
+                                <input
+                                    type="text"
+                                    className="form-control-perfil"
+                                    name="nombre"
+                                    value={userData.nombre}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group-perfil">
+                                <label>Apellido</label>
+                                <input
+                                    type="text"
+                                    className="form-control-perfil"
+                                    name="apellido"
+                                    value={userData.apellido}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group-perfil perfil-form-bottom">
+                                <label>Teléfono</label>
+                                <input
+                                    type="tel"
+                                    className="form-control-perfil"
+                                    name="telefono"
+                                    value={userData.telefono}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group-perfil">
+                                <button type="submit" className="btn-primary-perfil">Guardar Cambios</button>
+                            </div>
+
                         </div>
-                        <div className="form-group-perfil">
-                            <label>Apellido</label>
-                            <input
-                                type="text"
-                                className="form-control-perfil"
-                                name="apellido"
-                                value={userData.apellido}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group-perfil">
-                            <label>Teléfono</label>
-                            <input
-                                type="tel"
-                                className="form-control-perfil"
-                                name="telefono"
-                                value={userData.telefono}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group-perfil">
-                            <button type="button" className="btn btn-secondary-perfil" onClick={handleChangePassword}>Cambiar Contraseña</button>
-                        </div>
-                        <div className="form-group-perfil">
-                            <button type="button" className="btn btn-secondary-perfil" onClick={handleEnable2FA}>
-                                {userData.isTwoFactorEnabled ? 'Deshabilitar 2FA' : 'Habilitar 2FA'}
-                            </button>
-                        </div>
-                        <div className="form-group-perfil">
-                            <button type="submit" className="btn-primary-perfil">Guardar Cambios</button>
-                        </div>
+                        
                     </form>
 
                     {mensaje && <p className="text-info-perfil">{mensaje}</p>}

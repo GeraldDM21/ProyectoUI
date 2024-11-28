@@ -299,25 +299,39 @@ function CrearMulta() {
                         <LocationMarker />
                     </MapContainer>
                     <div className="form-group">
-                        <label>Tipo de Infracción:</label>
-                        <select multiple value={selectedInfracciones} onChange={(e) => {
-                            const options = e.target.options;
-                            const selectedValues = [];
-                            for (let i = 0; i < options.length; i++) {
-                                if (options[i].selected) {
-                                    selectedValues.push(options[i].value);
-                                }
-                            }
-                            setSelectedInfracciones(selectedValues);
-                            console.log(selectedValues);
-                        }}>
-                            {infraccion.map((infraccion) => (
-                                <option key={infraccion.id} value={infraccion.id}>
-                                    {infraccion.nombre}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+    <label>Tipo de Infracción:</label>
+    <div>
+        {infraccion.map((infraccion) => (
+            <div key={infraccion.id} className="form-check">
+                <input
+                    type="checkbox"
+                    id={`infraccion-${infraccion.id}`}
+                    value={infraccion.id}
+                    checked={selectedInfracciones.includes(infraccion.id)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (e.target.checked) {
+                            // Agregar al array si está marcado
+                            setSelectedInfracciones([...selectedInfracciones, value]);
+                        } else {
+                            // Remover del array si se desmarca
+                            setSelectedInfracciones(
+                                selectedInfracciones.filter((id) => id !== value)
+                            );
+                        }
+                    }}
+                    className="form-check-input"
+                />
+                <label
+                    htmlFor={`infraccion-${infraccion.id}`}
+                    className="form-check-label"
+                >
+                    {infraccion.nombre}
+                </label>
+            </div>
+        ))}
+    </div>
+</div>
                     <button type="submit" className="btn-submit">Registrar Multa</button>
                     {message && <p className="message">{message}</p>}
                 </form>
