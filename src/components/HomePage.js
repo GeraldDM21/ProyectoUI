@@ -4,7 +4,10 @@ import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import HeatMap from './HeatMap';
+import ReCAPTCHA from 'react-google-recaptcha';
 import './HomePage.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  // Importa los estilos de react-toastify
 
 function HomePage() {
     const navigate = useNavigate();
@@ -12,6 +15,7 @@ function HomePage() {
     const [results, setResults] = useState([]);
     const [heatmapPoints, setHeatmapPoints] = useState([]);
     const [infracciones, setInfracciones] = useState([]);
+    const [recaptchaToken, setRecaptchaToken] = useState(null);
 
     useEffect(() => {
         const fetchHeatmapPoints = async () => {
@@ -51,6 +55,11 @@ function HomePage() {
     const handleRegister = () => navigate('/register');
 
     const handleSearch = async () => {
+        if (!recaptchaToken) {
+            toast.error('Por favor complete el reCAPTCHA para continuar con la búsqueda.');
+            return;
+        }
+
         try {
             const response = await fetch(`https://localhost:7201/api/Multas/PlacaID/${plate}`);
             const data = await response.json();
@@ -68,6 +77,10 @@ function HomePage() {
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
+    };
+
+    const handleRecaptchaChange = (token) => {
+        setRecaptchaToken(token);
     };
 
     return (
@@ -111,7 +124,14 @@ function HomePage() {
                         value={plate}
                         onChange={(e) => setPlate(e.target.value)}
                     />
+                    
                     <button onClick={handleSearch}>Buscar</button>
+                </div>
+                <div className="consulta-form">
+                <ReCAPTCHA
+                        sitekey="6Lf0Ko0qAAAAACNgXe2jDdlHC1-cNFhn_QQU3KZJ"
+                        onChange={handleRecaptchaChange}
+                    />
                 </div>
                 <table className="results-table">
                     <thead>
@@ -137,6 +157,7 @@ function HomePage() {
                         ))}
                     </tbody>
                 </table>
+                <ToastContainer />
             </div>
             <footer>  <h2 className="footer-title">Next Code Solutions</h2></footer>
         </body>
