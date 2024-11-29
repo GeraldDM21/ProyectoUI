@@ -127,10 +127,10 @@ function ReporteAdministrativo() {
     const filas = multasFiltradas.map((multa) => ({
       Fecha: new Date(multa.fecha).toLocaleDateString("es-ES"), // Formatear la fecha en español
       Cédula: multa.cedulaInfractor || "N/A", // Manejar cédulas vacías
-      Monto: `₡${multa.monto.toLocaleString("es-ES", {
+      Monto: `₡${(multa.monto ?? 0).toLocaleString("es-ES", { // Usar 0 si `multa.monto` es undefined o null
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      })}`, // Formatear el monto
+      })}`,
       Estado: multa.pagada ? "Pagada" : "Pendiente", // Estado en texto
     }));
   
@@ -156,6 +156,7 @@ function ReporteAdministrativo() {
     document.body.removeChild(link); // Eliminar enlace después de descargar
   };
   
+  
 
   // Descargar PDF
   const exportarPDF = () => {
@@ -163,7 +164,7 @@ function ReporteAdministrativo() {
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default();
         const logoUrl = `${process.env.PUBLIC_URL}/logo.png.jpeg`; // Ruta absoluta desde "public"
-
+  
         // Cargar el logo y agregarlo al PDF
         const logoImage = new Image();
         logoImage.src = logoUrl;
@@ -171,29 +172,30 @@ function ReporteAdministrativo() {
           doc.addImage(logoImage, "JPEG", 10, 10, 30, 30); // Logo ajustado
           doc.text("Reporte Administrativo", 50, 20);
           doc.text(`Generado por: ${userEmail}`, 50, 30);
-
+  
           const filas = multasFiltradas.map((multa) => [
-            multa.fecha,
-            multa.cedulaInfractor,
-            `₡${multa.monto.toLocaleString("en-US", {
+            new Date(multa.fecha).toLocaleDateString("es-ES"),
+            multa.cedulaInfractor || "N/A",
+            `₡${(multa.monto ?? 0).toLocaleString("es-ES", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}`,
             multa.pagada ? "Pagada" : "Pendiente",
           ]);
-
+  
           doc.autoTable({
             head: [["Fecha", "Cédula", "Monto", "Estado"]],
             body: filas,
             startY: 40,
             headStyles: { fillColor: "#007BFF" },
           });
-
+  
           doc.save("reporte_multas_administrativo.pdf");
         };
       });
     });
   };
+  
 
   return (
     <div className="reporte-container">

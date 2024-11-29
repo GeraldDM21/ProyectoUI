@@ -120,7 +120,7 @@ function ReporteOficial() {
       Estado: multa.pagada ? "Pagada" : "No Pagada",
     }));
 
-    const encabezados = [["Fecha", "Zona", "Monto", "Estado"]];
+    const encabezados = [["Fecha", "Monto", "Estado"]];
     const hoja = XLSX.utils.json_to_sheet(filas, { header: encabezados });
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, "Multas");
@@ -151,7 +151,7 @@ function ReporteOficial() {
       ]);
 
       autoTable(doc, {
-        head: [["Fecha", "Zona", "Monto", "Estado"]], // Cambiar orden aquí
+        head: [["Fecha", "Monto", "Estado"]], // Cambiar orden aquí
         body: filas,
         startY: 40,
         headStyles: { fillColor: "#007BFF" },
