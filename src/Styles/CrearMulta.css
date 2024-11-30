@@ -62,7 +62,6 @@
 }
 
 input, select {
-    width: 100%;
     padding: 10px;
     border: 1px solid var(--cadet-gray);
     border-radius: 5px;
@@ -143,4 +142,21 @@ input, select {
     border-radius: 8px;
     border: 1px solid var(--cadet-gray);
     margin-bottom: 15px;
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+    margin-left: 25px;
+}
+  
+.form-check {
+    display: flex;
+    align-items: center;
+}
+
+.form-container{
+    border: 1px solid #546A76;
+    padding: 10px;
 }

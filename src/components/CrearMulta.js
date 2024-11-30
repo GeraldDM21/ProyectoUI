@@ -298,39 +298,36 @@ function CrearMulta() {
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         <LocationMarker />
                     </MapContainer>
-                    <div className="form-group">
-    <label>Tipo de Infracción:</label>
-    <div>
-        {infraccion.map((infraccion) => (
-            <div key={infraccion.id} className="form-check">
-                <input
-                    type="checkbox"
-                    id={`infraccion-${infraccion.id}`}
-                    value={infraccion.id}
-                    checked={selectedInfracciones.includes(infraccion.id)}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (e.target.checked) {
-                            // Agregar al array si está marcado
-                            setSelectedInfracciones([...selectedInfracciones, value]);
-                        } else {
-                            // Remover del array si se desmarca
-                            setSelectedInfracciones(
-                                selectedInfracciones.filter((id) => id !== value)
-                            );
-                        }
-                    }}
-                    className="form-check-input"
-                />
-                <label
-                    htmlFor={`infraccion-${infraccion.id}`}
-                    className="form-check-label"
-                >
-                    {infraccion.nombre}
-                </label>
-            </div>
-        ))}
-    </div>
+                    <div className="form-group form-container">
+                        <label>Tipo de Infracción:</label>
+                        <div className="checkbox-container">
+                            {infraccion.map((infraccion) => (
+                                <div key={infraccion.id} className="form-check">
+                                <input
+                                    type="checkbox"
+                                    id={`infraccion-${infraccion.id}`}
+                                    value={infraccion.id}
+                                    onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (e.target.checked) {
+                                        setSelectedInfracciones([...selectedInfracciones, value]);
+                                    } else {
+                                        setSelectedInfracciones(
+                                        selectedInfracciones.filter((id) => id !== value)
+                                        );
+                                    }
+                                    }}
+                                    className="form-check-input"
+                                />
+                                <label
+                                    htmlFor={`infraccion-${infraccion.id}`}
+                                    className="form-check-label"
+                                >
+                                    {infraccion.nombre}
+                            </label>
+                        </div>
+                        ))}
+                    </div>
 </div>
                     <button type="submit" className="btn-submit">Registrar Multa</button>
                     {message && <p className="message">{message}</p>}
