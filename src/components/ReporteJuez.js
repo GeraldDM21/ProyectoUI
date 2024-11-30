@@ -7,11 +7,26 @@ function ReporteJuez() {
   const [chart, setChart] = useState(null);
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
+  const [userEmail, setUserEmail] = useState("correo@predeterminado.com"); // Correo predeterminado
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    // Simulación de datos desde el backend (conectar con tu API real)
-    const fetchData = async () => {
+    // Llamada al backend para obtener el correo del usuario
+    const fetchUserEmail = async () => {
+      try {
+        const response = await fetch(`https://localhost:7201/api/Usuarios/${userId}`);
+        if (!response.ok) {
+          throw new Error("No se pudo cargar el perfil del usuario.");
+        }
+        const data = await response.json();
+        setUserEmail(data.correo);
+      } catch (error) {
+        console.error("Error al obtener el correo del usuario:", error);
+      }
+    };
+
+    // Llamada al backend para obtener las disputas
+    const fetchDisputas = async () => {
       try {
         const response = await fetch(`https://localhost:7201/api/Disputas/IdJuez/${userId}`);
         const data = await response.json();
@@ -22,8 +37,9 @@ function ReporteJuez() {
       }
     };
 
-    fetchData();
-  }, []);
+    fetchUserEmail();
+    fetchDisputas();
+  }, [userId]);
 
   // Aplicar filtros por fecha
   const filtrarDisputas = () => {
@@ -52,7 +68,7 @@ function ReporteJuez() {
   const denegadas =
     disputasFiltradas.filter((disputa) => disputa.resolucion === "Multa Validada" || disputa.resolucion === "Usuario pagó la multa.").length;
 
-  // Renderizar gráfico
+  // Gráfico dinámico
   useEffect(() => {
     if (chart) {
       chart.destroy(); // Destruir gráfico anterior
@@ -60,17 +76,32 @@ function ReporteJuez() {
 
     const ctx = document.getElementById("chartJuez").getContext("2d");
 
+    const maxValor = Math.max(pendientes, aprobadas, denegadas);
+    const rangoMaximo = Math.ceil((maxValor + 1) / 10) * 5;
+
     const nuevoChart = new Chart(ctx, {
       type: "bar",
       data: {
         labels: ["Disputas Pendientes", "Disputas Aprobadas", "Disputas Denegadas"],
         datasets: [
           {
-            label: "Disputas",
+            label: "Cantidad de Disputas",
             data: [pendientes, aprobadas, denegadas],
-            backgroundColor: ["#88A0A8", "#B4CEB3", "#88A0A8"],
+            backgroundColor: ["#F5A623", "#7ED321", "#D0021B"],
           },
         ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: rangoMaximo,
+            ticks: {
+              stepSize: 10,
+            },
+          },
+        },
       },
     });
 
@@ -81,25 +112,27 @@ function ReporteJuez() {
         nuevoChart.destroy();
       }
     };
-  }, [disputasFiltradas]);
+  }, [disputasFiltradas, pendientes, aprobadas, denegadas]);
 
   // Exportar a Excel
   const exportarExcel = () => {
     const filas = disputasFiltradas.map((disputa) => ({
-      Fecha: disputa.fecha,
-      Razón: disputa.razon,
-      Descripción: disputa.descripcion,
+      Fecha: new Date(disputa.fecha).toLocaleDateString("es-ES"),
+      Razón: disputa.razon || "N/A",
+      Descripción: disputa.descripcion || "N/A",
       Estado: disputa.estado,
       Resolución: disputa.resolucion,
     }));
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [
-        "Fecha,Razon,Descripcion,Estado,Resolucion",
-        ...filas.map((fila) => `${fila.Fecha},${fila.Razón},${fila.Descripción},${fila.Estado},${fila.Resolución}`),
-      ].join("\n");
+    const encabezados = "Fecha;Razón;Descripción;Estado;Resolución";
+    const contenido = filas
+      .map(
+        (fila) =>
+          `${fila.Fecha};${fila.Razón};${fila.Descripción};${fila.Estado};${fila.Resolución}`
+      )
+      .join("\n");
 
+    const csvContent = `data:text/csv;charset=utf-8,\ufeff${encabezados}\n${contenido}`;
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -114,22 +147,32 @@ function ReporteJuez() {
     import("jspdf").then((jsPDF) => {
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default();
-        doc.text("Reporte de Disputas - Juez", 10, 10);
+        const logoUrl = `${process.env.PUBLIC_URL}/logo.png.jpeg`;
 
-        const filas = disputasFiltradas.map((disputa) => [
-          disputa.fecha,
-          disputa.razon,
-          disputa.descripcion,
-          disputa.estado,
-          disputa.resolucion,
-        ]);
+        const logoImage = new Image();
+        logoImage.src = logoUrl;
+        logoImage.onload = () => {
+          doc.addImage(logoImage, "JPEG", 10, 10, 30, 30);
+          doc.text("Reporte de Disputas - Juez", 50, 20);
+          doc.text(`Generado por: ${userEmail}`, 50, 30);
 
-        doc.autoTable({
-          head: [["Fecha", "Razón", "Descripción", "Estado", "Resolución"]],
-          body: filas,
-        });
+          const filas = disputasFiltradas.map((disputa) => [
+            new Date(disputa.fecha).toLocaleDateString("es-ES"),
+            disputa.razon || "N/A",
+            disputa.descripcion || "N/A",
+            disputa.estado,
+            disputa.resolucion,
+          ]);
 
-        doc.save("reporte_disputas_juez.pdf");
+          doc.autoTable({
+            head: [["Fecha", "Razón", "Descripción", "Estado", "Resolución"]],
+            body: filas,
+            startY: 40,
+            headStyles: { fillColor: "#007BFF" },
+          });
+
+          doc.save("reporte_disputas_juez.pdf");
+        };
       });
     });
   };
